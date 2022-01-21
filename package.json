@@ -2,6 +2,7 @@
   "name": "no-name",
   "license": "UNLICENSED",
   "dependencies": {
+    "@collaborne/polymer-password-strength": "4.0.0",
     "@polymer/iron-a11y-announcer": "3.0.2",
     "@polymer/iron-a11y-keys-behavior": "3.0.1",
     "@polymer/iron-fit-behavior": "3.0.2",
@@ -91,6 +92,7 @@
   },
   "vaadin": {
     "dependencies": {
+      "@collaborne/polymer-password-strength": "4.0.0",
       "@polymer/iron-a11y-announcer": "3.0.2",
       "@polymer/iron-a11y-keys-behavior": "3.0.1",
       "@polymer/iron-fit-behavior": "3.0.2",
@@ -178,6 +180,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "26db63d7d7c059297aa1d4d8aee4fb2ebf860941902e95094c1eb8bf11b59024"
+    "hash": "c852f60521d5232ffd90829e10d63fc5e5f4e2244f176dd9c6ea28eb635451e7"
   }
 }

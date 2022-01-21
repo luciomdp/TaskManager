@@ -1,0 +1,12 @@
+<list>
+<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+		<query>
+			SELECT * from site
+		</query>
+		<name>loadsites</name>
+		<classNameResult></classNameResult>
+		<resultTransformerClass>com.advenio.medere.emr.dao.dto.SiteDTO</resultTransformerClass>
+		<queryHasWhere>false</queryHasWhere>
+		<queryReplaceParts />
+	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+</list>
