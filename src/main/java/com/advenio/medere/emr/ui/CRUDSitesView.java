@@ -150,9 +150,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 		grid.init();
 
-		// grid.getFilterController().addFilter(new TextFilterConfig("site",
-		// "").addField("site"), true);
-
+	
 	}
 
 	@PostConstruct

@@ -2,6 +2,7 @@ package com.advenio.medere.emr.view.edit;
 
 
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -13,6 +14,8 @@ import java.util.UUID;
 import javax.persistence.PersistenceException;
 import javax.xml.bind.DatatypeConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -75,6 +78,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	@Autowired protected ApplicationContext context;
 	@Autowired protected ISessionManager sessionManager;
 	@Autowired protected MessageBusContainer messageBus;
+	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesWindow.class);
 	
 	protected TextField txtName;
 	protected TextField txtEmail;
@@ -405,7 +409,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 
 	@Override
 	protected void accept() {
-		if (aceptedChanges) { 
+		if (aceptedChanges || imageLoaded) { 
 			if (validate()) {
 				String uri;
 				UriComponentsBuilder builder;
@@ -574,9 +578,13 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			String oldPath = site.getLogoFileName();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 			LocalDateTime now = LocalDateTime.now();
-			//site.setLogoFileName("logoSite" + dtf.format(now) + ".png");
-			//site.setLogoFileHash(getLogoFileHash(logoImage));
-			//logoProvider.setImage(site.getLogoFileName(),logoImage,oldPath);
+			site.setLogoFileName("logoSite" + dtf.format(now) + ".png");
+			site.setLogoFileHash(getLogoFileHash(logoImage));
+			try {
+				logoProvider.sendLogoImage(site.getLogoFileName(),logoImage,oldPath);
+			} catch (IOException e) {
+				logger.error(e.getMessage() + " hubo problemas al enviar la imagen a través del logo provider",e); 
+			}
 			
 			//borrar carpeta img dentro de sitesabm
 		}
@@ -586,7 +594,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	@Override
 	protected void cancel() {
 		
-		if(aceptedChanges) {
+		if(aceptedChanges || imageLoaded) {
 			ConfirmDialog dialog = context.getBean(ConfirmDialog.class,sessionManager.getI18nMessage("AreYouSureToCloseHavingPendingModifications"));
 			dialog.addAcceptListener(new IOnNotificationListener () {
 				public void onNotification() {
