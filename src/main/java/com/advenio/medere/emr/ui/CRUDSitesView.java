@@ -199,7 +199,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@Override
 	protected void newItem() {
 		windowOpen = true;
-		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("NewSite"));// sessionManager.getI18nMessage("NewMMSI"));
+		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("NewSite"));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
