@@ -541,7 +541,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	
 	
 	protected void UploadChanges() {
-	//ver logoreportfilename
+
 		if (site == null) {
 			site = new Site();
 			site.setDefaultSite(false);
@@ -587,7 +587,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 				logger.error(e.getMessage() + " hubo problemas al enviar la imagen a través del logo provider",e); 
 			}
 			
-			//borrar carpeta img dentro de sitesabm
 		}
 
 	}
