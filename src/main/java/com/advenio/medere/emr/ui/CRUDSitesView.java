@@ -2,28 +2,36 @@ package com.advenio.medere.emr.ui;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
+import com.advenio.medere.emr.dao.MedereDAO;
 import com.advenio.medere.emr.dao.SiteDAO;
+import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventSitesChanged;
-import com.advenio.medere.rest.MedereRest;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
 import com.advenio.medere.ui.components.grid.GridLoadListener;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.advenio.medere.ui.views.BaseCRUDView;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.data.selection.SelectionEvent;
+import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Command;
@@ -40,13 +48,17 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	private String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
 
 	private static final long serialVersionUID = -1985837633347632519L;
+	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
 
 	@Autowired
 	protected SiteDAO siteDAO;
 	@Autowired
+	protected MedereDAO medereDAO;
+	@Autowired
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
+	@Autowired protected UserDAO userDAO;
 
 	@Override
 	protected void createGrid() {
@@ -156,7 +168,32 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@PostConstruct
 	@Override
 	public void init() {
-		super.init();
+		createGrid();
+		grid.getGrid().addSelectionListener(new SelectionListener<Grid<SiteDTO>, SiteDTO>() {
+
+			private static final long serialVersionUID = -1266658791714326144L;
+
+			@Override
+			public void selectionChange(SelectionEvent<Grid<SiteDTO>, SiteDTO> event) {
+				if (event.getFirstSelectedItem().isPresent()) {
+					editItem(grid.getGrid().asSingleSelect().getValue());
+				}
+			}
+		});
+
+		Button btnNew = new Button(VaadinIcon.PLUS.create());
+		btnNew.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		btnNew.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
+			
+			private static final long serialVersionUID = -4512181173967300148L;
+
+			@Override
+			public void onComponentEvent(ClickEvent<Button> event) {
+				newItem();
+			}
+		});		
+		grid.addControlToHeader(btnNew, false);
+		setViewContent(grid.getComponent());
 		titleDelete = sessionManager.getI18nMessage("SiteView");
 		titleDeleteItemText = sessionManager.getI18nMessage("AreYouSureToDeleteSite");
 	}
@@ -185,15 +222,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 	@Override
 	protected void deleteItem(SiteDTO item) {
-		try {
-			String uri = medereAddress.concat(webmedererestcontrollerURL) + "deleteSite";
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteKey", item.getMedereuuid());
-			RestTemplate restTemplate = context.getBean(MedereRest.class).createRestTemplate();
-			restTemplate.getForObject(builder.toUriString(), String.class); 
-			siteDAO.deleteSite(item.getSite().longValue());
-		} catch (Exception e) {
-		}
-		grid.loadData();
+
 	}
 
 	@Override

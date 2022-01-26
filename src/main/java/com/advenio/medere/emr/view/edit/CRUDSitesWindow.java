@@ -3,6 +3,7 @@ package com.advenio.medere.emr.view.edit;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -20,15 +21,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.advenio.medere.MessageBusContainer;
-import com.advenio.medere.dao.impl.UserDAO;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.MedereDAO;
 import com.advenio.medere.emr.dao.SiteDAO;
+import com.advenio.medere.emr.dao.UserDAO;
+import com.advenio.medere.emr.objects.patient.PatientEntity;
+import com.advenio.medere.emr.objects.user.UserEMR;
 import com.advenio.medere.objects.DocumentType;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.location.City;
@@ -68,7 +72,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
-	private String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
+	private final String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
+	private final String COMPANY_ADMIN_USERNAME = "administrador";
+	private final String COMPANY_ADMIN_PASSWORD = "administrador";
 	
 	@Autowired protected LogoProvider logoProvider;
 	@Autowired protected SiteDAO siteDAO;
@@ -78,6 +84,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	@Autowired protected ApplicationContext context;
 	@Autowired protected ISessionManager sessionManager;
 	@Autowired protected MessageBusContainer messageBus;
+	
 	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesWindow.class);
 	
 	protected TextField txtName;
@@ -418,7 +425,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 				try {
 					if(newSite) {
 						uri = medereAddress.concat(webmedererestcontrollerURL) + "createSite";
-						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", siteDAO.saveSite(site));
+						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", siteDAO.saveSite(site,generateAdmin(COMPANY_ADMIN_USERNAME,COMPANY_ADMIN_PASSWORD)));
 						restTemplate = context.getBean(MedereRest.class).createRestTemplate();
 						restTemplate.getForObject(builder.toUriString(), String.class); 
 					}
@@ -618,5 +625,45 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 				e.printStackTrace();
 			}
 			return myChecksum;
+	}
+	
+	private UserEMR generateAdmin(String userName, String password) {
+		UserEMR admin = new UserEMR();
+		admin.setBlocked(false);
+		admin.setEmail("completar@completar.com.ar");
+		admin.setFirstName("Administrador");
+		admin.setLanguage(site.getLanguage());
+		admin.setLastName(site.getCompanyName());
+		admin.setMaxInactiveInterval(3600);
+		BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
+		admin.setPassword(passEncoder.encode(password));
+		admin.setPasswordChange(false);
+		admin.setProfile(userDAO.findProfile(1, site.getLanguage()));
+		admin.setRegionalSettings(site.getDefaultRegionalSettings());
+		admin.setSite(site);
+		admin.setUsername(userName);
+		
+		PatientEntity person = new PatientEntity();
+		person.setActive(true);
+		person.setAddress("");
+		person.setAge(BigDecimal.valueOf(99));
+		person.setCity(site.getDefaultCity());
+		person.setClinicHistoryID("");
+		person.setCredentialPhotoBack("");
+		person.setCredentialPhotoFront("");
+		person.setDocumentType(site.getDefaultDocumentType());
+		person.setEmail(admin.getEmail());	
+		person.setEntityPhoto("");
+		person.setExternalID("");
+		person.setFirstName(admin.getFirstName());
+		person.setGender('M');
+		person.setLastName(admin.getLastName());
+		person.setMobilePhone(site.getCompanyTelephone());
+		person.setPhoneNumber(site.getCompanyTelephone());
+		person.setSite(site);
+		
+		admin.setMedereEntity(person);
+		
+		return admin;
 	}
 }

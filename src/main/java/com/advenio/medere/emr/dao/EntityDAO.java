@@ -25,7 +25,6 @@ import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.dao.nativeSQL.ParameterData;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
-import com.advenio.medere.emr.objects.externaldata.ExternalCity;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.location.City;
 import com.advenio.medere.objects.location.Country;
@@ -108,30 +107,6 @@ public class EntityDAO {
 		return city;
 	}
 
-	@Transactional(readOnly = true)
-	public City findCityByExternalCode(String externalCode) {
-
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ExternalCity> criteria = builder.createQuery(ExternalCity.class);
-		Root<ExternalCity> root = criteria.from(ExternalCity.class);
-		criteria.where(builder.equal(root.get("id"), externalCode));
-		List<ExternalCity> lExternalCity = entityManager.createQuery(criteria)
-				.setHint("org.hibernate.cacheable", "true").getResultList();
-
-		if (lExternalCity.size() > 0) {
-			CriteriaQuery<City> criteriaCity = builder.createQuery(City.class);
-			Root<City> rootCity = criteriaCity.from(City.class);
-			criteriaCity.where(builder.equal(rootCity.get("city"), lExternalCity.get(0).getCity()));
-			List<City> lCity = entityManager.createQuery(criteriaCity).setHint("org.hibernate.cacheable", "true")
-					.getResultList();
-			if (lCity.size() > 0) {
-				return lCity.get(0);
-			}
-		}
-		logger.info("Unknown CITY: " + externalCode);
-		return null;
-
-	}
 	@Transactional(readOnly = true)
 	public List<Country> findAllCountries(Language language) {
 

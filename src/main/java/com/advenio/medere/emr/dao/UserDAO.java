@@ -1,4 +1,4 @@
-package com.advenio.medere.dao.impl;
+package com.advenio.medere.emr.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,8 +10,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
@@ -19,26 +21,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.IUserDAO;
+import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.dto.users.IPLoginAttemptDTO;
 import com.advenio.medere.objects.dto.users.UserDTO;
+import com.advenio.medere.objects.user.Profile;
 import com.advenio.medere.objects.user.User;
+import com.advenio.medere.objects.user.i18n.ProfileI18n;
 import com.advenio.medere.security.SecurityConfig;
 import com.advenio.medere.ui.components.menu.MenuItemDTO;
 
 @Service
 @Primary
 public class UserDAO implements IUserDAO {
+	
 
 	@Autowired
 	protected ApplicationContext context;
 	@PersistenceContext
 	protected EntityManager entityManager;
 	
+	
 	@Override
 	public void clearAttempts(String username, String remoteAddress) {
 				
 	}
-
+	
+	public User findUserById(Long userid){			
+		User user =loadCompleteUser(userid);
+		return user;
+	}
+	
 	@Override
 	public UserDTO findUser(String username) {
 	
@@ -126,6 +138,24 @@ public class UserDAO implements IUserDAO {
 		
 		User user = l.get(0);
 		return user;
+	}
+	
+	@Transactional(readOnly=true)
+	public Profile findProfile(int profileID, Language language) {
+		Session hibernateSession = entityManager.unwrap(Session.class);
+		hibernateSession.enableFilter("language").setParameter("language", language.getLanguage().longValue());
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Profile> criteria = builder.createQuery(Profile.class);
+		Root<Profile> root = criteria.from(Profile.class);
+		Join<Profile, ProfileI18n> joinMeasureUnit = root.join("profileI18n");
+		criteria.where(builder.equal(root.get("profile"), profileID));
+		TypedQuery<Profile> query = entityManager.createQuery(criteria).setHint("org.hibernate.cacheable", "true");
+		List<Profile> list = query.getResultList();
+		Profile result = null;
+		if (list.size()>0){
+			result = list.get(0);
+		}
+		return result;
 	}
 
 }
