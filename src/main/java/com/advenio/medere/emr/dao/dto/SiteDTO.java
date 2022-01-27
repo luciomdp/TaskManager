@@ -10,7 +10,6 @@ public class SiteDTO {
 	
 	protected String logofilename;
 	protected String logofilehash;
-	protected String logoreportfilename;
 
 	protected String apptitle;
 	protected String faviconpath;
@@ -80,14 +79,6 @@ public class SiteDTO {
 
 	public void setLogofilehash(String logofilehash) {
 		this.logofilehash = logofilehash;
-	}
-
-	public String getLogoreportfilename() {
-		return logoreportfilename;
-	}
-
-	public void setLogoreportfilename(String logoreportfilename) {
-		this.logoreportfilename = logoreportfilename;
 	}
 
 	public String getApptitle() {
