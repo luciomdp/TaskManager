@@ -45,7 +45,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	private static final String WIDTH_BIG = "200px";
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
-	private String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
 
 	private static final long serialVersionUID = -1985837633347632519L;
 	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
@@ -90,9 +89,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 		grid.getGrid().addColumn("logofilehash").setHeader(sessionManager.getI18nMessage("LogoFileHash")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("logoreportfilename").setHeader(sessionManager.getI18nMessage("LogoReportFileName"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
 
 		grid.getGrid().addColumn("apptitle").setHeader(sessionManager.getI18nMessage("CompanyApptitle")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);

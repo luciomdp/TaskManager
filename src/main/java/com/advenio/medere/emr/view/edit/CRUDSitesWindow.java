@@ -553,7 +553,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			site = new Site();
 			site.setDefaultSite(false);
 			site.setTotemUser(userDAO.loadCompleteUser(Long.valueOf(28013)));
-			site.setLogoReportFileName("/img/logo_report.png");
 		}
 		
 		site.setCompanyName(txtName.getValue());
