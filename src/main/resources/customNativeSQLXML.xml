@@ -21,4 +21,17 @@
 		<queryHasWhere>false</queryHasWhere>
 		<queryReplaceParts />
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+		<query>
+		SELECT nutritionalitem.nutritionalitem, nutritionalitem.description, t18.description typedescription, nutritionalitem.active
+		FROM nutritionalitem 
+        JOIN nutritionaltype t ON t.nutritionaltype = nutritionalitem.nutritionaltype
+        JOIN nutritionaltypei18n t18 ON t18.nutritionaltype = t.nutritionaltype and t18.language = :language
+		</query>
+		<name>nutritionalitemlist</name>
+		<classNameResult></classNameResult>
+		<resultTransformerClass>com.advenio.medere.emr.dao.dto.NutritionalItemDTO</resultTransformerClass>
+		<queryHasWhere>false</queryHasWhere>
+		<queryReplaceParts />
+	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 </list>

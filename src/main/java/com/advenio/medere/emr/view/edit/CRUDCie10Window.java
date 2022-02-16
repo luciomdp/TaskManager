@@ -43,8 +43,6 @@ public class CRUDCie10Window extends BaseCRUDWindow implements HasDynamicTitle{
 	
 
 	@Autowired protected CIE10DAO cie10DAO;
-	@Autowired protected MedereDAO medereDAO;
-	@Autowired protected UserDAO userDAO;
 	@Autowired protected ApplicationContext context;
 	@Autowired protected ISessionManager sessionManager;
 	@Autowired protected MessageBusContainer messageBus;

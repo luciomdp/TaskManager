@@ -115,8 +115,15 @@ public class UserDAO implements IUserDAO {
 		Cie10Grid.setItemId(Long.valueOf(2));
 		Cie10Grid.setItemName("Lista de enfermedades");
 		Cie10Grid.setOrder(2);
+		MenuItemDTO nutritionGrid = new MenuItemDTO();
+		nutritionGrid.setIcon("home");
+		nutritionGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDNutritionView");
+		nutritionGrid.setItemId(Long.valueOf(3));
+		nutritionGrid.setItemName("Lista de items nutricionales");
+		nutritionGrid.setOrder(3);
 		menu.add(siteGrid);
 		menu.add(Cie10Grid);
+		menu.add(nutritionGrid);
 		return menu;
 	}
 	
