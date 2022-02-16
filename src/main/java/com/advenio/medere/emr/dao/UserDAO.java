@@ -109,7 +109,14 @@ public class UserDAO implements IUserDAO {
 		siteGrid.setItemId(Long.valueOf(1));
 		siteGrid.setItemName("Lista de sitios");
 		siteGrid.setOrder(1);
+		MenuItemDTO Cie10Grid = new MenuItemDTO();
+		Cie10Grid.setIcon("home");
+		Cie10Grid.setItemClassName("com.advenio.medere.emr.ui.CRUDCie10View");
+		Cie10Grid.setItemId(Long.valueOf(2));
+		Cie10Grid.setItemName("Lista de enfermedades");
+		Cie10Grid.setOrder(2);
 		menu.add(siteGrid);
+		menu.add(Cie10Grid);
 		return menu;
 	}
 	

@@ -442,7 +442,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 						Notification.show(sessionManager.getI18nMessage("YouShouldSelectLogo")).setPosition(Position.MIDDLE);
 						btnLogo.focus();
 					}
-					messageBus.post(new EventSitesChanged());
+					messageBus.post(new EventStateChanged());
 					close();
 				}catch(ResourceAccessException e) {
 					Notification.show(sessionManager.getI18nMessage("ErrorUpdatingSiteInMedere")).setPosition(Position.MIDDLE);

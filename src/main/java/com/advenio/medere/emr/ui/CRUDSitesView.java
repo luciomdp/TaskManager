@@ -15,7 +15,7 @@ import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
-import com.advenio.medere.emr.view.edit.EventSitesChanged;
+import com.advenio.medere.emr.view.edit.EventStateChanged;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
@@ -30,6 +30,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -79,7 +80,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn("site").setHeader(sessionManager.getI18nMessage("SiteId")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("active").setHeader(sessionManager.getI18nMessage("Active")).setTextAlign(ColumnTextAlign.CENTER)
+		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isActive()))).setHeader(sessionManager.getI18nMessage("Active")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn("url").setHeader(sessionManager.getI18nMessage("URL")).setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
@@ -114,7 +115,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn("companywebsite").setHeader(sessionManager.getI18nMessage("CompanyWebsite"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
 
-		grid.getGrid().addColumn("defaultsite").setHeader(sessionManager.getI18nMessage("DefaultSite")).setTextAlign(ColumnTextAlign.CENTER)
+		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isDefaultsite()))).setHeader(sessionManager.getI18nMessage("DefaultSite")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn("language").setHeader(sessionManager.getI18nMessage("Language")).setTextAlign(ColumnTextAlign.CENTER)
@@ -123,7 +124,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn("webappointmentsurl").setHeader(sessionManager.getI18nMessage("WebAppointmentsUrl"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
 
-		grid.getGrid().addColumn("showcoveragewarning").setHeader(sessionManager.getI18nMessage("ShowCoverageWarning"))
+		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isShowcoveragewarning()))).setHeader(sessionManager.getI18nMessage("ShowCoverageWarning"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn("webapptitle").setHeader(sessionManager.getI18nMessage("CompanyWebApptitle")).setTextAlign(ColumnTextAlign.CENTER)
@@ -138,10 +139,10 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn("regionalsettings").setHeader(sessionManager.getI18nMessage("RegionalSettings"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("hiderequestprescriptions").setHeader(sessionManager.getI18nMessage("HideRequestPrescriptions"))
+		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isHiderequestprescriptions()))).setHeader(sessionManager.getI18nMessage("HideRequestPrescriptions"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("hidelocationdetails").setHeader(sessionManager.getI18nMessage("HideLocationDetails"))
+		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isHidelocationdetails()))).setHeader(sessionManager.getI18nMessage("HideLocationDetails"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn("totemurl").setHeader(sessionManager.getI18nMessage("TotemUrl")).setTextAlign(ColumnTextAlign.CENTER)
@@ -238,7 +239,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	}
 	
 	@Handler
-    public void handleEvent(EventSitesChanged event) {
+    public void handleEvent(EventStateChanged event) {
         if ((getUI().isPresent()) && (!getUI().get().isClosing()) ) {
             getUI().get().access(new Command() {
                 private static final long serialVersionUID = 7766674267731647725L;

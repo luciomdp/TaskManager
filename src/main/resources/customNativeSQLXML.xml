@@ -9,4 +9,16 @@
 		<queryHasWhere>false</queryHasWhere>
 		<queryReplaceParts />
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+
+
+	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+		<query>
+			select * from Disease
+		</query>
+		<name>loaddiseases</name>
+		<classNameResult></classNameResult>
+		<resultTransformerClass>com.advenio.medere.emr.dao.dto.DiseaseDTO</resultTransformerClass>
+		<queryHasWhere>false</queryHasWhere>
+		<queryReplaceParts />
+	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 </list>
