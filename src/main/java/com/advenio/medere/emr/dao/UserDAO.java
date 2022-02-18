@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,10 @@ import com.advenio.medere.ui.components.menu.MenuItemDTO;
 @Primary
 public class UserDAO implements IUserDAO {
 	
-
+	@Value("${userPassword}")     
+	private String userPassword;
+	@Value("${showSite}")     
+	private boolean showSite;
 	@Autowired
 	protected ApplicationContext context;
 	@PersistenceContext
@@ -68,7 +72,7 @@ public class UserDAO implements IUserDAO {
 		
 		SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
 		
-		user.setPassword(securityConfig.passwordEncoder().encode("1234"));
+		user.setPassword(securityConfig.passwordEncoder().encode(userPassword));
 		user.setLanguageId(1);
 		return user;
 	}
@@ -103,31 +107,34 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public List<MenuItemDTO> loadMenu(long profileId,long languageId) {
 		List<MenuItemDTO> menu = new ArrayList<MenuItemDTO>();
-		MenuItemDTO siteGrid = new MenuItemDTO();
-		siteGrid.setIcon("home");
-		siteGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDSitesView");
-		siteGrid.setItemId(Long.valueOf(1));
-		siteGrid.setItemName("Lista de sitios");
-		siteGrid.setOrder(1);
+		int i = 1;
+		if(showSite) {
+			MenuItemDTO siteGrid = new MenuItemDTO();
+			siteGrid.setIcon("home");
+			siteGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDSitesView");
+			siteGrid.setItemId(Long.valueOf(i));
+			siteGrid.setItemName("Lista de sitios");
+			siteGrid.setOrder(i++);
+			menu.add(siteGrid);
+		}
 		MenuItemDTO Cie10Grid = new MenuItemDTO();
 		Cie10Grid.setIcon("home");
 		Cie10Grid.setItemClassName("com.advenio.medere.emr.ui.CRUDCie10View");
-		Cie10Grid.setItemId(Long.valueOf(2));
+		Cie10Grid.setItemId(Long.valueOf(i));
 		Cie10Grid.setItemName("Lista de enfermedades");
-		Cie10Grid.setOrder(2);
+		Cie10Grid.setOrder(i++);
 		MenuItemDTO nutritionGrid = new MenuItemDTO();
 		nutritionGrid.setIcon("home");
 		nutritionGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDNutritionView");
-		nutritionGrid.setItemId(Long.valueOf(3));
+		nutritionGrid.setItemId(Long.valueOf(i));
 		nutritionGrid.setItemName("Lista de items nutricionales");
-		nutritionGrid.setOrder(3);
+		nutritionGrid.setOrder(i++);
 		MenuItemDTO genericDrugGrid = new MenuItemDTO();
 		genericDrugGrid.setIcon("home");
 		genericDrugGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDGenericDrugView");
-		genericDrugGrid.setItemId(Long.valueOf(4));
+		genericDrugGrid.setItemId(Long.valueOf(i));
 		genericDrugGrid.setItemName("Lista de drogas genericas");
-		genericDrugGrid.setOrder(4);
-		menu.add(siteGrid);
+		genericDrugGrid.setOrder(i);
 		menu.add(Cie10Grid);
 		menu.add(nutritionGrid);
 		menu.add(genericDrugGrid);

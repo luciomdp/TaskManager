@@ -21,6 +21,7 @@ import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
 import com.advenio.medere.ui.components.grid.GridLoadListener;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
+import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
 import com.advenio.medere.ui.views.BaseCRUDView;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -62,7 +63,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<SiteDTO>(SiteDTO.class, false, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid = new DataGrid<SiteDTO>(SiteDTO.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
 		grid.setLoadListener(new GridLoadListener<SiteDTO>() {
 			@Override
 			public Page<SiteDTO> load(PageLoadConfig<SiteDTO> loadconfig) {
@@ -83,82 +84,30 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isActive()))).setHeader(sessionManager.getI18nMessage("Active")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("url").setHeader(sessionManager.getI18nMessage("URL")).setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
+		grid.getGrid().addColumn("apptitle").setHeader(sessionManager.getI18nMessage("Title")).setTextAlign(ColumnTextAlign.CENTER)
+				.setWidth(WIDTH_MEDIUM).setId("apptitle");
+		
+		grid.getGrid().addColumn("companyname").setHeader(sessionManager.getI18nMessage("Name")).setTextAlign(ColumnTextAlign.CENTER)
+		.setWidth(WIDTH_MEDIUM).setId("companyname");
+		
+		grid.getGrid().addColumn("companywebsite").setHeader(sessionManager.getI18nMessage("Website"))
+		.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
 
-		grid.getGrid().addColumn("logofilename").setHeader(sessionManager.getI18nMessage("LogoFileName")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("logofilehash").setHeader(sessionManager.getI18nMessage("LogoFileHash")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("apptitle").setHeader(sessionManager.getI18nMessage("CompanyApptitle")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("faviconpath").setHeader(sessionManager.getI18nMessage("FavIconPath")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("medereuuid").setHeader(sessionManager.getI18nMessage("UUID")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("companyaddress").setHeader(sessionManager.getI18nMessage("CompanyAddress"))
+		grid.getGrid().addColumn("companyaddress").setHeader(sessionManager.getI18nMessage("Address"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("companyemail").setHeader(sessionManager.getI18nMessage("CompanyEmail")).setTextAlign(ColumnTextAlign.CENTER)
+		grid.getGrid().addColumn("companyemail").setHeader(sessionManager.getI18nMessage("Email")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn("companyname").setHeader(sessionManager.getI18nMessage("CompanyName")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("companytelephone").setHeader(sessionManager.getI18nMessage("CompanyPhone"))
+		grid.getGrid().addColumn("companytelephone").setHeader(sessionManager.getI18nMessage("Phone"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("companywebsite").setHeader(sessionManager.getI18nMessage("CompanyWebsite"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
 
 		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isDefaultsite()))).setHeader(sessionManager.getI18nMessage("DefaultSite")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("language").setHeader(sessionManager.getI18nMessage("Language")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("webappointmentsurl").setHeader(sessionManager.getI18nMessage("WebAppointmentsUrl"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isShowcoveragewarning()))).setHeader(sessionManager.getI18nMessage("ShowCoverageWarning"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("webapptitle").setHeader(sessionManager.getI18nMessage("CompanyWebApptitle")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("documenttype").setHeader(sessionManager.getI18nMessage("DocumentType")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("city").setHeader(sessionManager.getI18nMessage("City")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("regionalsettings").setHeader(sessionManager.getI18nMessage("RegionalSettings"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isHiderequestprescriptions()))).setHeader(sessionManager.getI18nMessage("HideRequestPrescriptions"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isHidelocationdetails()))).setHeader(sessionManager.getI18nMessage("HideLocationDetails"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("totemurl").setHeader(sessionManager.getI18nMessage("TotemUrl")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("totemuser").setHeader(sessionManager.getI18nMessage("TotemUser")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn("anesthesiaappurl").setHeader(sessionManager.getI18nMessage("AnesthesiaUrl")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-
-		grid.getGrid().addColumn("patientcallerurl").setHeader(sessionManager.getI18nMessage("PatientCallerUrl"))
-				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_BIG);
-
 		grid.init();
-
+		
+		grid.getFilterController().addFilter(new TextFilterConfig("apptitle","").addField("apptitle"), true);
+		grid.getFilterController().addFilter(new TextFilterConfig("companyname","").addField("companyname"), true);
 	
 	}
 
