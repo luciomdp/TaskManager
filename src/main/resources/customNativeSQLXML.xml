@@ -34,4 +34,29 @@
 		<queryHasWhere>false</queryHasWhere>
 		<queryReplaceParts />
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+		<query>select 
+		genericdrug.genericdrug,
+        genericdrug.name,
+        genericdrug.observations,
+        genericdrug.maxdaystreatmentduration,
+		genericdrug.preventoutofleveldosage,
+		genericdrug.composed,
+		genericdrug.commercialnames,
+		genericdrug.therapeuticalgroup,
+		genericdrug.therapeuticalsubgroup,
+		genericdrug.dosageinformation,
+		genericdrug.routes,
+		genericdrug.adverseeffects,
+		genericdrug.therapeuticcomments,
+		genericdrug.additionalobservations		
+			from genericdrug
+		</query>
+		<name>genericdruglist</name>
+		<classNameResult></classNameResult>
+		<resultTransformerClass>com.advenio.medere.emr.dao.dto.GenericDrugDTO
+		</resultTransformerClass>
+		<queryHasWhere>false</queryHasWhere>
+		<queryReplaceParts />
+	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>		
 </list>
