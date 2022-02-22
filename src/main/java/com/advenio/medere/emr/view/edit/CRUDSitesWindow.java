@@ -121,6 +121,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected Language language;
 	protected byte[] logoImage;
 	protected LogoEditPanel logoEditPanel;
+
+	protected Checkbox chkManualHospitalizationEgressEnabled;
+	protected Checkbox chkManualHospitalizationEnabled;
 	
 	protected Site site;
 	
@@ -334,6 +337,16 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		chkActive.setValue(true);
 		chkActive.addValueChangeListener(event -> aceptedChanges = true);
 
+		chkManualHospitalizationEnabled = new Checkbox("Manual Hospitalization Enabled");//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEnabled.setSizeFull();
+		chkManualHospitalizationEnabled.setValue(true);
+		chkManualHospitalizationEnabled.addValueChangeListener(event -> aceptedChanges = true);
+
+		chkManualHospitalizationEgressEnabled = new Checkbox("Manual Hospitalization Egress Enabled");//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEgressEnabled.setSizeFull();
+		chkManualHospitalizationEgressEnabled.setValue(true);
+		chkManualHospitalizationEgressEnabled.addValueChangeListener(event -> aceptedChanges = true);
+
 		VerticalLayout vl = new VerticalLayout();
 		btnLogo = new Button(sessionManager.getI18nMessage("EditLogo"),VaadinIcon.PICTURE.create());
 		btnLogo.addClickListener(event -> {
@@ -352,7 +365,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		formLayout.add(vl,txtName, txtEmail, txtAddress, txtWebsite, txtApptitle, txtWebApptitle,
 				txtUrl,txtWebappointmentsurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
 				txtPhone,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,
-				chkHideLocationDetails,chkHideRequestPrescriptions, chkShowCoverageWarning, chkActive);
+				chkHideLocationDetails,chkHideRequestPrescriptions, chkShowCoverageWarning, chkManualHospitalizationEnabled,
+				chkManualHospitalizationEgressEnabled ,chkActive);
 
 		formLayout.setResponsiveSteps(
 		        new ResponsiveStep("0", 1),
@@ -408,6 +422,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			chkHideLocationDetails.setValue(site.isHideLocationDetails());
 			chkHideRequestPrescriptions.setValue(site.isHideRequestPrescriptions());
 			chkShowCoverageWarning.setValue(site.isShowcoveragewarning());
+			chkManualHospitalizationEnabled.setValue(site.getManualHospitalizationEnabled());
+			chkManualHospitalizationEgressEnabled.setValue(site.getManualHospitalizationEgressEnabled());
 			chkActive.setValue(site.isActive());
 			aceptedChanges = false;
 		}
@@ -577,6 +593,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		site.setHideLocationDetails(chkHideLocationDetails.getValue());
 		site.setHideRequestPrescriptions(chkHideRequestPrescriptions.getValue());
 		site.setShowcoveragewarning(chkShowCoverageWarning.getValue());
+		site.setManualHospitalizationEnabled(chkManualHospitalizationEnabled.getValue());
+		site.setManualHospitalizationEgressEnabled(chkManualHospitalizationEgressEnabled.getValue());
+
 		site.setActive(chkActive.getValue());
 		
 		if(site.getMedereUUID() == null)
