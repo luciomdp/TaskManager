@@ -164,7 +164,7 @@ public class UserDAO implements IUserDAO {
 		
 		List<User> l = tQuery.getResultList();
 		
-		User user = l.get(0);
+		User user = l.size() > 0 ? l.get(0) : null;
 		return user;
 	}
 	

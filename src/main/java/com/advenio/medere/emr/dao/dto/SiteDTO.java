@@ -41,6 +41,9 @@ public class SiteDTO {
 	
 	protected String patientcallerurl;
 
+	protected boolean manualhospitalizationegressenabled;
+	protected boolean manualhospitalizationenabled;
+
 	public BigInteger getSite() {
 		return site;
 	}
@@ -257,5 +260,19 @@ public class SiteDTO {
 		this.patientcallerurl = patientcallerurl;
 	}
 
-	
+	public void setManualhospitalizationegressenabled(boolean manualhospitalizationegressenabled) {
+		this.manualhospitalizationegressenabled = manualhospitalizationegressenabled;
+	}
+
+	public boolean getManualhospitalizationegressenabled() {
+		return manualhospitalizationegressenabled;
+	}
+
+	public void setManualospitalizationenabled(boolean manualhospitalizationenabled){
+		this.manualhospitalizationenabled = manualhospitalizationenabled;
+	}
+
+	public boolean getManualhospitalizationenabled(){
+		return manualhospitalizationenabled;
+	}
 }
