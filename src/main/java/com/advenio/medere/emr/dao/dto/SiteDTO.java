@@ -40,6 +40,9 @@ public class SiteDTO {
 	protected String anesthesiaappurl;
 	
 	protected String patientcallerurl;
+	
+	protected boolean manualHospitalizationEgressEnabled;
+	protected boolean manualHospitalizationEnabled;
 
 	public BigInteger getSite() {
 		return site;
@@ -255,6 +258,22 @@ public class SiteDTO {
 
 	public void setPatientcallerurl(String patientcallerurl) {
 		this.patientcallerurl = patientcallerurl;
+	}
+
+	public boolean isManualHospitalizationEgressEnabled() {
+		return manualHospitalizationEgressEnabled;
+	}
+
+	public void setManualHospitalizationEgressEnabled(boolean manualHospitalizationEgressEnabled) {
+		this.manualHospitalizationEgressEnabled = manualHospitalizationEgressEnabled;
+	}
+
+	public boolean isManualHospitalizationEnabled() {
+		return manualHospitalizationEnabled;
+	}
+
+	public void setManualHospitalizationEnabled(boolean manualHospitalizationEnabled) {
+		this.manualHospitalizationEnabled = manualHospitalizationEnabled;
 	}
 
 	
