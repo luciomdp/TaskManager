@@ -44,6 +44,9 @@ public class SiteDTO {
 	protected boolean manualHospitalizationEgressEnabled;
 	protected boolean manualHospitalizationEnabled;
 
+	protected boolean manualhospitalizationegressenabled;
+	protected boolean manualhospitalizationenabled;
+
 	public BigInteger getSite() {
 		return site;
 	}
@@ -276,5 +279,19 @@ public class SiteDTO {
 		this.manualHospitalizationEnabled = manualHospitalizationEnabled;
 	}
 
-	
+	public void setManualhospitalizationegressenabled(boolean manualhospitalizationegressenabled) {
+		this.manualhospitalizationegressenabled = manualhospitalizationegressenabled;
+	}
+
+	public boolean getManualhospitalizationegressenabled() {
+		return manualhospitalizationegressenabled;
+	}
+
+	public void setManualospitalizationenabled(boolean manualhospitalizationenabled){
+		this.manualhospitalizationenabled = manualhospitalizationenabled;
+	}
+
+	public boolean getManualhospitalizationenabled(){
+		return manualhospitalizationenabled;
+	}
 }
