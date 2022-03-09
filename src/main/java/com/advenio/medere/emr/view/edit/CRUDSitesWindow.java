@@ -107,6 +107,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected Checkbox chkHideRequestPrescriptions;
 	protected Checkbox chkShowCoverageWarning;
 	protected Checkbox chkActive;
+	protected Checkbox chkManualHospitalizationEgressEnabled;
+	protected Checkbox chkManualHospitalizationEnabled;
 	
 	protected ComboBox<DocumentType> cboDocumentType;
 	protected ComboBox<Language> cboLanguage;
@@ -121,9 +123,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected Language language;
 	protected byte[] logoImage;
 	protected LogoEditPanel logoEditPanel;
-
-	protected Checkbox chkManualHospitalizationEgressEnabled;
-	protected Checkbox chkManualHospitalizationEnabled;
 	
 	protected Site site;
 	
@@ -337,12 +336,12 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		chkActive.setValue(true);
 		chkActive.addValueChangeListener(event -> aceptedChanges = true);
 
-		chkManualHospitalizationEnabled = new Checkbox("Manual Hospitalization Enabled");//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEnabled"));//sessionManager.getI18nMessage("Active"));
 		chkManualHospitalizationEnabled.setSizeFull();
 		chkManualHospitalizationEnabled.setValue(true);
 		chkManualHospitalizationEnabled.addValueChangeListener(event -> aceptedChanges = true);
 
-		chkManualHospitalizationEgressEnabled = new Checkbox("Manual Hospitalization Egress Enabled");//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEgressEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEgressEnabled"));//sessionManager.getI18nMessage("Active"));
 		chkManualHospitalizationEgressEnabled.setSizeFull();
 		chkManualHospitalizationEgressEnabled.setValue(true);
 		chkManualHospitalizationEgressEnabled.addValueChangeListener(event -> aceptedChanges = true);
