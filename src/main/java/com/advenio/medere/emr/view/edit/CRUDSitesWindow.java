@@ -96,6 +96,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	
 	protected TextField txtUrl;
 	protected TextField txtWebappointmentsurl;
+	protected TextField txtWebappointmentsuserurl;
 	protected TextField txtTotemurl;
 	protected TextField txtAnesthesiaappurl;
 	protected TextField txtPatientcallerurl;
@@ -109,6 +110,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected Checkbox chkActive;
 	protected Checkbox chkManualHospitalizationEgressEnabled;
 	protected Checkbox chkManualHospitalizationEnabled;
+	protected Checkbox chkWebappointmentsEnabled;
 	
 	protected ComboBox<DocumentType> cboDocumentType;
 	protected ComboBox<Language> cboLanguage;
@@ -198,6 +200,14 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		txtWebappointmentsurl = new TextField(sessionManager.getI18nMessage("WebAppointmentsUrl"));
 		txtWebappointmentsurl.setSizeFull();
 		txtWebappointmentsurl.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
+			public void onComponentEvent(BlurEvent<TextField> event) {
+				aceptedChanges = true;	
+			}	
+		});
+		
+		txtWebappointmentsuserurl = new TextField(sessionManager.getI18nMessage("WebAppointmentsUserUrl"));
+		txtWebappointmentsuserurl.setSizeFull();
+		txtWebappointmentsuserurl.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
 			public void onComponentEvent(BlurEvent<TextField> event) {
 				aceptedChanges = true;	
 			}	
@@ -336,15 +346,28 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		chkActive.setValue(true);
 		chkActive.addValueChangeListener(event -> aceptedChanges = true);
 
-		chkManualHospitalizationEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEnabled"));//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEnabled"));
 		chkManualHospitalizationEnabled.setSizeFull();
 		chkManualHospitalizationEnabled.setValue(true);
 		chkManualHospitalizationEnabled.addValueChangeListener(event -> aceptedChanges = true);
 
-		chkManualHospitalizationEgressEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEgressEnabled"));//sessionManager.getI18nMessage("Active"));
+		chkManualHospitalizationEgressEnabled = new Checkbox(sessionManager.getI18nMessage("ManualHospitalizationEgressEnabled"));
 		chkManualHospitalizationEgressEnabled.setSizeFull();
 		chkManualHospitalizationEgressEnabled.setValue(true);
 		chkManualHospitalizationEgressEnabled.addValueChangeListener(event -> aceptedChanges = true);
+		
+		chkWebappointmentsEnabled = new Checkbox(sessionManager.getI18nMessage("WebAppointmentsEnabled"));
+		chkWebappointmentsEnabled.setSizeFull();
+		chkWebappointmentsEnabled.setValue(true);
+		chkWebappointmentsEnabled.addValueChangeListener(event -> {
+			txtWebApptitle.setEnabled(event.getValue());
+			txtWebappointmentsurl.setEnabled(event.getValue());
+			txtWebappointmentsuserurl.setEnabled(event.getValue());
+			chkHideLocationDetails.setEnabled(event.getValue());
+			chkHideRequestPrescriptions.setEnabled(event.getValue());
+			chkShowCoverageWarning.setEnabled(event.getValue());	
+			aceptedChanges = true;
+		});
 
 		VerticalLayout vl = new VerticalLayout();
 		btnLogo = new Button(sessionManager.getI18nMessage("EditLogo"),VaadinIcon.PICTURE.create());
@@ -362,8 +385,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		vl.add(btnLogo);
 		vl.setSizeFull();
 		formLayout.add(vl,txtName, txtEmail, txtAddress, txtWebsite, txtApptitle, txtWebApptitle,
-				txtUrl,txtWebappointmentsurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
-				txtPhone,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,
+				txtUrl,txtWebappointmentsurl,txtWebappointmentsuserurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
+				txtPhone,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,chkWebappointmentsEnabled,
 				chkHideLocationDetails,chkHideRequestPrescriptions, chkShowCoverageWarning, chkManualHospitalizationEnabled,
 				chkManualHospitalizationEgressEnabled ,chkActive);
 
@@ -399,6 +422,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			
 			txtUrl.setValue(site.getUrl()==null?"":site.getUrl());
 			txtWebappointmentsurl.setValue(site.getWebAppointmentsUrl()==null?"":site.getWebAppointmentsUrl());
+			txtWebappointmentsuserurl.setValue(site.getWebAppointmentsUserUrl()==null?"":site.getWebAppointmentsUserUrl());
 			txtTotemurl.setValue(site.getTotemUrl()==null?"":site.getTotemUrl());
 			txtAnesthesiaappurl.setValue(site.getAnesthesiaAppUrl()==null?"":site.getAnesthesiaAppUrl());
 			txtPatientcallerurl.setValue(site.getPatientCallerUrl()==null?"":site.getPatientCallerUrl());
@@ -425,6 +449,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			chkManualHospitalizationEgressEnabled.setValue(site.getManualHospitalizationEgressEnabled());
 			chkActive.setValue(site.isActive());
 			aceptedChanges = false;
+			if(StringsUtils.isNullOrEmptyTrimmed(site.getWebAppointmentsUrl())) {
+				chkWebappointmentsEnabled.setValue(false);
+			}
 		}
 	}
 
@@ -505,21 +532,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			return false;
 		}
 		
-		if (StringsUtils.isNullOrEmptyTrimmed(txtWebApptitle.getValue())) {
-			txtWebApptitle.focus();
-			Notification.show(sessionManager.getI18nMessage("PleaseCompleteWebAppTitle")).setPosition(Position.MIDDLE);
-			return false;
-		}
-		
 		if (StringsUtils.isNullOrEmptyTrimmed(txtUrl.getValue())) {
 			txtUrl.focus();
 			Notification.show(sessionManager.getI18nMessage("PleaseCompleteUrl")).setPosition(Position.MIDDLE);
-			return false;
-		}
-		
-		if (StringsUtils.isNullOrEmptyTrimmed(txtWebappointmentsurl.getValue())) {
-			txtWebappointmentsurl.focus();
-			Notification.show(sessionManager.getI18nMessage("PleaseCompleteWebAppointmentsUrl")).setPosition(Position.MIDDLE);
 			return false;
 		}
 		
@@ -558,6 +573,28 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			return false;			
 		}
 		
+		//Parametros de webappointments
+		if(chkWebappointmentsEnabled.getValue()) {
+		
+			if (StringsUtils.isNullOrEmptyTrimmed(txtWebApptitle.getValue())) {
+				txtWebApptitle.focus();
+				Notification.show(sessionManager.getI18nMessage("PleaseCompleteWebAppTitle")).setPosition(Position.MIDDLE);
+				return false;
+			}
+			
+			if (StringsUtils.isNullOrEmptyTrimmed(txtWebappointmentsurl.getValue())) {
+				txtWebappointmentsurl.focus();
+				Notification.show(sessionManager.getI18nMessage("PleaseCompleteWebAppointmentsUrl")).setPosition(Position.MIDDLE);
+				return false;
+			}
+			
+			if (StringsUtils.isNullOrEmptyTrimmed(txtWebappointmentsuserurl.getValue())) {
+				txtWebappointmentsuserurl.focus();
+				Notification.show(sessionManager.getI18nMessage("PleaseCompleteWebAppointmentsUserUrl")).setPosition(Position.MIDDLE);
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -574,10 +611,10 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		site.setCompanyEmail(txtEmail.getValue());
 		site.setCompanyAddress(txtAddress.getValue());
 		site.setCompanyWebsite(txtWebsite.getValue());
-		site.setWebAppTitle(txtWebApptitle.getValue());
+		
 		site.setApptitle(txtApptitle.getValue());
 		site.setUrl(txtUrl.getValue());
-		site.setWebAppointmentsUrl(txtWebappointmentsurl.getValue());
+		
 		site.setTotemUrl(txtTotemurl.getValue());
 		site.setAnesthesiaAppUrl(txtAnesthesiaappurl.getValue());
 		site.setPatientCallerUrl(txtPatientcallerurl.getValue());
@@ -611,6 +648,16 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 				logger.error(e.getMessage() + " hubo problemas al enviar la imagen a través del logo provider",e); 
 			}
 			
+		}
+		//Parametros de webappointments
+		if(chkWebappointmentsEnabled.getValue()) {
+			site.setWebAppTitle(txtWebApptitle.getValue());
+			site.setWebAppointmentsUrl(txtWebappointmentsurl.getValue());
+			site.setWebAppointmentsUserUrl(txtWebappointmentsuserurl.getValue());
+		}else {
+			site.setWebAppTitle(null);
+			site.setWebAppointmentsUrl(null);
+			site.setWebAppointmentsUserUrl(null);
 		}
 
 	}

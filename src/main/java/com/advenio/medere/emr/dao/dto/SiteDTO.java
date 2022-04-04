@@ -6,46 +6,14 @@ public class SiteDTO {
 	
 	protected BigInteger site;
 	protected boolean active;
-	protected String url; 
-	
-	protected String logofilename;
-	protected String logofilehash;
-
+	protected boolean defaultsite;
 	protected String apptitle;
-	protected String faviconpath;
-	protected String medereuuid;
-	
 	protected String companyaddress;
 	protected String companyemail;
 	protected String companyname;
 	protected String companytelephone;
 	protected String companywebsite;
-	protected boolean defaultsite;
-
-	protected BigInteger language;
 	
-	// WebAppointment properties
-	protected String webappointmentsurl;
-	protected boolean showcoveragewarning;
-	protected String webapptitle;
-	protected BigInteger documenttype;
-	protected BigInteger city;
-	protected BigInteger regionalsettings;
-	protected boolean hiderequestprescriptions;
-	protected boolean hidelocationdetails;
-	
-	protected String totemurl;
-	protected BigInteger totemuser;
-	
-	protected String anesthesiaappurl;
-	
-	protected String patientcallerurl;
-	
-	protected boolean manualHospitalizationEgressEnabled;
-	protected boolean manualHospitalizationEnabled;
-
-	protected boolean manualhospitalizationegressenabled;
-	protected boolean manualhospitalizationenabled;
 
 	public BigInteger getSite() {
 		return site;
@@ -63,52 +31,12 @@ public class SiteDTO {
 		this.active = active;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getLogofilename() {
-		return logofilename;
-	}
-
-	public void setLogofilename(String logofilename) {
-		this.logofilename = logofilename;
-	}
-
-	public String getLogofilehash() {
-		return logofilehash;
-	}
-
-	public void setLogofilehash(String logofilehash) {
-		this.logofilehash = logofilehash;
-	}
-
 	public String getApptitle() {
 		return apptitle;
 	}
 
 	public void setApptitle(String apptitle) {
 		this.apptitle = apptitle;
-	}
-
-	public String getFaviconpath() {
-		return faviconpath;
-	}
-
-	public void setFaviconpath(String faviconpath) {
-		this.faviconpath = faviconpath;
-	}
-
-	public String getMedereuuid() {
-		return medereuuid;
-	}
-
-	public void setMedereuuid(String medereuuid) {
-		this.medereuuid = medereuuid;
 	}
 
 	public String getCompanyaddress() {
@@ -159,139 +87,4 @@ public class SiteDTO {
 		this.defaultsite = defaultsite;
 	}
 
-	public BigInteger getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(BigInteger language) {
-		this.language = language;
-	}
-
-	public String getWebappointmentsurl() {
-		return webappointmentsurl;
-	}
-
-	public void setWebappointmentsurl(String webappointmentsurl) {
-		this.webappointmentsurl = webappointmentsurl;
-	}
-
-	public boolean isShowcoveragewarning() {
-		return showcoveragewarning;
-	}
-
-	public void setShowcoveragewarning(boolean showcoveragewarning) {
-		this.showcoveragewarning = showcoveragewarning;
-	}
-
-	public String getWebapptitle() {
-		return webapptitle;
-	}
-
-	public void setWebapptitle(String webapptitle) {
-		this.webapptitle = webapptitle;
-	}
-
-	public BigInteger getDocumenttype() {
-		return documenttype;
-	}
-
-	public void setDocumenttype(BigInteger documenttype) {
-		this.documenttype = documenttype;
-	}
-
-	public BigInteger getCity() {
-		return city;
-	}
-
-	public void setCity(BigInteger city) {
-		this.city = city;
-	}
-
-	public BigInteger getRegionalsettings() {
-		return regionalsettings;
-	}
-
-	public void setRegionalsettings(BigInteger regionalsettings) {
-		this.regionalsettings = regionalsettings;
-	}
-
-	public boolean isHiderequestprescriptions() {
-		return hiderequestprescriptions;
-	}
-
-	public void setHiderequestprescriptions(boolean hiderequestprescriptions) {
-		this.hiderequestprescriptions = hiderequestprescriptions;
-	}
-
-	public boolean isHidelocationdetails() {
-		return hidelocationdetails;
-	}
-
-	public void setHidelocationdetails(boolean hidelocationdetails) {
-		this.hidelocationdetails = hidelocationdetails;
-	}
-
-	public String getTotemurl() {
-		return totemurl;
-	}
-
-	public void setTotemurl(String totemurl) {
-		this.totemurl = totemurl;
-	}
-
-	public BigInteger getTotemuser() {
-		return totemuser;
-	}
-
-	public void setTotemuser(BigInteger totemuser) {
-		this.totemuser = totemuser;
-	}
-
-	public String getAnesthesiaappurl() {
-		return anesthesiaappurl;
-	}
-
-	public void setAnesthesiaappurl(String anesthesiaappurl) {
-		this.anesthesiaappurl = anesthesiaappurl;
-	}
-
-	public String getPatientcallerurl() {
-		return patientcallerurl;
-	}
-
-	public void setPatientcallerurl(String patientcallerurl) {
-		this.patientcallerurl = patientcallerurl;
-	}
-
-	public boolean isManualHospitalizationEgressEnabled() {
-		return manualHospitalizationEgressEnabled;
-	}
-
-	public void setManualHospitalizationEgressEnabled(boolean manualHospitalizationEgressEnabled) {
-		this.manualHospitalizationEgressEnabled = manualHospitalizationEgressEnabled;
-	}
-
-	public boolean isManualHospitalizationEnabled() {
-		return manualHospitalizationEnabled;
-	}
-
-	public void setManualHospitalizationEnabled(boolean manualHospitalizationEnabled) {
-		this.manualHospitalizationEnabled = manualHospitalizationEnabled;
-	}
-
-	public void setManualhospitalizationegressenabled(boolean manualhospitalizationegressenabled) {
-		this.manualhospitalizationegressenabled = manualhospitalizationegressenabled;
-	}
-
-	public boolean getManualhospitalizationegressenabled() {
-		return manualhospitalizationegressenabled;
-	}
-
-	public void setManualospitalizationenabled(boolean manualhospitalizationenabled){
-		this.manualhospitalizationenabled = manualhospitalizationenabled;
-	}
-
-	public boolean getManualhospitalizationenabled(){
-		return manualhospitalizationenabled;
-	}
 }

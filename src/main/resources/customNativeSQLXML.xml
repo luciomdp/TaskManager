@@ -1,7 +1,7 @@
 <list>
 <com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
-			SELECT * from site
+			SELECT site,active,defaultsite,apptitle,companyaddress,companyemail,companyname,companytelephone,companywebsite from site
 		</query>
 		<name>loadsites</name>
 		<classNameResult></classNameResult>
