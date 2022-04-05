@@ -54,6 +54,11 @@ public class SiteDAO {
 		return entityManager.find(Site.class, siteId);
 	}
 	
+	@Transactional(readOnly=true)
+	public Site loadDefaultSite() {
+		return entityManager.find(Site.class, (long)1);
+	}
+	
 	public Page<SiteDTO> loadSites(PageLoadConfig<SiteDTO> loadconfig,Long language) {
 		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
         ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();

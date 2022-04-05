@@ -101,6 +101,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected TextField txtAnesthesiaappurl;
 	protected TextField txtPatientcallerurl;
 	protected TextField txtFavIconPath;
+	protected TextField txtPrescriptionAppMaxScheduleHour;
+	protected TextField txtPrescriptionAppDeadlineToScheduleForCurrentDate;
 	
 	protected TextField txtPhone;
 	
@@ -111,6 +113,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	protected Checkbox chkManualHospitalizationEgressEnabled;
 	protected Checkbox chkManualHospitalizationEnabled;
 	protected Checkbox chkWebappointmentsEnabled;
+	protected Checkbox chkStockPreparationControl;
 	
 	protected ComboBox<DocumentType> cboDocumentType;
 	protected ComboBox<Language> cboLanguage;
@@ -252,6 +255,22 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			}	
 		});
 		
+		txtPrescriptionAppMaxScheduleHour = new TextField(sessionManager.getI18nMessage("PrescriptionAppMaxScheduleHour"));
+		txtPrescriptionAppMaxScheduleHour.setSizeFull();	
+		txtPrescriptionAppMaxScheduleHour.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
+			public void onComponentEvent(BlurEvent<TextField> event) {
+				aceptedChanges = true;	
+			}	
+		});
+		
+		txtPrescriptionAppDeadlineToScheduleForCurrentDate = new TextField(sessionManager.getI18nMessage("PrescriptionAppDeadlineToScheduleForCurrentDate"));
+		txtPrescriptionAppDeadlineToScheduleForCurrentDate.setSizeFull();	
+		txtPrescriptionAppDeadlineToScheduleForCurrentDate.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
+			public void onComponentEvent(BlurEvent<TextField> event) {
+				aceptedChanges = true;	
+			}	
+		});
+		
 		cboLanguage = new ComboBox<Language>(sessionManager.getI18nMessage("Language"));
 		List<Language> languages = medereDAO.loadLanguages();
 		cboLanguage.setItems(languages);
@@ -368,6 +387,13 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			chkShowCoverageWarning.setEnabled(event.getValue());	
 			aceptedChanges = true;
 		});
+		
+		chkStockPreparationControl = new Checkbox(sessionManager.getI18nMessage("StockPreparationControl"));
+		chkStockPreparationControl.setSizeFull();
+		chkStockPreparationControl.setValue(true);
+		chkStockPreparationControl.addValueChangeListener(event -> {	
+			aceptedChanges = true;
+		});
 
 		VerticalLayout vl = new VerticalLayout();
 		btnLogo = new Button(sessionManager.getI18nMessage("EditLogo"),VaadinIcon.PICTURE.create());
@@ -386,9 +412,9 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		vl.setSizeFull();
 		formLayout.add(vl,txtName, txtEmail, txtAddress, txtWebsite, txtApptitle, txtWebApptitle,
 				txtUrl,txtWebappointmentsurl,txtWebappointmentsuserurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
-				txtPhone,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,chkWebappointmentsEnabled,
+				txtPhone,txtPrescriptionAppMaxScheduleHour,txtPrescriptionAppDeadlineToScheduleForCurrentDate,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,chkWebappointmentsEnabled,
 				chkHideLocationDetails,chkHideRequestPrescriptions, chkShowCoverageWarning, chkManualHospitalizationEnabled,
-				chkManualHospitalizationEgressEnabled ,chkActive);
+				chkManualHospitalizationEgressEnabled,chkStockPreparationControl,chkActive);
 
 		formLayout.setResponsiveSteps(
 		        new ResponsiveStep("0", 1),
@@ -410,9 +436,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	@Override
 	public void editItem(Object item) {
 		
-		newSite = false;
-		site = (Site) item;
-		if(site != null) {
+		if(item != null) {
+			site = (Site) item;
 			txtName.setValue(site.getCompanyName()==null?"":site.getCompanyName());
 			txtEmail.setValue(site.getCompanyEmail()==null?"":site.getCompanyEmail());
 			txtAddress.setValue(site.getCompanyAddress()==null?"":site.getCompanyAddress());
@@ -427,6 +452,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			txtAnesthesiaappurl.setValue(site.getAnesthesiaAppUrl()==null?"":site.getAnesthesiaAppUrl());
 			txtPatientcallerurl.setValue(site.getPatientCallerUrl()==null?"":site.getPatientCallerUrl());
 			txtFavIconPath.setValue(site.getFavIconPath()==null?"":site.getFavIconPath());
+			txtPrescriptionAppDeadlineToScheduleForCurrentDate.setValue(site.getPrescriptionAppDeadlineToScheduleForCurrentDate()==null?"":site.getPrescriptionAppDeadlineToScheduleForCurrentDate());
+			txtPrescriptionAppMaxScheduleHour.setValue(site.getPrescriptionAppMaxScheduleHour()==null?"":site.getPrescriptionAppMaxScheduleHour());
 			
 			txtPhone.setValue(site.getCompanyTelephone()==null?"":site.getCompanyTelephone());
 			if(language != null)
@@ -448,6 +475,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			chkManualHospitalizationEnabled.setValue(site.getManualHospitalizationEnabled());
 			chkManualHospitalizationEgressEnabled.setValue(site.getManualHospitalizationEgressEnabled());
 			chkActive.setValue(site.isActive());
+			chkStockPreparationControl.setValue(site.isStockPreparationControl());
 			aceptedChanges = false;
 			if(StringsUtils.isNullOrEmptyTrimmed(site.getWebAppointmentsUrl())) {
 				chkWebappointmentsEnabled.setValue(false);
@@ -565,7 +593,19 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			txtPhone.focus();
 			Notification.show(sessionManager.getI18nMessage("PleaseCompletePhone")).setPosition(Position.MIDDLE);
 			return false;
-		}		
+		}
+		
+		if (StringsUtils.isNullOrEmptyTrimmed(txtPrescriptionAppDeadlineToScheduleForCurrentDate.getValue())) {
+			txtPrescriptionAppDeadlineToScheduleForCurrentDate.focus();
+			Notification.show(sessionManager.getI18nMessage("PleaseCompletePrescriptionHour")).setPosition(Position.MIDDLE);
+			return false;
+		}
+		
+		if (StringsUtils.isNullOrEmptyTrimmed(txtPrescriptionAppMaxScheduleHour.getValue())) {
+			txtPrescriptionAppMaxScheduleHour.focus();
+			Notification.show(sessionManager.getI18nMessage("PleaseCompletePrescriptionHour")).setPosition(Position.MIDDLE);
+			return false;
+		}
 		
 		if (cboCity.isEmpty()) {
 			cboCity.focus();
@@ -620,6 +660,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		site.setPatientCallerUrl(txtPatientcallerurl.getValue());
 		site.setFavIconPath(txtFavIconPath.getValue());
 		site.setCompanyTelephone(txtPhone.getValue());
+		site.setPrescriptionAppDeadlineToScheduleForCurrentDate(txtPrescriptionAppDeadlineToScheduleForCurrentDate.getValue());
+		site.setPrescriptionAppMaxScheduleHour(txtPrescriptionAppMaxScheduleHour.getValue());
 		
 		site.setLanguage(cboLanguage.getValue());
 		site.setDefaultCity(cboCity.getValue());
@@ -633,6 +675,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		site.setManualHospitalizationEgressEnabled(chkManualHospitalizationEgressEnabled.getValue());
 
 		site.setActive(chkActive.getValue());
+		site.setStockPreparationControl(chkStockPreparationControl.getValue());
 		
 		if(site.getMedereUUID() == null)
 			site.setMedereUUID(UUID.randomUUID().toString());
@@ -730,4 +773,14 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		
 		return admin;
 	}
+
+	public boolean isNewSite() {
+		return newSite;
+	}
+
+	public void setNewSite(boolean newSite) {
+		this.newSite = newSite;
+	}
+	
+	
 }
