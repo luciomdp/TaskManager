@@ -154,6 +154,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	protected void editItem(SiteDTO item) {
 		windowOpen = true;
 		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("EditSite"));// sessionManager.getI18nMessage("EditMMSI"));
+		w.setNewSite(false);
 		w.editItem(siteDAO.loadSite(((SiteDTO)item).getSite().longValue()));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
@@ -176,6 +177,8 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	protected void newItem() {
 		windowOpen = true;
 		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("NewSite"));
+		w.setNewSite(true);
+		w.editItem(siteDAO.loadDefaultSite());
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
