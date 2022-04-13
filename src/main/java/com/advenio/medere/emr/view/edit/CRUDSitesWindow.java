@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -192,7 +193,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			}	
 		});
 		
-		txtUrl = new TextField(sessionManager.getI18nMessage("URL"));
+		txtUrl = new TextField(sessionManager.getI18nMessage("MedereURL"));
 		txtUrl.setSizeFull();
 		txtUrl.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
 			public void onComponentEvent(BlurEvent<TextField> event) {
@@ -410,8 +411,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		vl.setAlignItems(Alignment.END);
 		vl.add(btnLogo);
 		vl.setSizeFull();
-		formLayout.add(vl,txtName, txtEmail, txtAddress, txtWebsite, txtApptitle, txtWebApptitle,
-				txtUrl,txtWebappointmentsurl,txtWebappointmentsuserurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
+		formLayout.add(vl,txtName, txtEmail, txtAddress, txtWebsite, txtApptitle, txtUrl,
+				txtWebApptitle,txtWebappointmentsurl,txtWebappointmentsuserurl,txtTotemurl,txtAnesthesiaappurl,txtPatientcallerurl,txtFavIconPath,
 				txtPhone,txtPrescriptionAppMaxScheduleHour,txtPrescriptionAppDeadlineToScheduleForCurrentDate,cboLanguage, cboCountry, cboProvince, cboCity, cboDocumentType, cboRegionalSettings,chkWebappointmentsEnabled,
 				chkHideLocationDetails,chkHideRequestPrescriptions, chkShowCoverageWarning, chkManualHospitalizationEnabled,
 				chkManualHospitalizationEgressEnabled,chkStockPreparationControl,chkActive);
@@ -444,9 +445,14 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			txtWebsite.setValue(site.getCompanyWebsite()==null?"":site.getCompanyWebsite());
 			txtWebApptitle.setValue(site.getWebAppTitle()==null?"":site.getWebAppTitle());
 			txtApptitle.setValue(site.getApptitle()==null?"":site.getApptitle());
-			
-			txtUrl.setValue(site.getUrl()==null?"":site.getUrl());
-			txtWebappointmentsurl.setValue(site.getWebAppointmentsUrl()==null?"":site.getWebAppointmentsUrl());
+			if(site.getSite() != null)
+				txtUrl.setValue(site.getUrl()==null?"":site.getUrl());
+			else
+				txtUrl.setPlaceholder("http://www.xxxxxxx.com.ar");
+			if(site.getSite() != null)
+				txtWebappointmentsurl.setValue(site.getWebAppointmentsUrl()==null?"":site.getWebAppointmentsUrl());
+			else
+				txtWebappointmentsurl.setPlaceholder("http://www.xxxxxxx.com.ar");
 			txtWebappointmentsuserurl.setValue(site.getWebAppointmentsUserUrl()==null?"":site.getWebAppointmentsUserUrl());
 			txtTotemurl.setValue(site.getTotemUrl()==null?"":site.getTotemUrl());
 			txtAnesthesiaappurl.setValue(site.getAnesthesiaAppUrl()==null?"":site.getAnesthesiaAppUrl());
@@ -514,6 +520,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 					}
 					messageBus.post(new EventStateChanged());
 					close();
+				}catch(DataIntegrityViolationException e) {
+					Notification.show(sessionManager.getI18nMessage("URLMustBeUniqueForEachSite")).setPosition(Position.MIDDLE);
 				}catch(ResourceAccessException e) {
 					Notification.show(sessionManager.getI18nMessage("ErrorUpdatingSiteInMedere")).setPosition(Position.MIDDLE);
 
@@ -677,8 +685,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		site.setActive(chkActive.getValue());
 		site.setStockPreparationControl(chkStockPreparationControl.getValue());
 		
-		if(site.getMedereUUID() == null)
-			site.setMedereUUID(UUID.randomUUID().toString());
 		if(imageLoaded && logoImage != null) {
 			String oldPath = site.getLogoFileName();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");

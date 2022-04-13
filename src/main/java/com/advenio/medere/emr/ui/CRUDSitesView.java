@@ -1,5 +1,7 @@
 package com.advenio.medere.emr.ui;
 
+import java.util.UUID;
+
 import javax.annotation.PostConstruct;
 
 
@@ -17,6 +19,7 @@ import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
+import com.advenio.medere.objects.site.Site;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
@@ -178,7 +181,11 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		windowOpen = true;
 		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("NewSite"));
 		w.setNewSite(true);
-		w.editItem(siteDAO.loadDefaultSite());
+		Site newSite = siteDAO.loadDefaultSite();
+		newSite.setSite(null);
+		newSite.setMedereUUID(UUID.randomUUID().toString());
+		newSite.setDefaultSite(false);
+		w.editItem(newSite);
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
