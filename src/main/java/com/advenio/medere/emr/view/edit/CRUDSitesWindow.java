@@ -603,18 +603,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			return false;
 		}
 		
-		if (StringsUtils.isNullOrEmptyTrimmed(txtPrescriptionAppDeadlineToScheduleForCurrentDate.getValue())) {
-			txtPrescriptionAppDeadlineToScheduleForCurrentDate.focus();
-			Notification.show(sessionManager.getI18nMessage("PleaseCompletePrescriptionHour")).setPosition(Position.MIDDLE);
-			return false;
-		}
-		
-		if (StringsUtils.isNullOrEmptyTrimmed(txtPrescriptionAppMaxScheduleHour.getValue())) {
-			txtPrescriptionAppMaxScheduleHour.focus();
-			Notification.show(sessionManager.getI18nMessage("PleaseCompletePrescriptionHour")).setPosition(Position.MIDDLE);
-			return false;
-		}
-		
 		if (cboCity.isEmpty()) {
 			cboCity.focus();
 			Notification.show(sessionManager.getI18nMessage("PleaseSelectCity")).setPosition(Position.MIDDLE);
