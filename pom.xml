@@ -40,7 +40,7 @@
     	<repository>
 			<id>advenio</id>
 			<name>ADVSERVER-releases</name>
-			<url>http://dev.advenio.com.ar:8081/artifactory/libs-release-local</url>
+			<url>https://dev.advenio.com.ar/artifactory/libs-release-local</url>
 		</repository>
     
         <repository>
