@@ -151,7 +151,7 @@ public class SiteDAO {
 				") select * from nomenclator_res");
 		System.out.println(sb.toString());
 		//entityManager.createNativeQuery(sb.toString()).setParameter("fromSite", fromSite).setParameter("toSite", toSite).executeUpdate();
-		int result = entityManager.createNamedStoredProcedureQuery();   //createNativeQuery(sb.toString()).executeUpdate();
+		int result = entityManager.createNativeQuery(sb.toString()).executeUpdate();
 		return 1;
 	}
 
