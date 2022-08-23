@@ -77,4 +77,82 @@ public class SiteDAO {
         return page.getCount();
 	}
 
+	@Transactional
+	public Integer copyNomeclators (long fromSite, long toSite){
+		StringBuilder sb = new StringBuilder();
+		sb.append("with fromSite as (" +
+				" select " + fromSite + " as siteId" +
+				")," +
+				"toSite as (" +
+				" select " + toSite + " as siteId" +
+				")," +
+				"tmp_nomenclator as (" +
+				"SELECT " +
+				"        nomenclator.nomenclatortype," +
+				"        nextval('nomenclator_nomenclator_seq') as nomenclator," +
+				"        nomenclator.nomenclator as id," +
+				"        nomenclator.abbreviation," +
+				"        nomenclator.active," +
+				"        nomenclator.code," +
+				"        nomenclator.description," +
+				"        nomenclator.studytype," +
+				"        nomenclator.healthentity," +
+				"        nomenclator.relatednomenclator," +
+				"        nomenclator.nomenchierarchytype," +
+				"        nomenclator.defaultprice," +
+				"        nomenclator.nomenclated," +
+				"        (select siteId from toSite) as site" +
+				"    from nomenclator inner join fromSite on fromSite.siteId = nomenclator.site " +
+				")," +
+				"tmp_nomenclator_determination as (" +
+				"SELECT " +
+				"        tn.nomenclator as nomenclator," +
+				"        nd.determination as determination" +
+				"    FROM" +
+				"        public.nomenclator_determination as nd inner join tmp_nomenclator as tn on nd.nomenclator = tn.id" +
+				")" +
+				"," +
+				"nomenclator_res as (" +
+				"    INSERT INTO" +
+				"        public.nomenclator(" +
+				"        nomenclatortype," +
+				"        nomenclator," +
+				"        abbreviation," +
+				"        active," +
+				"        code," +
+				"        description," +
+				"        studytype," +
+				"        healthentity," +
+				"        relatednomenclator," +
+				"        nomenchierarchytype," +
+				"        defaultprice," +
+				"        nomenclated," +
+				"        site)" +
+				"    select nomenclatortype," +
+				"        nomenclator," +
+				"        abbreviation," +
+				"        active," +
+				"        code," +
+				"        description," +
+				"        studytype," +
+				"        healthentity," +
+				"        relatednomenclator," +
+				"        nomenchierarchytype," +
+				"        defaultprice," +
+				"        nomenclated," +
+				"        site" +
+				"    from tmp_nomenclator" +
+				"    returning *" +
+				")," +
+				"determination_res as (" +
+				"    INSERT INTO nomenclator_determination(nomenclator, determination)" +
+				"    select nomenclator, determination from tmp_nomenclator_determination" +
+				"    returning *" +
+				") select * from nomenclator_res");
+		System.out.println(sb.toString());
+		//entityManager.createNativeQuery(sb.toString()).setParameter("fromSite", fromSite).setParameter("toSite", toSite).executeUpdate();
+		int result = entityManager.createNamedStoredProcedureQuery();   //createNativeQuery(sb.toString()).executeUpdate();
+		return 1;
+	}
+
 }
