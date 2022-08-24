@@ -1,10 +1,15 @@
 package com.advenio.medere.emr.dao;
 
+import java.math.BigInteger;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,81 +83,51 @@ public class SiteDAO {
 	}
 
 	@Transactional
-	public Integer copyNomeclators (long fromSite, long toSite){
+	public void copyInfoBetweenSites (long fromSite, long toSite, boolean copyNomenclators, boolean copyHealthEntities,
+									  boolean copyProfiles) {
+
 		StringBuilder sb = new StringBuilder();
-		sb.append("with fromSite as (" +
-				" select " + fromSite + " as siteId" +
-				")," +
-				"toSite as (" +
-				" select " + toSite + " as siteId" +
-				")," +
-				"tmp_nomenclator as (" +
-				"SELECT " +
-				"        nomenclator.nomenclatortype," +
-				"        nextval('nomenclator_nomenclator_seq') as nomenclator," +
-				"        nomenclator.nomenclator as id," +
-				"        nomenclator.abbreviation," +
-				"        nomenclator.active," +
-				"        nomenclator.code," +
-				"        nomenclator.description," +
-				"        nomenclator.studytype," +
-				"        nomenclator.healthentity," +
-				"        nomenclator.relatednomenclator," +
-				"        nomenclator.nomenchierarchytype," +
-				"        nomenclator.defaultprice," +
-				"        nomenclator.nomenclated," +
-				"        (select siteId from toSite) as site" +
-				"    from nomenclator inner join fromSite on fromSite.siteId = nomenclator.site " +
-				")," +
-				"tmp_nomenclator_determination as (" +
-				"SELECT " +
-				"        tn.nomenclator as nomenclator," +
-				"        nd.determination as determination" +
-				"    FROM" +
-				"        public.nomenclator_determination as nd inner join tmp_nomenclator as tn on nd.nomenclator = tn.id" +
-				")" +
-				"," +
-				"nomenclator_res as (" +
-				"    INSERT INTO" +
-				"        public.nomenclator(" +
-				"        nomenclatortype," +
-				"        nomenclator," +
-				"        abbreviation," +
-				"        active," +
-				"        code," +
-				"        description," +
-				"        studytype," +
-				"        healthentity," +
-				"        relatednomenclator," +
-				"        nomenchierarchytype," +
-				"        defaultprice," +
-				"        nomenclated," +
-				"        site)" +
-				"    select nomenclatortype," +
-				"        nomenclator," +
-				"        abbreviation," +
-				"        active," +
-				"        code," +
-				"        description," +
-				"        studytype," +
-				"        healthentity," +
-				"        relatednomenclator," +
-				"        nomenchierarchytype," +
-				"        defaultprice," +
-				"        nomenclated," +
-				"        site" +
-				"    from tmp_nomenclator" +
-				"    returning *" +
-				")," +
-				"determination_res as (" +
-				"    INSERT INTO nomenclator_determination(nomenclator, determination)" +
-				"    select nomenclator, determination from tmp_nomenclator_determination" +
-				"    returning *" +
-				") select * from nomenclator_res");
-		System.out.println(sb.toString());
-		//entityManager.createNativeQuery(sb.toString()).setParameter("fromSite", fromSite).setParameter("toSite", toSite).executeUpdate();
-		int result = entityManager.createNativeQuery(sb.toString()).executeUpdate();
-		return 1;
+		sb.append("call sp_copyinfobetweensites(:fromsite, :tosite, :copyprofiles, :copyhealthentities,:copynomenclator)");
+		entityManager.createNativeQuery(sb.toString())
+				.setParameter("fromsite", fromSite)
+				.setParameter("tosite", toSite)
+				.setParameter("copyprofiles", copyProfiles)
+				.setParameter("copyhealthentities", copyHealthEntities)
+				.setParameter("copynomenclator", copyNomenclators)
+				.executeUpdate();
+
+
+	}
+
+	public boolean hasAnyHealthEntity (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count (m.medereentity) from medereentity m " +
+				"where m.medereentitytype = 6 and m.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
+	}
+	public boolean hasAnyProfile (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count(p.profile) from profile p " +
+				"where p.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
+	}
+	public boolean hasAnyNomenclator (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count(n.nomenclator) from nomenclator n " +
+				"where n.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
 	}
 
 }

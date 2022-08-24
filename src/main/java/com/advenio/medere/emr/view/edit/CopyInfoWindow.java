@@ -3,13 +3,11 @@ package com.advenio.medere.emr.view.edit;
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.ui.util.UIUtils;
-import com.advenio.medere.ui.views.BaseCRUDWindow;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,6 +16,8 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
+import javax.persistence.PersistenceException;
+import javax.persistence.TransactionRequiredException;
 import java.util.List;
 
 @SpringComponent()
@@ -28,7 +28,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private SiteDAO siteDAO;
     private ComboBox <SiteDTO> cboFromSite;
     private ComboBox <SiteDTO> cboToSite;
-    private Checkbox chkNomeclator;
+    private Checkbox chkNomenclator;
     private Checkbox chkProfiles;
     private Checkbox chkHealthEntity;
     private List <SiteDTO> sites;
@@ -63,16 +63,16 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         cboToSite.addValueChangeListener(e -> {
             if (e.getValue() != null){
                 if (e.getValue().getSite() == cboFromSite.getValue().getSite()) {
-                    UIUtils.showErrorNotification("Sitio Repetido", 3000, null);
+                    UIUtils.showErrorNotification("El sitio origen y el sitio destino deben ser diferentes", 3000, null);
                     cboToSite.clear();
                 }
             }
         });
 
 
-        chkNomeclator = new Checkbox();
-        chkNomeclator.setLabel("Copiar nomecladores");
-        chkNomeclator.setValue(false);
+        chkNomenclator = new Checkbox();
+        chkNomenclator.setLabel("Copiar nomecladores");
+        chkNomenclator.setValue(false);
 
         chkProfiles = new Checkbox();
         chkProfiles.setLabel("Copiar perfiles");
@@ -93,12 +93,17 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         btnContinue.setSizeFull();
         btnContinue.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         btnContinue.addClickListener(e -> {
-            // validar que el destino no tenga datos en los campos seleccionados
+            if (validate()) {
+                try {
+                    siteDAO.copyInfoBetweenSites(cboFromSite.getValue().getSite().longValue(), cboToSite.getValue().getSite().longValue(),
+                            chkNomenclator.getValue(), chkHealthEntity.getValue(), chkProfiles.getValue());
+                    UIUtils.showNotification("Se ha copiado la información con éxito", 3000, null, NotificationVariant.LUMO_SUCCESS);
+                }
+                catch (PersistenceException persistenceException) {
+                    UIUtils.showErrorNotification("Ha ocurrido un error con la persistencia", 3000, null);
+                }
 
-                // ejecutar scripts
-
-                Integer result = siteDAO.copyNomeclators(cboFromSite.getValue().getSite().longValue(), cboToSite.getValue().getSite().longValue());
-
+            }
         });
 
         HorizontalLayout hlComboBox = new HorizontalLayout();
@@ -107,7 +112,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
         VerticalLayout vlCheckBox = new VerticalLayout();
         vlCheckBox.setSizeFull();
-        vlCheckBox.add(chkProfiles, chkNomeclator, chkHealthEntity);
+        vlCheckBox.add(chkProfiles, chkNomenclator, chkHealthEntity);
 
         HorizontalLayout hlButtons = new HorizontalLayout();
         hlButtons.setSizeFull();
@@ -123,19 +128,34 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
     }
 
-    private void validate() {
+    private boolean validate() {
+        if (cboFromSite.getValue() == null || cboToSite.getValue() == null) {
+            UIUtils.showErrorNotification("Debe seleccionar un sitio de partida y de destino", 3000, null);
+            return false;
+        }
         if (chkHealthEntity.getValue() == true){
-            //verificar que no tenga obras sociales cargadas
-
+            if (siteDAO.hasAnyHealthEntity(cboToSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio destino ya tiene cargadas obras sociales", 3000, null);
+                return false;
+            }
         }
         if (chkProfiles.getValue() == true){
             //verificar que no tenga perfiles cargados
+            if (siteDAO.hasAnyProfile(cboToSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio destino ya tiene cargados perfiles", 3000, null);
+                return false;
+            }
 
         }
-        if (chkNomeclator.getValue() == true){
+        if (chkNomenclator.getValue() == true){
             //verificar que no tenga nomecladores cargados
+            if (siteDAO.hasAnyNomenclator(cboToSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio destino ya tiene cargados nomecladores", 3000, null);
+                return false;
+            }
 
         }
+        return true;
     }
 
     @Override
