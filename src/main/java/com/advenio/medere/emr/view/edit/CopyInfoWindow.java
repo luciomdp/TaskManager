@@ -2,6 +2,7 @@ package com.advenio.medere.emr.view.edit;
 
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.util.UIUtils;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -35,6 +36,8 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private Checkbox chkProfiles;
     private Checkbox chkHealthEntity;
     private TextField txtNoDataToCopy;
+    @Autowired
+    private ISessionManager sessionManager;
     private List <SiteDTO> sites;
 
     public CopyInfoWindow (List<SiteDTO> sites){
@@ -47,7 +50,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         cboFromSite =  new ComboBox<SiteDTO>();
         cboFromSite.setSizeFull();
         cboFromSite.setItemLabelGenerator(e -> e.getCompanyname());
-        cboFromSite.setLabel("Sitio origen");
+        cboFromSite.setLabel(sessionManager.getI18nMessage("OriginSite"));
         cboFromSite.setItems(sites);
         cboFromSite.addValueChangeListener(e -> {
             if (e.getValue() != null)
@@ -62,12 +65,12 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         cboToSite.setEnabled(false);
         cboToSite.setSizeFull();
         cboToSite.setItemLabelGenerator(e -> e.getCompanyname());
-        cboToSite.setLabel("Sitio destino");
+        cboToSite.setLabel(sessionManager.getI18nMessage("DestinySite"));
         cboToSite.setItems(sites);
         cboToSite.addValueChangeListener(e -> {
             if (e.getValue() != null){
                 if (e.getValue().getSite() == cboFromSite.getValue().getSite()) {
-                    UIUtils.showErrorNotification("El sitio origen y el sitio destino deben ser diferentes", 3000, null);
+                    UIUtils.showErrorNotification(sessionManager.getI18nMessage("OriginSiteAndDestinySiteMustBeDifferent"), 3000, null);
                     cboToSite.clear();
                 }
                 else {
@@ -79,15 +82,15 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
 
         chkNomenclator = new Checkbox();
-        chkNomenclator.setLabel("Copiar nomecladores");
+        chkNomenclator.setLabel(sessionManager.getI18nMessage("CopyNomenclators"));
         chkNomenclator.setValue(false);
 
         chkProfiles = new Checkbox();
-        chkProfiles.setLabel("Copiar perfiles");
+        chkProfiles.setLabel(sessionManager.getI18nMessage("CopyProfiles"));
         chkProfiles.setValue(false);
 
         chkHealthEntity = new Checkbox();
-        chkHealthEntity.setLabel("Copiar obras sociales");
+        chkHealthEntity.setLabel(sessionManager.getI18nMessage("CopyHealthEntities"));
         chkHealthEntity.setValue(false);
 
         txtNoDataToCopy = new TextField();
@@ -96,17 +99,17 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         txtNoDataToCopy.setSizeFull();
         txtNoDataToCopy.setReadOnly(true);
         txtNoDataToCopy.setLabel("");
-        txtNoDataToCopy.setValue("El sitio destino ya tiene cargados todos los datos posibles");
+        txtNoDataToCopy.setValue(sessionManager.getI18nMessage("DestinySiteHasAlreadyAllPossibleData"));
         txtNoDataToCopy.setVisible(false);
 
-        Button btnCancel = new Button ("Cancelar");
+        Button btnCancel = new Button (sessionManager.getI18nMessage("Cancel"));
         btnCancel.setSizeFull();
         btnCancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         btnCancel.addClickListener(e -> {
             close();
         });
 
-        Button btnContinue = new Button ("Continuar");
+        Button btnContinue = new Button (sessionManager.getI18nMessage("Continue"));
         btnContinue.setSizeFull();
         btnContinue.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         btnContinue.addClickListener(e -> {
@@ -114,10 +117,10 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
                 try {
                     siteDAO.copyInfoBetweenSites(cboFromSite.getValue().getSite().longValue(), cboToSite.getValue().getSite().longValue(),
                             chkNomenclator.getValue(), chkHealthEntity.getValue(), chkProfiles.getValue());
-                    UIUtils.showNotification("Se ha copiado la información con éxito", 3000, Notification.Position.MIDDLE, NotificationVariant.LUMO_SUCCESS);
+                    UIUtils.showNotification(sessionManager.getI18nMessage("InformationHasBeenCopiedSuccessfully"), 3000, Notification.Position.MIDDLE, NotificationVariant.LUMO_SUCCESS);
                 }
                 catch (PersistenceException persistenceException) {
-                    UIUtils.showErrorNotification("Ha ocurrido un error con la persistencia", 3000, null);
+                    UIUtils.showErrorNotification(sessionManager.getI18nMessage("PersistenceError"), 3000, null);
                 }
 
             }
@@ -179,23 +182,22 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
     private boolean validate() {
         if (cboFromSite.getValue() == null || cboToSite.getValue() == null) {
-            UIUtils.showErrorNotification("Debe seleccionar un sitio de partida y de destino", 3000, null);
+            UIUtils.showErrorNotification(sessionManager.getI18nMessage("YouMustSelectOriginSiteAndDestinySite"), 3000, null);
             return false;
         }
         if (chkHealthEntity.getValue() == false &&  chkProfiles.getValue() == false && chkNomenclator.getValue() == false){
-            UIUtils.showErrorNotification("Debe seleccionar al menos un check", 3000, null);
+            UIUtils.showErrorNotification(sessionManager.getI18nMessage("YouMustSelectAtLeastOneCheck"), 3000, null);
             return false;
         }
         if (chkHealthEntity.getValue() == true){
             if (!siteDAO.hasAnyHealthEntity(cboFromSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio origen no tiene cargadas obras sociales", 3000, null);
+                UIUtils.showErrorNotification(sessionManager.getI18nMessage("OriginSiteDontHaveAnyHealthEntity"), 3000, null);
                 return false;
             }
         }
         if (chkProfiles.getValue() == true){
-            //verificar que no tenga perfiles cargados
             if (!siteDAO.hasAnyProfile(cboFromSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio origen no tiene cargados perfiles", 3000, null);
+                UIUtils.showErrorNotification(sessionManager.getI18nMessage("OriginSiteDontHaveAnyProfile"), 3000, null);
                 return false;
             }
 
@@ -203,7 +205,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         if (chkNomenclator.getValue() == true){
             //verificar que no tenga nomecladores cargados
             if (!siteDAO.hasAnyNomenclator(cboFromSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio origen no tiene cargados nomecladores", 3000, null);
+                UIUtils.showErrorNotification(sessionManager.getI18nMessage("OriginSiteDontHaveAnyNomenclator"), 3000, null);
                 return false;
             }
 
