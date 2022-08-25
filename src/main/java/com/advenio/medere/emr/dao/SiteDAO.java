@@ -6,7 +6,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
@@ -85,7 +87,6 @@ public class SiteDAO {
 	@Transactional
 	public void copyInfoBetweenSites (long fromSite, long toSite, boolean copyNomenclators, boolean copyHealthEntities,
 									  boolean copyProfiles) {
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("call sp_copyinfobetweensites(:fromsite, :tosite, :copyprofiles, :copyhealthentities,:copynomenclator)");
 		entityManager.createNativeQuery(sb.toString())
@@ -95,8 +96,6 @@ public class SiteDAO {
 				.setParameter("copyhealthentities", copyHealthEntities)
 				.setParameter("copynomenclator", copyNomenclators)
 				.executeUpdate();
-
-
 	}
 
 	public boolean hasAnyHealthEntity (long siteid){

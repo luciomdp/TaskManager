@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -97,7 +98,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
                 try {
                     siteDAO.copyInfoBetweenSites(cboFromSite.getValue().getSite().longValue(), cboToSite.getValue().getSite().longValue(),
                             chkNomenclator.getValue(), chkHealthEntity.getValue(), chkProfiles.getValue());
-                    UIUtils.showNotification("Se ha copiado la información con éxito", 3000, null, NotificationVariant.LUMO_SUCCESS);
+                    UIUtils.showNotification("Se ha copiado la información con éxito", 3000, Notification.Position.MIDDLE, NotificationVariant.LUMO_SUCCESS);
                 }
                 catch (PersistenceException persistenceException) {
                     UIUtils.showErrorNotification("Ha ocurrido un error con la persistencia", 3000, null);
@@ -133,6 +134,33 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
             UIUtils.showErrorNotification("Debe seleccionar un sitio de partida y de destino", 3000, null);
             return false;
         }
+        if (chkHealthEntity.getValue() == false &&  chkProfiles.getValue() == false && chkNomenclator.getValue() == false){
+            UIUtils.showErrorNotification("Debe seleccionar al menos un check", 3000, null);
+            return false;
+        }
+        if (chkHealthEntity.getValue() == true){
+            if (!siteDAO.hasAnyHealthEntity(cboFromSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio origen no tiene cargadas obras sociales", 3000, null);
+                return false;
+            }
+        }
+        if (chkProfiles.getValue() == true){
+            //verificar que no tenga perfiles cargados
+            if (!siteDAO.hasAnyProfile(cboFromSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio origen no tiene cargados perfiles", 3000, null);
+                return false;
+            }
+
+        }
+        if (chkNomenclator.getValue() == true){
+            //verificar que no tenga nomecladores cargados
+            if (!siteDAO.hasAnyNomenclator(cboFromSite.getValue().getSite().longValue())) {
+                UIUtils.showErrorNotification("El sitio origen no tiene cargados nomecladores", 3000, null);
+                return false;
+            }
+
+        }
+
         if (chkHealthEntity.getValue() == true){
             if (siteDAO.hasAnyHealthEntity(cboToSite.getValue().getSite().longValue())) {
                 UIUtils.showErrorNotification("El sitio destino ya tiene cargadas obras sociales", 3000, null);
