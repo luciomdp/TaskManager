@@ -12,6 +12,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private Checkbox chkNomenclator;
     private Checkbox chkProfiles;
     private Checkbox chkHealthEntity;
+    private TextField txtNoDataToCopy;
     private List <SiteDTO> sites;
 
     public CopyInfoWindow (List<SiteDTO> sites){
@@ -67,7 +70,11 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
                     UIUtils.showErrorNotification("El sitio origen y el sitio destino deben ser diferentes", 3000, null);
                     cboToSite.clear();
                 }
+                else {
+                    validateComboTo();
+                }
             }
+
         });
 
 
@@ -82,6 +89,15 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         chkHealthEntity = new Checkbox();
         chkHealthEntity.setLabel("Copiar obras sociales");
         chkHealthEntity.setValue(false);
+
+        txtNoDataToCopy = new TextField();
+        txtNoDataToCopy.getElement().getStyle().set("background", "#E1E1E1");
+        txtNoDataToCopy.getElement().getStyle().set("box-shadow", "-4px 4px 5px 0px rgba(0,0,0,0.26)");
+        txtNoDataToCopy.setSizeFull();
+        txtNoDataToCopy.setReadOnly(true);
+        txtNoDataToCopy.setLabel("");
+        txtNoDataToCopy.setValue("El sitio destino ya tiene cargados todos los datos posibles");
+        txtNoDataToCopy.setVisible(false);
 
         Button btnCancel = new Button ("Cancelar");
         btnCancel.setSizeFull();
@@ -113,7 +129,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
         VerticalLayout vlCheckBox = new VerticalLayout();
         vlCheckBox.setSizeFull();
-        vlCheckBox.add(chkProfiles, chkNomenclator, chkHealthEntity);
+        vlCheckBox.add(chkProfiles, chkNomenclator, chkHealthEntity, txtNoDataToCopy);
 
         HorizontalLayout hlButtons = new HorizontalLayout();
         hlButtons.setSizeFull();
@@ -126,6 +142,38 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
         this.setCloseOnOutsideClick(false);
         this.add(vlMain);
+        this.setWidth("500px");
+
+    }
+
+    private void validateComboTo() {
+        int count = 0;
+        if (siteDAO.hasAnyHealthEntity(cboToSite.getValue().getSite().longValue())) {
+            chkHealthEntity.setVisible(false);
+            count++;
+        }
+        else
+                chkHealthEntity.setVisible(true);
+
+        if (siteDAO.hasAnyProfile(cboToSite.getValue().getSite().longValue())) {
+            chkProfiles.setVisible(false);
+            count++;
+        }
+        else
+            chkProfiles.setVisible(true);
+
+        if (siteDAO.hasAnyNomenclator(cboToSite.getValue().getSite().longValue())) {
+            chkNomenclator.setVisible(false);
+            count++;
+        }
+        else
+            chkNomenclator.setVisible(true);
+
+        if (count == 3)
+            txtNoDataToCopy.setVisible(true);
+        else
+            txtNoDataToCopy.setVisible(false);
+
 
     }
 
@@ -161,28 +209,6 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
         }
 
-        if (chkHealthEntity.getValue() == true){
-            if (siteDAO.hasAnyHealthEntity(cboToSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio destino ya tiene cargadas obras sociales", 3000, null);
-                return false;
-            }
-        }
-        if (chkProfiles.getValue() == true){
-            //verificar que no tenga perfiles cargados
-            if (siteDAO.hasAnyProfile(cboToSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio destino ya tiene cargados perfiles", 3000, null);
-                return false;
-            }
-
-        }
-        if (chkNomenclator.getValue() == true){
-            //verificar que no tenga nomecladores cargados
-            if (siteDAO.hasAnyNomenclator(cboToSite.getValue().getSite().longValue())) {
-                UIUtils.showErrorNotification("El sitio destino ya tiene cargados nomecladores", 3000, null);
-                return false;
-            }
-
-        }
         return true;
     }
 
