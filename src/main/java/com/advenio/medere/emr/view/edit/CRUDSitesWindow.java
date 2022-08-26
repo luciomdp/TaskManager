@@ -501,7 +501,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 				try {
 					if(newSite) {
 						uri = medereAddress.concat(webmedererestcontrollerURL) + "createSite";
-						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", siteDAO.saveSite(site,generateAdmin(COMPANY_ADMIN_USERNAME,COMPANY_ADMIN_PASSWORD)));
+						Long siteId =  siteDAO.saveSite(site,generateAdmin(COMPANY_ADMIN_USERNAME,COMPANY_ADMIN_PASSWORD));
+						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", siteId);
 						restTemplate = context.getBean(MedereRest.class).createRestTemplate();
 						restTemplate.getForObject(builder.toUriString(), String.class); 
 					}
@@ -510,7 +511,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 						uri = medereAddress.concat(webmedererestcontrollerURL) + "updateSite";
 						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", site.getSite());
 						restTemplate = context.getBean(MedereRest.class).createRestTemplate();
-						restTemplate.getForObject(builder.toUriString(), String.class); 
+						restTemplate.getForObject(builder.toUriString(), String.class);
 					}
 					Notification.show(sessionManager.getI18nMessage("DataSuccesfullySave")).setPosition(Position.MIDDLE);
 					
