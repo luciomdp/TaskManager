@@ -1,10 +1,13 @@
 package com.advenio.medere.emr.ui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
 
+import com.advenio.medere.emr.view.edit.CopyInfoWindow;
 import com.advenio.medere.emr.view.edit.PrescriptionExpirationJobsWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +68,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@Autowired
 	protected ApplicationContext context;
 	@Autowired protected UserDAO userDAO;
+	private List<SiteDTO> sites;
 
 	@Override
 	protected void createGrid() {
@@ -72,7 +76,9 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.setLoadListener(new GridLoadListener<SiteDTO>() {
 			@Override
 			public Page<SiteDTO> load(PageLoadConfig<SiteDTO> loadconfig) {
-				return siteDAO.loadSites(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+				Page <SiteDTO> page = siteDAO.loadSites(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+				sites = page.getData();
+				return page;
 			}
 
 			@Override
@@ -131,6 +137,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 				}
 			}
 		});
+		sites = new ArrayList <SiteDTO>();
 
 		Button btnJobs = new Button(VaadinIcon.ROCKET.create());
 		btnJobs.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -156,6 +163,21 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 				newItem();
 			}
 		});
+
+		Button btnCopySiteInfo = new Button();
+		btnCopySiteInfo.setText("Copiar información de sitio");
+		btnCopySiteInfo.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		btnCopySiteInfo.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
+
+			private static final long serialVersionUID = -4512181173967300148L;
+
+			@Override
+			public void onComponentEvent(ClickEvent<Button> event) {
+				CopyInfoWindow w = context.getBean(CopyInfoWindow.class, sites);
+				w.open();
+			}
+		});
+		grid.addControlToHeader(btnCopySiteInfo, false);
 		grid.addControlToHeader(btnJobs, false);
 		grid.addControlToHeader(btnNew, false);
 		setViewContent(grid.getComponent());

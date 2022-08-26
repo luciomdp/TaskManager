@@ -1,10 +1,17 @@
 package com.advenio.medere.emr.dao;
 
+import java.math.BigInteger;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +82,51 @@ public class SiteDAO {
         		loadconfig.getSortingList(), loadconfig.getFilters(), "loadsites",
         		language, params, true, false, fieldDataRequest);
         return page.getCount();
+	}
+
+	@Transactional
+	public void copyInfoBetweenSites (long fromSite, long toSite, boolean copyNomenclators, boolean copyHealthEntities,
+									  boolean copyProfiles) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("call sp_copyinfobetweensites(:fromsite, :tosite, :copyprofiles, :copyhealthentities,:copynomenclator)");
+		entityManager.createNativeQuery(sb.toString())
+				.setParameter("fromsite", fromSite)
+				.setParameter("tosite", toSite)
+				.setParameter("copyprofiles", copyProfiles)
+				.setParameter("copyhealthentities", copyHealthEntities)
+				.setParameter("copynomenclator", copyNomenclators)
+				.executeUpdate();
+	}
+
+	public boolean hasAnyHealthEntity (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count (m.medereentity) from medereentity m " +
+				"where m.medereentitytype = 6 and m.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
+	}
+	public boolean hasAnyProfile (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count(p.profile) from profile p " +
+				"where p.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
+	}
+	public boolean hasAnyNomenclator (long siteid){
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count(n.nomenclator) from nomenclator n " +
+				"where n.site = :site");
+		BigInteger qnty = (BigInteger)entityManager.createNativeQuery(sb.toString()).setParameter("site", siteid).getSingleResult();
+		if (qnty.longValue() > 0)
+			return true;
+		else
+			return false;
 	}
 
 }
