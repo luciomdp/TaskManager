@@ -20,6 +20,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.PersistenceException;
 import javax.persistence.TransactionRequiredException;
 import java.util.List;
@@ -36,15 +37,16 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private Checkbox chkProfiles;
     private Checkbox chkHealthEntity;
     private TextField txtNoDataToCopy;
+    private Button btnContinue;
     @Autowired
     private ISessionManager sessionManager;
     private List <SiteDTO> sites;
 
     public CopyInfoWindow (List<SiteDTO> sites){
         this.sites = sites;
-        createComponents();
-    }
 
+    }
+    @PostConstruct
     private void createComponents (){
 
         cboFromSite =  new ComboBox<SiteDTO>();
@@ -109,7 +111,7 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
             close();
         });
 
-        Button btnContinue = new Button (sessionManager.getI18nMessage("Continue"));
+        btnContinue = new Button (sessionManager.getI18nMessage("Continue"));
         btnContinue.setSizeFull();
         btnContinue.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         btnContinue.addClickListener(e -> {
@@ -172,11 +174,14 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         else
             chkNomenclator.setVisible(true);
 
-        if (count == 3)
+        if (count == 3) {
             txtNoDataToCopy.setVisible(true);
-        else
+            btnContinue.setEnabled(false);
+        }
+        else {
             txtNoDataToCopy.setVisible(false);
-
+            btnContinue.setEnabled(true);
+        }
 
     }
 
