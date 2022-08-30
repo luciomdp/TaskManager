@@ -2,6 +2,7 @@ package com.advenio.medere.emr.view.edit;
 
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.rest.MedereRest;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.util.UIUtils;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +19,11 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.PersistenceException;
@@ -29,8 +34,9 @@ import java.util.List;
 @Scope("prototype")
 public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
 
-    @Autowired
-    private SiteDAO siteDAO;
+    private final String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
+    @Value("${medere.medereaddress}")
+    private String medereAddress;
     private ComboBox <SiteDTO> cboFromSite;
     private ComboBox <SiteDTO> cboToSite;
     private Checkbox chkNomenclator;
@@ -39,7 +45,11 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private TextField txtNoDataToCopy;
     private Button btnContinue;
     @Autowired
+    private SiteDAO siteDAO;
+    @Autowired
     private ISessionManager sessionManager;
+    @Autowired
+    private ApplicationContext context;
     private List <SiteDTO> sites;
 
     public CopyInfoWindow (List<SiteDTO> sites){
@@ -116,10 +126,18 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         btnContinue.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         btnContinue.addClickListener(e -> {
             if (validate()) {
+                String uri;
+                UriComponentsBuilder builder;
+                RestTemplate restTemplate;
                 try {
                     siteDAO.copyInfoBetweenSites(cboFromSite.getValue().getSite().longValue(), cboToSite.getValue().getSite().longValue(),
                             chkNomenclator.getValue(), chkHealthEntity.getValue(), chkProfiles.getValue());
+                    uri = medereAddress.concat(webmedererestcontrollerURL) + "updateProfiles";
+                    builder = UriComponentsBuilder.fromHttpUrl(uri);
+                    restTemplate = context.getBean(MedereRest.class).createRestTemplate();
+                    restTemplate.getForObject(builder.toUriString(), String.class);
                     UIUtils.showNotification(sessionManager.getI18nMessage("InformationHasBeenCopiedSuccessfully"), 3000, Notification.Position.MIDDLE, NotificationVariant.LUMO_SUCCESS);
+                    close();
                 }
                 catch (PersistenceException persistenceException) {
                     UIUtils.showErrorNotification(sessionManager.getI18nMessage("PersistenceError"), 3000, null);
