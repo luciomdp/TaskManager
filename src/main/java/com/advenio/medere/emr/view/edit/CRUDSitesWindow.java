@@ -76,7 +76,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	private final String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
 	private final String COMPANY_ADMIN_USERNAME = "administrador";
 	private final String COMPANY_ADMIN_PASSWORD = "administrador";
-	
+
 	@Autowired protected LogoProvider logoProvider;
 	@Autowired protected SiteDAO siteDAO;
 	@Autowired protected EntityDAO entityDAO;
@@ -202,6 +202,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		});
 		
 		txtWebappointmentsurl = new TextField(sessionManager.getI18nMessage("WebAppointmentsUrl"));
+		txtWebappointmentsurl.setHelperText("No poner protocolo https");
 		txtWebappointmentsurl.setSizeFull();
 		txtWebappointmentsurl.addBlurListener(new ComponentEventListener<BlurEvent<TextField>>() {
 			public void onComponentEvent(BlurEvent<TextField> event) {
@@ -690,7 +691,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		//Parametros de webappointments
 		if(chkWebappointmentsEnabled.getValue()) {
 			site.setWebAppTitle(txtWebApptitle.getValue());
-			site.setWebAppointmentsUrl(txtWebappointmentsurl.getValue());
+			site.setWebAppointmentsUrl(String.join("", "https://",txtWebappointmentsurl.getValue()));
 			site.setWebAppointmentsUserUrl(txtWebappointmentsuserurl.getValue());
 		}else {
 			site.setWebAppTitle(null);
