@@ -1,7 +1,11 @@
 <list>
 <com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
-			SELECT site,active,defaultsite,apptitle,companyaddress,companyemail,companyname,companytelephone,companywebsite from site
+			SELECT s.site,s.active,s.defaultsite,s.apptitle,s.companyaddress,s.companyemail,
+			s.companyname,s.companytelephone,s.companywebsite,s.medereuuid,
+			(a.accountid IS NOT NULL) AS hasaccountms 
+			FROM site AS s
+			LEFT JOIN accountms AS a ON a.accountuuid = s.medereuuid	
 		</query>
 		<name>loadsites</name>
 		<classNameResult></classNameResult>

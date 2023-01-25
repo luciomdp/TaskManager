@@ -22,6 +22,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +47,10 @@ import com.advenio.medere.objects.location.Province;
 import com.advenio.medere.objects.site.Site;
 import com.advenio.medere.objects.user.RegionalSettings;
 import com.advenio.medere.rest.MedereRest;
+import com.advenio.medere.sender.objects.accounts.AccountMs;
+import com.advenio.medere.sender.objects.dto.MedereAccountDTO;
+import com.advenio.medere.sender.objects.jwt.JwtRequest;
+import com.advenio.medere.sender.objects.jwt.JwtResponse;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.views.BaseCRUDWindow;
 import com.advenio.medere.ui.views.ConfirmDialog;
@@ -73,7 +82,17 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 	
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
-	private final String webmedererestcontrollerURL = "rest/webmedererestcontroller/";
+	
+	@Value("${medere.webmedererestcontroller}")
+	private String webmedererestcontrollerURL;
+
+	@Value("${messagesender.url}")
+    private String urlMessageSender;
+	@Value("${messagesender.username}")
+    private String usernameMessageSender;
+	@Value("${messagesender.password}")
+    private String passwordMessageSender;
+
 	private final String COMPANY_ADMIN_USERNAME = "administrador";
 	private final String COMPANY_ADMIN_PASSWORD = "administrador";
 
@@ -506,6 +525,27 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 						builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("siteId", siteId);
 						restTemplate = context.getBean(MedereRest.class).createRestTemplate();
 						restTemplate.getForObject(builder.toUriString(), String.class); 
+
+						restTemplate = new RestTemplate();
+					    uri = urlMessageSender + "authenticate";
+						HttpEntity<JwtRequest> requestToken = new HttpEntity<>(new JwtRequest(usernameMessageSender, passwordMessageSender), null);
+						JwtResponse jwtResponse = restTemplate.postForObject(uri, requestToken, JwtResponse.class);
+						String token = jwtResponse.getToken();
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("Authorization", token);
+						RestTemplate createSenderAccountTemplate = new RestTemplate();
+						MedereAccountDTO account = new MedereAccountDTO();
+						account.setEnabled(true);
+						account.setMederename(site.getCompanyName());
+						account.setMedereurl(site.getCompanyWebsite());
+						account.setUsername(site.getApptitle());
+						account.setPassword(site.getMedereUUID());
+						HttpEntity<MedereAccountDTO> httpEntity = new HttpEntity<MedereAccountDTO>(account, headers);
+						ResponseEntity<AccountMs> response = createSenderAccountTemplate.exchange(
+							urlMessageSender + "accounts/saveMedereAccount", 
+							HttpMethod.POST, httpEntity,AccountMs.class);
+						if(response.getStatusCode() == HttpStatus.OK)
+							siteDAO.saveMessageSenderAccount(response.getBody());
 					}
 					else {
 						siteDAO.updateSite(site);

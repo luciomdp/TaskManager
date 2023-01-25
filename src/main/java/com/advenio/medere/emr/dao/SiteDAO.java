@@ -25,6 +25,7 @@ import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.objects.user.UserEMR;
 import com.advenio.medere.objects.site.Site;
+import com.advenio.medere.sender.objects.accounts.AccountMs;
 
 @Repository
 @Transactional
@@ -55,7 +56,7 @@ public class SiteDAO {
 		}
 		return site.getSite();
 	}
-	
+
 	@Transactional(readOnly=true)
 	public Site loadSite(long siteId) {
 		return entityManager.find(Site.class, siteId);
@@ -128,5 +129,9 @@ public class SiteDAO {
 		else
 			return false;
 	}
+
+    public void saveMessageSenderAccount(AccountMs body) {
+		entityManager.merge(body);
+    }
 
 }

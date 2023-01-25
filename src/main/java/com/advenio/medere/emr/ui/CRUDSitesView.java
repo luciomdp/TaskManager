@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-
+import org.springframework.web.client.RestTemplate;
 import com.advenio.medere.emr.view.edit.CopyInfoWindow;
 import com.advenio.medere.emr.view.edit.PrescriptionExpirationJobsWindow;
 import org.slf4j.Logger;
@@ -14,6 +14,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.advenio.medere.sender.objects.accounts.AccountMs;
+import com.advenio.medere.sender.objects.dto.MedereAccountDTO;
+import com.advenio.medere.sender.objects.jwt.JwtRequest;
+import com.advenio.medere.sender.objects.jwt.JwtResponse;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
@@ -39,6 +52,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.selection.SelectionListener;
@@ -56,6 +71,16 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
 
+	@Value("${medere.webmedererestcontroller}")
+	private String webmedererestcontrollerURL;
+
+	@Value("${messagesender.url}")
+    private String urlMessageSender;
+	@Value("${messagesender.username}")
+    private String usernameMessageSender;
+	@Value("${messagesender.password}")
+    private String passwordMessageSender;
+
 	private static final long serialVersionUID = -1985837633347632519L;
 	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
 
@@ -67,7 +92,9 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
+
 	@Autowired protected UserDAO userDAO;
+
 	private List<SiteDTO> sites;
 
 	@Override
@@ -125,6 +152,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@PostConstruct
 	@Override
 	public void init() {
+		sites = siteDAO.loadSites(new PageLoadConfig<SiteDTO>(), Long.valueOf(sessionManager.getUser().getLanguageId())).getData();
 		createGrid();
 		grid.getGrid().addSelectionListener(new SelectionListener<Grid<SiteDTO>, SiteDTO>() {
 
@@ -137,7 +165,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 				}
 			}
 		});
-		sites = new ArrayList <SiteDTO>();
 
 		Button btnJobs = new Button(VaadinIcon.ROCKET.create());
 		btnJobs.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -177,6 +204,51 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 				w.open();
 			}
 		});
+
+		Button btnCreateMessageSenderAccountsForSites = new Button(VaadinIcon.ENVELOPE.create());
+		btnCreateMessageSenderAccountsForSites.setVisible(sites.stream().filter(site -> !site.isHasaccountms()).count()>0);
+		btnCreateMessageSenderAccountsForSites.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		btnCreateMessageSenderAccountsForSites.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
+			
+			private static final long serialVersionUID = -4512181173967300148L;
+
+			@Override
+			public void onComponentEvent(ClickEvent<Button> event) {
+				RestTemplate restTemplate = new RestTemplate();
+				String url = urlMessageSender + "authenticate";
+				HttpEntity<JwtRequest> requestToken = new HttpEntity<>(new JwtRequest(usernameMessageSender, passwordMessageSender), null);
+				JwtResponse jwtResponse = restTemplate.postForObject(url, requestToken, JwtResponse.class);
+				String token = jwtResponse.getToken();
+				try {
+					HttpHeaders headers = new HttpHeaders();
+					headers.set("Authorization", token);
+
+					sites.stream().filter(site -> !site.isHasaccountms()).forEach(site ->{
+						RestTemplate createSenderAccountTemplate = new RestTemplate();
+						MedereAccountDTO account = new MedereAccountDTO();
+						account.setEnabled(true);
+						account.setMederename(site.getCompanyname());
+						account.setMedereurl(site.getCompanywebsite());
+						account.setUsername(site.getApptitle());
+						account.setPassword(site.getMedereuuid());
+						HttpEntity<MedereAccountDTO> httpEntity = new HttpEntity<MedereAccountDTO>(account, headers);
+						ResponseEntity<AccountMs> response = createSenderAccountTemplate.exchange(
+							urlMessageSender + "accounts/saveMedereAccount", 
+							HttpMethod.POST, httpEntity,AccountMs.class);
+						if(response.getStatusCode() == HttpStatus.OK){
+							siteDAO.saveMessageSenderAccount(response.getBody());
+							site.setHasaccountms(true);
+						}	
+					});
+					Notification.show(sessionManager.getI18nMessage("SenderAccountsHasBeenCreated")).setPosition(Position.MIDDLE);
+					btnCreateMessageSenderAccountsForSites.setVisible(false);
+				}catch(Exception e) {
+					logger.error(e.getMessage(), e);
+					Notification.show(sessionManager.getI18nMessage("ErrorCreatingSenderAccounts")).setPosition(Position.MIDDLE);
+				}
+			}
+		});
+		grid.addControlToHeader(btnCreateMessageSenderAccountsForSites, false);
 		grid.addControlToHeader(btnCopySiteInfo, false);
 		grid.addControlToHeader(btnJobs, false);
 		grid.addControlToHeader(btnNew, false);

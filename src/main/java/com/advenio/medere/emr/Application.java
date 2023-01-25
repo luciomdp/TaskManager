@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 @ComponentScan({"com.advenio.medere"})
-@EntityScan({"com.advenio.medere.objects","com.advenio.medere.emr.objects"})
+@EntityScan({"com.advenio.medere.objects","com.advenio.medere.emr.objects","com.advenio.medere.sender"})
 @EnableJpaRepositories({"com.advenio.medere.dao","com.advenio.medere.emr.dao"})
 public class Application extends SpringBootServletInitializer {
 

@@ -7,13 +7,23 @@ public class SiteDTO {
 	protected BigInteger site;
 	protected boolean active;
 	protected boolean defaultsite;
+	protected boolean hasaccountms;
 	protected String apptitle;
 	protected String companyaddress;
 	protected String companyemail;
 	protected String companyname;
 	protected String companytelephone;
 	protected String companywebsite;
+	protected String medereuuid;
 	
+
+	public String getMedereuuid() {
+		return medereuuid;
+	}
+
+	public void setMedereuuid(String medereuuid) {
+		this.medereuuid = medereuuid;
+	}
 
 	public BigInteger getSite() {
 		return site;
@@ -87,4 +97,11 @@ public class SiteDTO {
 		this.defaultsite = defaultsite;
 	}
 
+	public boolean isHasaccountms() {
+		return hasaccountms;
+	}
+
+	public void setHasaccountms(boolean hasaccountms) {
+		this.hasaccountms = hasaccountms;
+	}
 }
