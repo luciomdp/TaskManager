@@ -1,8 +1,12 @@
 package com.advenio.medere.emr.ui;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -18,12 +22,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.advenio.medere.sender.objects.accounts.AccountMs;
 import com.advenio.medere.sender.objects.dto.MedereAccountDTO;
+import com.advenio.medere.sender.objects.dto.ScheduleMessageResponseDTO;
+import com.advenio.medere.sender.objects.dto.TaskMessageDTO;
 import com.advenio.medere.sender.objects.jwt.JwtRequest;
 import com.advenio.medere.sender.objects.jwt.JwtResponse;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +40,7 @@ import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.MedereDAO;
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.UserDAO;
+import com.advenio.medere.emr.dao.dto.PrevScheduledMessageDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
@@ -214,11 +222,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
-				RestTemplate restTemplate = new RestTemplate();
-				String url = urlMessageSender + "authenticate";
-				HttpEntity<JwtRequest> requestToken = new HttpEntity<>(new JwtRequest(usernameMessageSender, passwordMessageSender), null);
-				JwtResponse jwtResponse = restTemplate.postForObject(url, requestToken, JwtResponse.class);
-				String token = jwtResponse.getToken();
+				String token = getMessageSenderToken(usernameMessageSender,passwordMessageSender);
 				try {
 					HttpHeaders headers = new HttpHeaders();
 					headers.set("Authorization", token);
@@ -238,6 +242,27 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 						if(response.getStatusCode() == HttpStatus.OK){
 							siteDAO.saveMessageSenderAccount(response.getBody());
 							site.setHasaccountms(true);
+							String tokenForSite = getMessageSenderToken(account.getUsername(),account.getPassword());
+							List<PrevScheduledMessageDTO> messagesToSchedule = siteDAO.loadPreviousScheduledMessagesForSite(site.getSite().longValue());
+							if(messagesToSchedule.size() > 0) {
+								Map<BigInteger, List<PrevScheduledMessageDTO>> messagesGroupedByTask = messagesToSchedule.stream().collect(Collectors.groupingBy(PrevScheduledMessageDTO::getPatientcarequeue));
+								HttpHeaders headerForSite = new HttpHeaders();
+								headerForSite.set("Authorization", tokenForSite);
+								headerForSite.setContentType(MediaType.MULTIPART_FORM_DATA);
+								messagesGroupedByTask.forEach((id,group) -> {
+									TaskMessageDTO task = new TaskMessageDTO();
+									task.setTaskmessagetype(BigInteger.valueOf(5));
+									task.setAccount(site.getMedereuuid());
+									task.setCreateddate(LocalDateTime.now());
+									task.setMessages(group.stream().map(PrevScheduledMessageDTO::transform).collect(Collectors.toList()));
+
+									RestTemplate restTemplateForSendingTask = new RestTemplate();
+									LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+									map.add("taskMessageDTO", task);
+									HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headerForSite);
+									restTemplateForSendingTask.postForObject(urlMessageSender + "messages/taskmessage/sendMessage", request, ScheduleMessageResponseDTO.class);
+								});
+							}
 						}	
 					});
 					Notification.show(sessionManager.getI18nMessage("SenderAccountsHasBeenCreated")).setPosition(Position.MIDDLE);
@@ -328,6 +353,14 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
             });
         }
     }
+
+	public String getMessageSenderToken (String username, String password) {
+		RestTemplate restTemplate = new RestTemplate();
+		String url = urlMessageSender + "authenticate";
+		HttpEntity<JwtRequest> requestToken = new HttpEntity<>(new JwtRequest(username, password), null);
+		JwtResponse jwtResponse = restTemplate.postForObject(url, requestToken, JwtResponse.class);
+		return jwtResponse.getToken();
+	}
 
 }
 

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -17,11 +18,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.DAOUtils;
+import com.advenio.medere.dao.SortingFieldInfo;
+import com.advenio.medere.dao.filters.FilterList;
 import com.advenio.medere.dao.nativeSQL.FieldDataRequest;
 import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.dao.nativeSQL.ParameterData;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
+import com.advenio.medere.emr.dao.dto.PrevScheduledMessageDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.objects.user.UserEMR;
 import com.advenio.medere.objects.site.Site;
@@ -83,6 +87,14 @@ public class SiteDAO {
         		loadconfig.getSortingList(), loadconfig.getFilters(), "loadsites",
         		language, params, true, false, fieldDataRequest);
         return page.getCount();
+	}
+
+	public List<PrevScheduledMessageDTO> loadPreviousScheduledMessagesForSite(Long siteId) {
+		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
+		params.add(new ParameterData ().setParamName("site").setValue(siteId));
+        return nativeQueryBuilder.runReport(0,0,  new ArrayList<SortingFieldInfo>(), new FilterList(),
+		"loadpreviousscheduledmessagesforsite", Long.valueOf(1), params, false, true,
+		new ArrayList<FieldDataRequest>()).getData();
 	}
 
 	@Transactional
