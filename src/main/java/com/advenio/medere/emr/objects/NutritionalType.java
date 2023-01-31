@@ -106,4 +106,8 @@ public class NutritionalType extends BaseObjectI18N {
 		}
 		return "";
 	}
+	@Override
+	public String getDescription(long lang) {
+		return findDescription(i18ncodes,lang);
+	}
 }

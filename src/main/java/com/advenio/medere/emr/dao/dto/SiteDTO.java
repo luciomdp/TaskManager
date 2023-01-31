@@ -7,7 +7,6 @@ public class SiteDTO {
 	protected BigInteger site;
 	protected boolean active;
 	protected boolean defaultsite;
-	protected boolean hasaccountms;
 	protected String apptitle;
 	protected String companyaddress;
 	protected String companyemail;
@@ -95,13 +94,5 @@ public class SiteDTO {
 
 	public void setDefaultsite(boolean defaultsite) {
 		this.defaultsite = defaultsite;
-	}
-
-	public boolean isHasaccountms() {
-		return hasaccountms;
-	}
-
-	public void setHasaccountms(boolean hasaccountms) {
-		this.hasaccountms = hasaccountms;
 	}
 }

@@ -2,10 +2,8 @@
 	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
 			SELECT s.site,s.active,s.defaultsite,s.apptitle,s.companyaddress,s.companyemail,
-			s.companyname,s.companytelephone,s.companywebsite,s.medereuuid,
-			(a.accountid IS NOT NULL) AS hasaccountms 
+			s.companyname,s.companytelephone,s.companywebsite,s.medereuuid
 			FROM site AS s
-			LEFT JOIN accountms AS a ON a.accountuuid = s.medereuuid	
 		</query>
 		<name>loadsites</name>
 		<classNameResult></classNameResult>
@@ -64,55 +62,4 @@
 		<queryReplaceParts />
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>		
 
-	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
-		<query>
-			SELECT 
-			s.webappointmentsurl,
-			va.patientcarequeue,
-			va.medereentity AS patientid,
-			CONCAT(
-				'&lt;!DOCTYPE html&gt;',
-				'&lt;html&gt;',
-				'&lt;head&gt;',
-				'&lt;meta charset="UTF-8"&gt;',
-				'&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;',
-				'&lt;/head&gt;',
-				'&lt;body&gt;',
-				'&lt;div&gt;&lt;img  src="cid:imgLogo" alt="Logo"&gt;&lt;/div&gt;&lt;br&gt;',
-				'&lt;strong&gt;',s.companyname,' &lt;/strong&gt;&lt;br&gt;&lt;br&gt;',
-				'&lt;p style="margin: 0;adding: 0; font-size:1.1em;"&gt;Por medio de este mail, le recordamos que tiene agendado el siguiente turno: &lt;/p&gt;',
-				'&lt;ul style="list-style-type:none;border:1px solid; display:inline-table;padding:0px;font-size:1.1em;" &gt;',
-				'&lt;li style="margin:15px;"&gt;&lt;p &gt;&lt;b&gt;Paciente: &lt;/b&gt;',va.patientname,'&lt;/p&gt;&lt;/li&gt;',
-				'&lt;li style="margin:15px;"&gt;&lt;p &gt;&lt;b&gt;Profesional: &lt;/b&gt; ',va.professionalnames,'&lt;/p&gt;&lt;/li&gt;',
-				'&lt;li style="margin:15px;"&gt;&lt;p &gt;&lt;b&gt;Fecha: &lt;/b&gt;',CAST(CAST(va.appointmentfromtime AS date) AS TEXT),'&lt;/p&gt;&lt;/li&gt;',
-				'&lt;li style="margin:15px;"&gt;&lt;p &gt;&lt;b&gt;Lugar: &lt;/b&gt;',CONCAT(va.buildingname,', ',va.buildingaddress),'&lt;/p&gt;&lt;/li&gt;',
-				'&lt;/ul&gt;',
-				'&lt;br&gt;',
-				'&lt;table &gt; &lt;tr&gt; ',
-				'&lt;td align="center" width="140" bgcolor="red" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #ffffff; display: block;"&gt;',
-				'&lt;a href=&quot;[HREFBUTTON]&quot; style=&quot;font-size:15px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:30px; display:inline-block&quot;&gt;',
-				'&lt;span style=&quot;color: #ffffff;&quot;&gt; Cancelar turno &lt;/span&gt;',
-				'&lt;/a&gt;',
-				'&lt;/td&gt;',
-				'&lt;/tr&gt; &lt;/table&gt; ',
-				'&lt;br&gt;',
-				'&lt;p style=&quot;margin: 0;adding: 0; font-size:1em;&quot;&gt;&lt;br&gt;',s.companyname,'&lt;/p&gt;',
-				'&lt;br&gt;&lt;br&gt;',
-				'&lt;p style=&quot;margin: 0;adding: 0; font-size:0.9em;&quot;&gt;Este mail es enviado automáticamente. Por favor, no lo responda. Ante cualquier duda o consulta, contáctenos telefónicamente ',s.companytelephone,'.&lt;/p&gt;',
-			'&lt;body&gt;',
-			'&lt;html&gt;'
-			) AS bodymessage
-			,CONCAT('Turno ',CAST(va.appointmentfromtime AS TEXT)) AS subject
-			,shippingdatetime AS datetosend
-			,va.email AS _to
-			FROM vappointmentstoremember AS va
-			JOIN site AS s ON s.site = va.site
-			WHERE va.site = :site AND va.shippingdatetime > CURRENT_TIMESTAMP
-		</query>
-		<name>loadpreviousscheduledmessagesforsite</name>
-		<classNameResult></classNameResult>
-		<resultTransformerClass>com.advenio.medere.emr.dao.dto.PrevScheduledMessageDTO</resultTransformerClass>
-		<queryHasWhere>true</queryHasWhere>
-		<queryReplaceParts />
-	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 </list>

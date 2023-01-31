@@ -213,67 +213,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 			}
 		});
 
-		Button btnCreateMessageSenderAccountsForSites = new Button(VaadinIcon.ENVELOPE.create());
-		btnCreateMessageSenderAccountsForSites.setVisible(sites.stream().filter(site -> !site.isHasaccountms()).count()>0);
-		btnCreateMessageSenderAccountsForSites.addThemeVariants(ButtonVariant.LUMO_SMALL);
-		btnCreateMessageSenderAccountsForSites.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-			
-			private static final long serialVersionUID = -4512181173967300148L;
-
-			@Override
-			public void onComponentEvent(ClickEvent<Button> event) {
-				String token = getMessageSenderToken(usernameMessageSender,passwordMessageSender);
-				try {
-					HttpHeaders headers = new HttpHeaders();
-					headers.set("Authorization", token);
-
-					sites.stream().filter(site -> !site.isHasaccountms()).forEach(site ->{
-						RestTemplate createSenderAccountTemplate = new RestTemplate();
-						MedereAccountDTO account = new MedereAccountDTO();
-						account.setEnabled(true);
-						account.setMederename(site.getCompanyname());
-						account.setMedereurl(site.getCompanywebsite());
-						account.setUsername(site.getApptitle());
-						account.setPassword(site.getMedereuuid());
-						HttpEntity<MedereAccountDTO> httpEntity = new HttpEntity<MedereAccountDTO>(account, headers);
-						ResponseEntity<AccountMs> response = createSenderAccountTemplate.exchange(
-							urlMessageSender + "accounts/saveMedereAccount", 
-							HttpMethod.POST, httpEntity,AccountMs.class);
-						if(response.getStatusCode() == HttpStatus.OK){
-							siteDAO.saveMessageSenderAccount(response.getBody());
-							site.setHasaccountms(true);
-							String tokenForSite = getMessageSenderToken(account.getUsername(),account.getPassword());
-							List<PrevScheduledMessageDTO> messagesToSchedule = siteDAO.loadPreviousScheduledMessagesForSite(site.getSite().longValue());
-							if(messagesToSchedule.size() > 0) {
-								Map<BigInteger, List<PrevScheduledMessageDTO>> messagesGroupedByTask = messagesToSchedule.stream().collect(Collectors.groupingBy(PrevScheduledMessageDTO::getPatientcarequeue));
-								HttpHeaders headerForSite = new HttpHeaders();
-								headerForSite.set("Authorization", tokenForSite);
-								headerForSite.setContentType(MediaType.MULTIPART_FORM_DATA);
-								messagesGroupedByTask.forEach((id,group) -> {
-									TaskMessageDTO task = new TaskMessageDTO();
-									task.setTaskmessagetype(BigInteger.valueOf(5));
-									task.setAccount(site.getMedereuuid());
-									task.setCreateddate(LocalDateTime.now());
-									task.setMessages(group.stream().map(PrevScheduledMessageDTO::transform).collect(Collectors.toList()));
-
-									RestTemplate restTemplateForSendingTask = new RestTemplate();
-									LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-									map.add("taskMessageDTO", task);
-									HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headerForSite);
-									restTemplateForSendingTask.postForObject(urlMessageSender + "messages/taskmessage/sendMessage", request, ScheduleMessageResponseDTO.class);
-								});
-							}
-						}	
-					});
-					Notification.show(sessionManager.getI18nMessage("SenderAccountsHasBeenCreated")).setPosition(Position.MIDDLE);
-					btnCreateMessageSenderAccountsForSites.setVisible(false);
-				}catch(Exception e) {
-					logger.error(e.getMessage(), e);
-					Notification.show(sessionManager.getI18nMessage("ErrorCreatingSenderAccounts")).setPosition(Position.MIDDLE);
-				}
-			}
-		});
-		grid.addControlToHeader(btnCreateMessageSenderAccountsForSites, false);
 		grid.addControlToHeader(btnCopySiteInfo, false);
 		grid.addControlToHeader(btnJobs, false);
 		grid.addControlToHeader(btnNew, false);

@@ -94,4 +94,9 @@ public class EntityTag extends BaseObjectI18N {
 		this.i18ncodes = i18ncodes;
 	}
 
+	@Override
+	public String getDescription(long lang) {
+		return findDescription(i18ncodes,lang);
+	}
+
 }
