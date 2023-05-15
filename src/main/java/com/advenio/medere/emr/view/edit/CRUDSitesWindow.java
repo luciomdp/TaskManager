@@ -4,6 +4,7 @@ package com.advenio.medere.emr.view.edit;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -535,11 +536,20 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 						headers.set("Authorization", token);
 						RestTemplate createSenderAccountTemplate = new RestTemplate();
 						MedereAccountDTO account = new MedereAccountDTO();
+						
 						account.setEnabled(true);
 						account.setMederename(site.getCompanyName());
 						account.setMedereurl(site.getCompanyWebsite());
 						account.setUsername(site.getApptitle());
 						account.setPassword(site.getMedereUUID());
+
+						account.setWithMailConfiguration(true);
+						account.setHost("smtp.gmail.com");
+						account.setPassword_smtp("M3d3r3M3d3r3");
+						account.setPort(BigInteger.valueOf(587));
+						account.setUsername_smtp(site.getCompanyName());
+						account.set_from("medere@advenio.com.ar");
+						account.setEmailname("medere@advenio.com.ar");
 						HttpEntity<MedereAccountDTO> httpEntity = new HttpEntity<MedereAccountDTO>(account, headers);
 						ResponseEntity<AccountMs> response = createSenderAccountTemplate.exchange(
 							urlMessageSender + "accounts/saveMedereAccount", 
