@@ -1,5 +1,8 @@
 package com.advenio.medere.emr.view.edit;
 
+import com.advenio.medere.dao.filters.FilteringInfo;
+import com.advenio.medere.dao.filters.FilteringInfo.FilterType;
+import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.rest.MedereRest;
@@ -50,10 +53,9 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
     private ISessionManager sessionManager;
     @Autowired
     private ApplicationContext context;
-    private List <SiteDTO> sites;
+    
 
-    public CopyInfoWindow (List<SiteDTO> sites){
-        this.sites = sites;
+    public CopyInfoWindow (){
 
     }
     @PostConstruct
@@ -63,7 +65,18 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         cboFromSite.setSizeFull();
         cboFromSite.setItemLabelGenerator(e -> e.getCompanyname());
         cboFromSite.setLabel(sessionManager.getI18nMessage("OriginSite"));
-        cboFromSite.setItems(sites);
+        cboFromSite.setDataProvider((filter, offset, limit) -> {
+            PageLoadConfig<SiteDTO> loadConfig = new PageLoadConfig<SiteDTO>();
+            loadConfig.getFilters().add(new FilteringInfo().setFieldname("s.companyname").addValue(filter).setFilterType(FilterType.ILIKE));
+            loadConfig.setStartIndex(offset);
+            loadConfig.setPageSize(limit);
+           return siteDAO.loadSites(loadConfig, Long.valueOf(sessionManager.getUser().getLanguageId())).getData().stream();
+        },
+        (filter) -> {
+            PageLoadConfig<SiteDTO> loadConfig = new PageLoadConfig<SiteDTO>();
+            loadConfig.getFilters().add(new FilteringInfo().setFieldname("s.companyname").addValue(filter).setFilterType(FilterType.ILIKE));
+            return siteDAO.countSites(loadConfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+        });
         cboFromSite.addValueChangeListener(e -> {
             if (e.getValue() != null)
                 cboToSite.setEnabled(true);
@@ -78,7 +91,18 @@ public class CopyInfoWindow extends Dialog implements HasDynamicTitle {
         cboToSite.setSizeFull();
         cboToSite.setItemLabelGenerator(e -> e.getCompanyname());
         cboToSite.setLabel(sessionManager.getI18nMessage("DestinySite"));
-        cboToSite.setItems(sites);
+        cboToSite.setDataProvider((filter, offset, limit) -> {
+            PageLoadConfig<SiteDTO> loadConfig = new PageLoadConfig<SiteDTO>();
+            loadConfig.getFilters().add(new FilteringInfo().setFieldname("s.companyname").addValue(filter).setFilterType(FilterType.ILIKE));
+            loadConfig.setStartIndex(offset);
+            loadConfig.setPageSize(limit);
+           return siteDAO.loadSites(loadConfig, Long.valueOf(sessionManager.getUser().getLanguageId())).getData().stream();
+        },
+        (filter) -> {
+            PageLoadConfig<SiteDTO> loadConfig = new PageLoadConfig<SiteDTO>();
+            loadConfig.getFilters().add(new FilteringInfo().setFieldname("s.companyname").addValue(filter).setFilterType(FilterType.ILIKE));
+            return siteDAO.countSites(loadConfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+        });
         cboToSite.addValueChangeListener(e -> {
             if (e.getValue() != null){
                 if (e.getValue().getSite() == cboFromSite.getValue().getSite()) {

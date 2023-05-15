@@ -1,13 +1,7 @@
 package com.advenio.medere.emr.ui;
 
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.web.client.RestTemplate;
@@ -19,28 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import com.advenio.medere.sender.objects.accounts.AccountMs;
-import com.advenio.medere.sender.objects.dto.MedereAccountDTO;
-import com.advenio.medere.sender.objects.dto.ScheduleMessageResponseDTO;
-import com.advenio.medere.sender.objects.dto.TaskMessageDTO;
 import com.advenio.medere.sender.objects.jwt.JwtRequest;
 import com.advenio.medere.sender.objects.jwt.JwtResponse;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.MedereDAO;
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.UserDAO;
-import com.advenio.medere.emr.dao.dto.PrevScheduledMessageDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
@@ -60,8 +39,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.data.selection.SelectionListener;
@@ -162,6 +139,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	public void init() {
 		sites = siteDAO.loadSites(new PageLoadConfig<SiteDTO>(), Long.valueOf(sessionManager.getUser().getLanguageId())).getData();
 		createGrid();
+		
 		grid.getGrid().addSelectionListener(new SelectionListener<Grid<SiteDTO>, SiteDTO>() {
 
 			private static final long serialVersionUID = -1266658791714326144L;
@@ -208,7 +186,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
-				CopyInfoWindow w = context.getBean(CopyInfoWindow.class, sites);
+				CopyInfoWindow w = context.getBean(CopyInfoWindow.class);
 				w.open();
 			}
 		});
