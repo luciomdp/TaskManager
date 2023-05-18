@@ -16,3 +16,8 @@ drivers/
 error-screenshots/
 webpack.generated.js
 node/
+applogs/
+sitesmanagement-1.0.0.jar.filepart
+webpack.config.js
+
+create.sql
