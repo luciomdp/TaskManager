@@ -595,12 +595,6 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			Notification.show(sessionManager.getI18nMessage("PleaseCompleteName")).setPosition(Position.MIDDLE);
 			return false;			
 		}
-
-		if (StringsUtils.isNullOrEmptyTrimmed(txtEmail.getValue())) {
-			txtEmail.focus();
-			Notification.show(sessionManager.getI18nMessage("PleaseCompleteMail")).setPosition(Position.MIDDLE);
-			return false;
-		}
 		
 		if (StringsUtils.isNullOrEmptyTrimmed(txtAddress.getValue())) {
 			txtAddress.focus();		
@@ -741,7 +735,7 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 		//Parametros de webappointments
 		if(chkWebappointmentsEnabled.getValue()) {
 			site.setWebAppTitle(txtWebApptitle.getValue());
-			site.setWebAppointmentsUrl(String.join("", "https://",txtWebappointmentsurl.getValue()));
+			site.setWebAppointmentsUrl(txtWebappointmentsurl.getValue());
 			site.setWebAppointmentsUserUrl(txtWebappointmentsuserurl.getValue());
 		}else {
 			site.setWebAppTitle(null);
