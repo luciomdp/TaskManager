@@ -17,6 +17,6 @@ public class Sector {
     private String name;
     private String description;
     @OneToOne
-    @JoinColumn(name = "sectorboss")
-    private User sectorBoss;
+    @JoinColumn(name = "sectormanager")
+    private User sector_manager;
 }
