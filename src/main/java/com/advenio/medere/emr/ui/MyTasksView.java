@@ -11,13 +11,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.advenio.medere.dao.SortingFieldInfo;
+import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
-import com.advenio.medere.emr.dao.CIE10DAO;
-import com.advenio.medere.emr.dao.MedereDAO;
-import com.advenio.medere.emr.dao.SiteDAO;
-import com.advenio.medere.emr.dao.UserDAO;
+import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.dto.DiseaseDTO;
+import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.view.edit.CRUDCie10Window;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
@@ -50,8 +49,8 @@ import com.vaadin.flow.server.Command;
 
 import net.engio.mbassy.listener.Handler;
 
-@Route(value = "cie10Grid", layout = MainLayout.class)
-public class CRUDCie10View extends BaseCRUDView<DiseaseDTO> implements HasDynamicTitle {
+@Route(value = "myTasks", layout = MainLayout.class)
+public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
@@ -59,37 +58,36 @@ public class CRUDCie10View extends BaseCRUDView<DiseaseDTO> implements HasDynami
 	private String medereAddress;
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
+	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
+
+	@Autowired private EntityDAO entityDAO;
 
 	@Autowired
-	protected SiteDAO siteDAO;
-	@Autowired
-	protected MedereDAO medereDAO;
+	private NativeSQLQueryBuilder nativeQueryBuilder;
+
 	@Autowired
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
-	@Autowired
-	protected CIE10DAO cie10Dao;
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<DiseaseDTO>(DiseaseDTO.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
-		grid.setLoadListener(new GridLoadListener<DiseaseDTO>() {
+		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid.setLoadListener(new GridLoadListener<Task>() {
 			@Override
-			public Page<DiseaseDTO> load(PageLoadConfig<DiseaseDTO> loadconfig) {
+			public Page<Task> load(PageLoadConfig<Task> loadconfig) {
 				ArrayList<SortingFieldInfo> sortingFields = new ArrayList<SortingFieldInfo>();
 		        SortingFieldInfo sfi = new SortingFieldInfo();
 		        sfi.setFieldname("cie10");
 		        sfi.setAscOrder(true);
 		        sortingFields.add(sfi);
 		        loadconfig.setSortingList(sortingFields);
-				return cie10Dao.loadCIE10(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+				return entityDAO.loadMyTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),false);
 			}
 
 			@Override
-			public Integer count(PageLoadConfig<DiseaseDTO> loadconfig) {
-				return cie10Dao.countCIE10(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+			public Integer count(PageLoadConfig<Task> loadconfig) {
+				return entityDAO.loadMyTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),true).getCount();
 			}
 		});
 
@@ -122,10 +120,10 @@ public class CRUDCie10View extends BaseCRUDView<DiseaseDTO> implements HasDynami
 	}
 
 	@Override
-	protected void editItem(DiseaseDTO item) {
+	protected void editItem(Task item) {
 		windowOpen = true;
 		CRUDCie10Window w = context.getBean(CRUDCie10Window.class, sessionManager.getI18nMessage("EditCIE10"));// sessionManager.getI18nMessage("EditMMSI"));
-		w.editItem(cie10Dao.findCie10ById(((DiseaseDTO)item).getDisease().longValue()));
+		//w.editItem(cie10Dao.findCie10ById(((DiseaseDTO)item).getDisease().longValue()));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
@@ -139,9 +137,9 @@ public class CRUDCie10View extends BaseCRUDView<DiseaseDTO> implements HasDynami
 	}
 
 	@Override
-	protected void deleteItem(DiseaseDTO item) {
+	protected void deleteItem(Task item) {
 		try {
-			cie10Dao.deleteDisease(((DiseaseDTO)item).getDisease().longValue());
+			//cie10Dao.deleteDisease(((DiseaseDTO)item).getDisease().longValue());
 		}catch(DataIntegrityViolationException e) {
 			Notification.show(sessionManager.getI18nMessage("ImposibleToDeleteThereAreReferencesToThisItem")).setPosition(Position.MIDDLE);
 		}

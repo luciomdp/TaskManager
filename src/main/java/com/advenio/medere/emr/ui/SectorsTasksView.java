@@ -14,10 +14,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.advenio.medere.dao.SortingFieldInfo;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
-import com.advenio.medere.emr.dao.MedereDAO;
-import com.advenio.medere.emr.dao.NutritionalItemDAO;
-import com.advenio.medere.emr.dao.SiteDAO;
-import com.advenio.medere.emr.dao.dto.NutritionalItemDTO;
+import com.advenio.medere.emr.dao.EntityDAO;
+import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.view.edit.CRUDNutritionWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
 import com.advenio.medere.server.session.ISessionManager;
@@ -40,8 +38,8 @@ import com.vaadin.flow.server.Command;
 
 import net.engio.mbassy.listener.Handler;
 
-@Route(value = "nutritionGrid", layout = MainLayout.class)
-public class CRUDNutritionView extends BaseCRUDView<NutritionalItemDTO> implements HasDynamicTitle {
+@Route(value = "sectorsTasksGrid", layout = MainLayout.class)
+public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
@@ -49,36 +47,33 @@ public class CRUDNutritionView extends BaseCRUDView<NutritionalItemDTO> implemen
 	private String medereAddress;
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
+	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
 	@Autowired
-	protected SiteDAO siteDAO;
-	@Autowired
-	protected MedereDAO medereDAO;
+	protected EntityDAO entityDAO;
 	@Autowired
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
-	@Autowired protected NutritionalItemDAO nutritionalItemDAO;
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<NutritionalItemDTO>(NutritionalItemDTO.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
-		grid.setLoadListener(new GridLoadListener<NutritionalItemDTO>() {
+		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid.setLoadListener(new GridLoadListener<Task>() {
 			@Override
-			public Page<NutritionalItemDTO> load(PageLoadConfig<NutritionalItemDTO> loadconfig) {
+			public Page<Task> load(PageLoadConfig<Task> loadconfig) {
 				ArrayList<SortingFieldInfo> sortingFields = new ArrayList<SortingFieldInfo>();
 		        SortingFieldInfo sfi = new SortingFieldInfo();
 		        sfi.setFieldname("description");
 		        sfi.setAscOrder(true);
 		        sortingFields.add(sfi);
 		        loadconfig.setSortingList(sortingFields);
-				return nutritionalItemDAO.loadNutritionalItemList(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+				return entityDAO.loadSectorsTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),false);
 			}
 
 			@Override
-			public Integer count(PageLoadConfig<NutritionalItemDTO> loadconfig) {
-				return nutritionalItemDAO.loadNutritionalItemList(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId())).getCount();
+			public Integer count(PageLoadConfig<Task> loadconfig) {
+				return entityDAO.loadSectorsTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),true).getCount();
 			}
 		});
 
@@ -90,8 +85,6 @@ public class CRUDNutritionView extends BaseCRUDView<NutritionalItemDTO> implemen
 		grid.getGrid().addColumn("typedescription").setHeader(sessionManager.getI18nMessage("Category")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_BIG).setId("typedescription");
 		
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isActive()))).setHeader(sessionManager.getI18nMessage("Active")).setTextAlign(ColumnTextAlign.CENTER)
-		.setWidth(WIDTH_BIG).setId("active");
 		
 		grid.init();
 		
@@ -112,11 +105,11 @@ public class CRUDNutritionView extends BaseCRUDView<NutritionalItemDTO> implemen
 	}
 
 	@Override
-	protected void editItem(NutritionalItemDTO item) {
+	protected void editItem(Task item) {
 		windowOpen = true;
 		CRUDNutritionWindow w = context.getBean(CRUDNutritionWindow.class, sessionManager.getI18nMessage("EditItem"));// sessionManager.getI18nMessage("EditMMSI"));
-		w.editItem(nutritionalItemDAO.findNutritionalItemById(((NutritionalItemDTO)item).getNutritionalitem().longValue(),
-				medereDAO.loadLanguage(sessionManager.getUser().getLanguageId())));
+		//w.editItem(nutritionalItemDAO.findNutritionalItemById(((Task)item).getNutritionalitem().longValue(),
+				//medereDAO.loadLanguage(sessionManager.getUser().getLanguageId())));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
@@ -130,9 +123,9 @@ public class CRUDNutritionView extends BaseCRUDView<NutritionalItemDTO> implemen
 	}
 
 	@Override
-	protected void deleteItem(NutritionalItemDTO item) {
+	protected void deleteItem(Task item) {
 		try {
-			nutritionalItemDAO.deleteNutritionalItem(((NutritionalItemDTO)item).getNutritionalitem().longValue());
+			//nutritionalItemDAO.deleteNutritionalItem(((Task)item).getNutritionalitem().longValue());
 		}catch(DataIntegrityViolationException e) {
 			Notification.show(sessionManager.getI18nMessage("ImposibleToDeleteThereAreReferencesToThisItem")).setPosition(Position.MIDDLE);
 		}
