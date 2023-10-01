@@ -17,7 +17,7 @@ import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.dto.DiseaseDTO;
 import com.advenio.medere.emr.objects.Task;
-import com.advenio.medere.emr.view.edit.CRUDCie10Window;
+import com.advenio.medere.emr.view.edit.VisualiceTaskWindow;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
 import com.advenio.medere.server.session.ISessionManager;
@@ -122,8 +122,7 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 	@Override
 	protected void editItem(Task item) {
 		windowOpen = true;
-		CRUDCie10Window w = context.getBean(CRUDCie10Window.class, sessionManager.getI18nMessage("EditCIE10"));// sessionManager.getI18nMessage("EditMMSI"));
-		//w.editItem(cie10Dao.findCie10ById(((DiseaseDTO)item).getDisease().longValue()));
+		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar tarea",item,true);
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
@@ -149,7 +148,7 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 	@Override
 	protected void newItem() {
 		windowOpen = true;
-		CRUDCie10Window w = context.getBean(CRUDCie10Window.class, sessionManager.getI18nMessage("NewCie10"));
+		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, sessionManager.getI18nMessage("NewCie10"));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {

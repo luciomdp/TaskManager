@@ -1,4 +1,4 @@
-package com.advenio.medere.emr.objects.user;
+package com.advenio.medere.emr.objects;
 
 import javax.persistence.Entity;
 import lombok.Getter;

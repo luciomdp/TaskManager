@@ -7,4 +7,5 @@ public class Task {
     private Long taskid;
     private String title;
     private String description;
+    private User assignedTo;
 }
