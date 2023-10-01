@@ -130,7 +130,7 @@
 		<dependency>
 			<groupId>com.advenio.medere</groupId>
 			<artifactId>medereui</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>		
 		
         <dependency>

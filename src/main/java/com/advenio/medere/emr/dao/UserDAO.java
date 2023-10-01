@@ -108,36 +108,29 @@ public class UserDAO implements IUserDAO {
 	public List<MenuItemDTO> loadMenu(long profileId,long languageId) {
 		List<MenuItemDTO> menu = new ArrayList<MenuItemDTO>();
 		int i = 1;
-		if(showSite) {
-			MenuItemDTO siteGrid = new MenuItemDTO();
-			siteGrid.setIcon("home");
-			siteGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDSitesView");
-			siteGrid.setItemId(Long.valueOf(i));
-			siteGrid.setItemName("Lista de sitios");
-			siteGrid.setOrder(i++);
-			menu.add(siteGrid);
-		}
+
+		MenuItemDTO siteGrid = new MenuItemDTO();
+		siteGrid.setIcon("home");
+		siteGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDSitesView");
+		siteGrid.setItemId(Long.valueOf(i));
+		siteGrid.setItemName("Mis tareas asignadas");
+		siteGrid.setOrder(i++);
+			
 		MenuItemDTO Cie10Grid = new MenuItemDTO();
 		Cie10Grid.setIcon("home");
 		Cie10Grid.setItemClassName("com.advenio.medere.emr.ui.CRUDCie10View");
 		Cie10Grid.setItemId(Long.valueOf(i));
-		Cie10Grid.setItemName("Lista de enfermedades");
+		Cie10Grid.setItemName("Lista de tareas");
 		Cie10Grid.setOrder(i++);
 		MenuItemDTO nutritionGrid = new MenuItemDTO();
 		nutritionGrid.setIcon("home");
 		nutritionGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDNutritionView");
 		nutritionGrid.setItemId(Long.valueOf(i));
-		nutritionGrid.setItemName("Lista de items nutricionales");
+		nutritionGrid.setItemName("Lista de sectores");
 		nutritionGrid.setOrder(i++);
-		MenuItemDTO genericDrugGrid = new MenuItemDTO();
-		genericDrugGrid.setIcon("home");
-		genericDrugGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDGenericDrugView");
-		genericDrugGrid.setItemId(Long.valueOf(i));
-		genericDrugGrid.setItemName("Lista de drogas genericas");
-		genericDrugGrid.setOrder(i);
+		menu.add(siteGrid);
 		menu.add(Cie10Grid);
-		menu.add(nutritionGrid);
-		menu.add(genericDrugGrid);
+		menu.add(nutritionGrid);;
 		return menu;
 	}
 	
