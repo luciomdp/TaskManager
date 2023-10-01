@@ -15,13 +15,10 @@ import com.advenio.medere.sender.objects.jwt.JwtRequest;
 import com.advenio.medere.sender.objects.jwt.JwtResponse;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
-import com.advenio.medere.emr.dao.MedereDAO;
-import com.advenio.medere.emr.dao.SiteDAO;
-import com.advenio.medere.emr.dao.UserDAO;
-import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.emr.dao.EntityDAO;
+import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.view.edit.CRUDSitesWindow;
 import com.advenio.medere.emr.view.edit.EventStateChanged;
-import com.advenio.medere.objects.site.Site;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
@@ -46,8 +43,8 @@ import com.vaadin.flow.server.Command;
 
 import net.engio.mbassy.listener.Handler;
 
-@Route(value = "siteGrid", layout = MainLayout.class)
-public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTitle {
+@Route(value = "createTask", layout = MainLayout.class)
+public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
@@ -62,44 +59,35 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
     private String passwordMessageSender;
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(CRUDSitesView.class);
+	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
 	@Autowired
-	protected SiteDAO siteDAO;
-	@Autowired
-	protected MedereDAO medereDAO;
+	protected EntityDAO entityDAO;
+
 	@Autowired
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
 
-	@Autowired protected UserDAO userDAO;
-
-	private List<SiteDTO> sites;
-
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<SiteDTO>(SiteDTO.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
-		grid.setLoadListener(new GridLoadListener<SiteDTO>() {
+		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid.setLoadListener(new GridLoadListener<Task>() {
 			@Override
-			public Page<SiteDTO> load(PageLoadConfig<SiteDTO> loadconfig) {
-				Page <SiteDTO> page = siteDAO.loadSites(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
-				sites = page.getData();
+			public Page<Task> load(PageLoadConfig<Task> loadconfig) {
+				Page <Task> page = entityDAO.loadCreatedTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),false);
 				return page;
 			}
 
 			@Override
-			public Integer count(PageLoadConfig<SiteDTO> loadconfig) {
-				return siteDAO.countSites(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()));
+			public Integer count(PageLoadConfig<Task> loadconfig) {
+				return entityDAO.loadCreatedTasks(loadconfig, Long.valueOf(sessionManager.getUser().getLanguageId()),true).getCount();
 			}
 		});
 
 		grid.getGrid().removeAllColumns();
 
 		grid.getGrid().addColumn("site").setHeader(sessionManager.getI18nMessage("SiteId")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
-
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isActive()))).setHeader(sessionManager.getI18nMessage("Active")).setTextAlign(ColumnTextAlign.CENTER)
 				.setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn("apptitle").setHeader(sessionManager.getI18nMessage("Title")).setTextAlign(ColumnTextAlign.CENTER)
@@ -120,8 +108,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		grid.getGrid().addColumn("companytelephone").setHeader(sessionManager.getI18nMessage("Phone"))
 				.setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn(new ComponentRenderer<>(e-> booleanRender(e.isDefaultsite()))).setHeader(sessionManager.getI18nMessage("DefaultSite")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_MEDIUM);
 		grid.init();
 		
 		grid.getFilterController().addFilter(new TextFilterConfig("apptitle","").addField("apptitle"), true);
@@ -132,15 +118,14 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	@PostConstruct
 	@Override
 	public void init() {
-		sites = siteDAO.loadSites(new PageLoadConfig<SiteDTO>(), Long.valueOf(sessionManager.getUser().getLanguageId())).getData();
 		createGrid();
 		
-		grid.getGrid().addSelectionListener(new SelectionListener<Grid<SiteDTO>, SiteDTO>() {
+		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
 
 			private static final long serialVersionUID = -1266658791714326144L;
 
 			@Override
-			public void selectionChange(SelectionEvent<Grid<SiteDTO>, SiteDTO> event) {
+			public void selectionChange(SelectionEvent<Grid<Task>, Task> event) {
 				if (event.getFirstSelectedItem().isPresent()) {
 					editItem(grid.getGrid().asSingleSelect().getValue());
 				}
@@ -187,11 +172,11 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	}
 
 	@Override
-	protected void editItem(SiteDTO item) {
+	protected void editItem(Task item) {
 		windowOpen = true;
 		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("EditSite"));// sessionManager.getI18nMessage("EditMMSI"));
 		w.setNewSite(false);
-		w.editItem(siteDAO.loadSite(((SiteDTO)item).getSite().longValue()));
+		//w.editItem(entityDAO.loadSite(((Task)item).getSite().longValue()));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
@@ -205,7 +190,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	}
 
 	@Override
-	protected void deleteItem(SiteDTO item) {
+	protected void deleteItem(Task item) {
 
 	}
 
@@ -214,11 +199,7 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 		windowOpen = true;
 		CRUDSitesWindow w = context.getBean(CRUDSitesWindow.class, sessionManager.getI18nMessage("NewSite"));
 		w.setNewSite(true);
-		Site newSite = siteDAO.loadDefaultSite();
-		newSite.setSite(null);
-		newSite.setMedereUUID(UUID.randomUUID().toString());
-		newSite.setDefaultSite(false);
-		w.editItem(newSite);
+		w.editItem(new Task());
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {

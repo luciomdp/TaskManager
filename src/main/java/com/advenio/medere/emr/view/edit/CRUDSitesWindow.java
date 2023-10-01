@@ -39,7 +39,7 @@ import com.advenio.medere.emr.dao.MedereDAO;
 import com.advenio.medere.emr.dao.SiteDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.patient.PatientEntity;
-import com.advenio.medere.emr.objects.user.UserEMR;
+import com.advenio.medere.emr.objects.user.User;
 import com.advenio.medere.objects.DocumentType;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.location.City;
@@ -712,8 +712,8 @@ public class CRUDSitesWindow extends BaseCRUDWindow implements HasDynamicTitle{
 			return myChecksum;
 	}
 	
-	private UserEMR generateAdmin(String userName, String password) {
-		UserEMR admin = new UserEMR();
+	private User generateAdmin(String userName, String password) {
+		User admin = new User();
 		admin.setBlocked(false);
 		admin.setEmail("completar@completar.com.ar");
 		admin.setFirstName("Administrador");

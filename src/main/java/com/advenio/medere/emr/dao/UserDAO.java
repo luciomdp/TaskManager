@@ -25,9 +25,6 @@ import com.advenio.medere.dao.IUserDAO;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.dto.users.IPLoginAttemptDTO;
 import com.advenio.medere.objects.dto.users.UserDTO;
-import com.advenio.medere.objects.user.Profile;
-import com.advenio.medere.objects.user.User;
-import com.advenio.medere.objects.user.i18n.ProfileI18n;
 import com.advenio.medere.security.SecurityConfig;
 import com.advenio.medere.ui.components.menu.MenuItemDTO;
 
@@ -50,10 +47,6 @@ public class UserDAO implements IUserDAO {
 				
 	}
 	
-	public User findUserById(Long userid){			
-		User user =loadCompleteUser(userid);
-		return user;
-	}
 	
 	@Override
 	public UserDTO findUser(String username) {
@@ -109,28 +102,37 @@ public class UserDAO implements IUserDAO {
 		List<MenuItemDTO> menu = new ArrayList<MenuItemDTO>();
 		int i = 1;
 
-		MenuItemDTO siteGrid = new MenuItemDTO();
-		siteGrid.setIcon("home");
-		siteGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDSitesView");
-		siteGrid.setItemId(Long.valueOf(i));
-		siteGrid.setItemName("Mis tareas asignadas");
-		siteGrid.setOrder(i++);
+		MenuItemDTO createdTasksGrid = new MenuItemDTO();
+		createdTasksGrid.setIcon("home");
+		createdTasksGrid.setItemClassName("com.advenio.medere.emr.ui.CreatedTasksView");
+		createdTasksGrid.setItemId(Long.valueOf(i));
+		createdTasksGrid.setItemName("Tareas creadas");
+		createdTasksGrid.setOrder(i++);
 			
-		MenuItemDTO Cie10Grid = new MenuItemDTO();
-		Cie10Grid.setIcon("home");
-		Cie10Grid.setItemClassName("com.advenio.medere.emr.ui.CRUDCie10View");
-		Cie10Grid.setItemId(Long.valueOf(i));
-		Cie10Grid.setItemName("Lista de tareas");
-		Cie10Grid.setOrder(i++);
-		MenuItemDTO nutritionGrid = new MenuItemDTO();
-		nutritionGrid.setIcon("home");
-		nutritionGrid.setItemClassName("com.advenio.medere.emr.ui.CRUDNutritionView");
-		nutritionGrid.setItemId(Long.valueOf(i));
-		nutritionGrid.setItemName("Lista de sectores");
-		nutritionGrid.setOrder(i++);
-		menu.add(siteGrid);
-		menu.add(Cie10Grid);
-		menu.add(nutritionGrid);;
+		MenuItemDTO myTasksGrid = new MenuItemDTO();
+		myTasksGrid.setIcon("home");
+		myTasksGrid.setItemClassName("com.advenio.medere.emr.ui.MyTasksView");
+		myTasksGrid.setItemId(Long.valueOf(i));
+		myTasksGrid.setItemName("Mis tareas");
+		myTasksGrid.setOrder(i++);
+
+		MenuItemDTO sectorTasksGrid = new MenuItemDTO();
+		sectorTasksGrid.setIcon("home");
+		sectorTasksGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsTasksView");
+		sectorTasksGrid.setItemId(Long.valueOf(i));
+		sectorTasksGrid.setItemName("Tareas de sector");
+		sectorTasksGrid.setOrder(i++);
+
+		MenuItemDTO sectorsGrid = new MenuItemDTO();
+		sectorsGrid.setIcon("home");
+		sectorsGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsView");
+		sectorsGrid.setItemId(Long.valueOf(i));
+		sectorsGrid.setItemName("Lista de sectores");
+		sectorsGrid.setOrder(i++);
+
+		menu.add(createdTasksGrid);
+		menu.add(sectorTasksGrid);
+		menu.add(sectorsGrid);;
 		return menu;
 	}
 	
@@ -142,41 +144,6 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void changeUserLanguage(Object userid, long languageId) {
 	
-	}
-	
-	@Transactional(readOnly=true)
-	public User loadCompleteUser(Long userID){
-
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		Root<User> rootuser = query.from(User.class);
-		query.where(builder.equal(rootuser.get("_User"), userID));
-
-		TypedQuery<User> tQuery = entityManager.createQuery(query);		
-		tQuery.setHint("org.hibernate.cacheable", "true");
-		
-		List<User> l = tQuery.getResultList();
-		
-		User user = l.size() > 0 ? l.get(0) : null;
-		return user;
-	}
-	
-	@Transactional(readOnly=true)
-	public Profile findProfile(int profileID, Language language) {
-		Session hibernateSession = entityManager.unwrap(Session.class);
-		hibernateSession.enableFilter("language").setParameter("language", language.getLanguage().longValue());
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Profile> criteria = builder.createQuery(Profile.class);
-		Root<Profile> root = criteria.from(Profile.class);
-		Join<Profile, ProfileI18n> joinMeasureUnit = root.join("profileI18n");
-		criteria.where(builder.equal(root.get("profile"), profileID));
-		TypedQuery<Profile> query = entityManager.createQuery(criteria).setHint("org.hibernate.cacheable", "true");
-		List<Profile> list = query.getResultList();
-		Profile result = null;
-		if (list.size()>0){
-			result = list.get(0);
-		}
-		return result;
 	}
 
 }

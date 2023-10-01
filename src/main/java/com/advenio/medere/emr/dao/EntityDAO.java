@@ -25,6 +25,10 @@ import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.dao.nativeSQL.ParameterData;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
+import com.advenio.medere.emr.dao.dto.DiseaseDTO;
+import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.emr.objects.Sector;
+import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.location.City;
 import com.advenio.medere.objects.location.Country;
@@ -32,7 +36,6 @@ import com.advenio.medere.objects.location.Province;
 import com.advenio.medere.objects.location.i18n.CityI18n;
 import com.advenio.medere.objects.location.i18n.CountryI18n;
 import com.advenio.medere.objects.location.i18n.ProvinceI18n;
-import com.advenio.medere.objects.user.RegionalSettings;
 
 @Repository
 @Transactional
@@ -263,10 +266,20 @@ public class EntityDAO {
 		criteriaLanguage.where(builder.equal(rootLanguage.get("code"),languageCode));		
 		return  entityManager.createQuery(criteriaLanguage).getSingleResult();
 	}
+
+	public Page<Task> loadCreatedTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
+		return null;
+	}
+
+	public Page<Task> loadMyTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
+		return null;
+	}
+
+	public Page<Task> loadSectorsTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
+		return null;
+	}
 	
-	@Transactional(readOnly = true)
-	public List<RegionalSettings> loadAllRegionalSettings() {
-		return entityManager.createQuery("From RegionalSettings", RegionalSettings.class)
-				.getResultList();
+	public Page<Sector> loadSectors(PageLoadConfig<Sector> loadconfig, Long valueOf, boolean onlyCount) {
+		return null;
 	}
 }
