@@ -1,6 +1,10 @@
-package com.advenio.medere.emr.objects.user;
+package com.advenio.medere.emr.objects;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,23 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
-
+	@Id
 	private Long userid;
 	private String username;
 	private String name;
+	@ManyToOne
+	@JoinColumn(name = "profile")
+	private Profile profile;
 
-	public enum Profiles {
-		USER(1), SPECIALIST (2), SECTOR_MANAGER(3), AREA_MANAGER(4);
-
-		private long value;
-
-		private Profiles(long value) {
-			this.value = value;
-		}
-
-		public long getValue() {
-			return value;
-		}
-	}
 	
 }
