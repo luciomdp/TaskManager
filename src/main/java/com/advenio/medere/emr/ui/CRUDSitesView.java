@@ -5,8 +5,6 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 
 import org.springframework.web.client.RestTemplate;
-import com.advenio.medere.emr.view.edit.CopyInfoWindow;
-import com.advenio.medere.emr.view.edit.PrescriptionExpirationJobsWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +53,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 	private static final String WIDTH_BIG = "200px";
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
-
-	@Value("${medere.webmedererestcontroller}")
-	private String webmedererestcontrollerURL;
 
 	@Value("${messagesender.url}")
     private String urlMessageSender;
@@ -152,18 +147,6 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 			}
 		});
 
-		Button btnJobs = new Button(VaadinIcon.ROCKET.create());
-		btnJobs.addThemeVariants(ButtonVariant.LUMO_SMALL);
-		btnJobs.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-
-			private static final long serialVersionUID = -4512181173967300148L;
-
-			@Override
-			public void onComponentEvent(ClickEvent<Button> event) {
-				viewJobs();
-			}
-		});
-
 
 		Button btnNew = new Button(VaadinIcon.PLUS.create());
 		btnNew.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -186,23 +169,17 @@ public class CRUDSitesView extends BaseCRUDView<SiteDTO> implements HasDynamicTi
 
 			@Override
 			public void onComponentEvent(ClickEvent<Button> event) {
-				CopyInfoWindow w = context.getBean(CopyInfoWindow.class);
-				w.open();
+			
 			}
 		});
 
 		grid.addControlToHeader(btnCopySiteInfo, false);
-		grid.addControlToHeader(btnJobs, false);
 		grid.addControlToHeader(btnNew, false);
 		setViewContent(grid.getComponent());
 		titleDelete = sessionManager.getI18nMessage("SiteView");
 		titleDeleteItemText = sessionManager.getI18nMessage("AreYouSureToDeleteSite");
 	}
 
-	private  void viewJobs() {
-		PrescriptionExpirationJobsWindow prescriptionExpirationJobsWindow = context.getBean(PrescriptionExpirationJobsWindow.class);
-		prescriptionExpirationJobsWindow.open();
-	}
 
 	@Override
 	public String getPageTitle() {

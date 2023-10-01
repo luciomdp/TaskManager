@@ -33,9 +33,6 @@ import com.advenio.medere.objects.location.i18n.CityI18n;
 import com.advenio.medere.objects.location.i18n.CountryI18n;
 import com.advenio.medere.objects.location.i18n.ProvinceI18n;
 import com.advenio.medere.objects.user.RegionalSettings;
-import com.advenio.medere.rest.dto.location.CityDTO;
-import com.advenio.medere.rest.dto.location.CountryDTO;
-import com.advenio.medere.rest.dto.location.ProvinceDTO;
 
 @Repository
 @Transactional
@@ -265,48 +262,6 @@ public class EntityDAO {
 		Root<Language> rootLanguage = criteriaLanguage.from(Language.class);
 		criteriaLanguage.where(builder.equal(rootLanguage.get("code"),languageCode));		
 		return  entityManager.createQuery(criteriaLanguage).getSingleResult();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Transactional(readOnly = true)
-	public List<CountryDTO> getCountries(PageLoadConfig<CountryDTO> loadConfig,long language) throws PersistException {
-		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
-		params.add(new ParameterData().setParamName("language").setValue(language));
-		ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();
-
-		Page page = nativeQueryBuilder.runReport(loadConfig.getStartIndex(), loadConfig.getPageSize(),
-				loadConfig.getSortingList(), loadConfig.getFilters(), "getcountries",
-				language, params, true, true, fieldDataRequest);
-
-		return page.getData();
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Transactional(readOnly = true)
-	public List<ProvinceDTO> getProvinces(PageLoadConfig<ProvinceDTO> loadConfig,long language) throws PersistException {
-		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
-		params.add(new ParameterData().setParamName("language").setValue(language));
-		ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();
-
-		Page page = nativeQueryBuilder.runReport(loadConfig.getStartIndex(), loadConfig.getPageSize(),
-				loadConfig.getSortingList(), loadConfig.getFilters(), "getprovinces",
-				language, params, true, true, fieldDataRequest);
-
-		return page.getData();
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Transactional(readOnly = true)
-	public List<CityDTO> getCities(PageLoadConfig<CityDTO> loadConfig,long language) throws PersistException {
-		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
-		params.add(new ParameterData().setParamName("language").setValue(language));
-		ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();
-
-		Page page = nativeQueryBuilder.runReport(loadConfig.getStartIndex(), loadConfig.getPageSize(),
-				loadConfig.getSortingList(), loadConfig.getFilters(), "getcities",
-				language, params, true, true, fieldDataRequest);
-
-		return page.getData();
 	}
 	
 	@Transactional(readOnly = true)

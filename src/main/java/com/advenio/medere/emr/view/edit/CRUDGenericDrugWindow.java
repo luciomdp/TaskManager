@@ -24,13 +24,11 @@ import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.medicine.GenericDrug;
 
 import com.advenio.medere.objects.Language;
-import com.advenio.medere.objects.site.Site;
 import com.advenio.medere.server.session.ISessionManager;
 
 import com.advenio.medere.ui.views.BaseCRUDWindow;
 import com.advenio.medere.ui.views.ConfirmDialog;
 import com.advenio.medere.ui.views.IOnNotificationListener;
-import com.advenio.medere.utils.LogoProvider;
 import com.advenio.medere.utils.StringsUtils;
 import com.vaadin.flow.component.BlurNotifier.BlurEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -51,7 +49,6 @@ public class CRUDGenericDrugWindow extends BaseCRUDWindow implements HasDynamicT
 	private static final long serialVersionUID = -389362694626171100L;
 
 	
-	@Autowired protected LogoProvider logoProvider;
 	@Autowired protected SiteDAO siteDAO;
 	@Autowired protected EntityDAO entityDAO;
 	@Autowired protected MedereDAO medereDAO;

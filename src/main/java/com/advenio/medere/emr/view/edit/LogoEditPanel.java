@@ -11,7 +11,6 @@ import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.views.BaseCRUDWindow;
 import com.advenio.medere.ui.views.ConfirmDialog;
 import com.advenio.medere.ui.views.IOnNotificationListener;
-import com.advenio.medere.utils.LogoProvider;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Image;
@@ -26,7 +25,6 @@ public class  LogoEditPanel extends BaseCRUDWindow{
 	
 	@Autowired protected ApplicationContext context;
 	@Autowired protected SiteDAO siteDAO;
-	@Autowired protected LogoProvider logoProvider;
 	
 	protected static final String IMG_PATH = "imgs/";
 	private final int IMG_WIDTH = 128;
@@ -62,18 +60,7 @@ public class  LogoEditPanel extends BaseCRUDWindow{
 		lblCurrentLogo = new H4(sessionManager.getI18nMessage("CurrentLogo"));
 		lblCurrentLogo.getStyle().set("margin-top", "0.5em");
 		vlCurrentLogo.add(lblCurrentLogo);
-		if (site != null && site.getLogoFileName() != null && site.getLogoFileHash() != null) 
-			logoImage = logoProvider.getLogoImage(site.getLogoFileName(), site.getLogoFileHash());
-		if(logoImage != null) {
-			logoImage.setWidth(IMG_WIDTH, Unit.PIXELS);
-			logoImage.setHeight(IMG_HEIGHT, Unit.PIXELS);
-			logoImage.setTitle(sessionManager.getI18nMessage("CurrentLogo"));
-			vlCurrentLogo.add(logoImage);
-		}
-		else {
-			lblNoImage = new Label(sessionManager.getI18nMessage("NoCompanyLogo"));
-			vlCurrentLogo.add(lblNoImage);
-		}
+		
 		vlCurrentLogo.setWidth("50%");
 		vlCurrentLogo.setHeight("50%");
 		imgUploader.setWidth("50%");
