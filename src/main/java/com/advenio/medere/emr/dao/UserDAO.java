@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.IUserDAO;
+import com.advenio.medere.emr.objects.Profile;
+import com.advenio.medere.emr.objects.Profile.Profiles;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.dto.users.IPLoginAttemptDTO;
 import com.advenio.medere.objects.dto.users.UserDTO;
@@ -108,31 +110,36 @@ public class UserDAO implements IUserDAO {
 		createdTasksGrid.setItemId(Long.valueOf(i));
 		createdTasksGrid.setItemName("Tareas creadas");
 		createdTasksGrid.setOrder(i++);
-			
-		MenuItemDTO myTasksGrid = new MenuItemDTO();
-		myTasksGrid.setIcon("home");
-		myTasksGrid.setItemClassName("com.advenio.medere.emr.ui.MyTasksView");
-		myTasksGrid.setItemId(Long.valueOf(i));
-		myTasksGrid.setItemName("Mis tareas");
-		myTasksGrid.setOrder(i++);
-
-		MenuItemDTO sectorTasksGrid = new MenuItemDTO();
-		sectorTasksGrid.setIcon("home");
-		sectorTasksGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsTasksView");
-		sectorTasksGrid.setItemId(Long.valueOf(i));
-		sectorTasksGrid.setItemName("Tareas de sector");
-		sectorTasksGrid.setOrder(i++);
-
-		MenuItemDTO sectorsGrid = new MenuItemDTO();
-		sectorsGrid.setIcon("home");
-		sectorsGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsView");
-		sectorsGrid.setItemId(Long.valueOf(i));
-		sectorsGrid.setItemName("Lista de sectores");
-		sectorsGrid.setOrder(i++);
-
 		menu.add(createdTasksGrid);
-		menu.add(sectorTasksGrid);
-		menu.add(sectorsGrid);;
+
+		if((profileId == Profiles.SPECIALIST.getValue()) || (profileId == Profiles.SECTOR_MANAGER.getValue()) || (profileId == Profiles.AREA_MANAGER.getValue())) {
+			MenuItemDTO myTasksGrid = new MenuItemDTO();
+			myTasksGrid.setIcon("home");
+			myTasksGrid.setItemClassName("com.advenio.medere.emr.ui.MyTasksView");
+			myTasksGrid.setItemId(Long.valueOf(i));
+			myTasksGrid.setItemName("Mis tareas");
+			myTasksGrid.setOrder(i++);
+			menu.add(myTasksGrid);
+		}
+		if((profileId == Profiles.SECTOR_MANAGER.getValue()) || (profileId == Profiles.AREA_MANAGER.getValue())) {
+			MenuItemDTO sectorTasksGrid = new MenuItemDTO();
+			sectorTasksGrid.setIcon("home");
+			sectorTasksGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsTasksView");
+			sectorTasksGrid.setItemId(Long.valueOf(i));
+			sectorTasksGrid.setItemName("Tareas de sector");
+			sectorTasksGrid.setOrder(i++);
+			menu.add(sectorTasksGrid);
+		}
+		if(profileId == Profiles.AREA_MANAGER.getValue()) {
+			MenuItemDTO sectorsGrid = new MenuItemDTO();
+			sectorsGrid.setIcon("home");
+			sectorsGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsView");
+			sectorsGrid.setItemId(Long.valueOf(i));
+			sectorsGrid.setItemName("Lista de sectores");
+			sectorsGrid.setOrder(i++);
+			menu.add(sectorsGrid);
+		}
+		
 		return menu;
 	}
 	
