@@ -58,7 +58,15 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 		grid.getGrid().addColumn(e -> e.getDatelimit()!=null?e.getDatelimit():"").setHeader("Fecha limite").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("solver");;
+
+		grid.getGrid().addItemClickListener(item -> {
+			if(!item.getColumn().getId().isPresent())
+				return;
+			if(item.getColumn().getId().get().equals("solver")) {
+				//TODO window de asignar tarea a especialista
+			}
+		});
 		
 		grid.init();
 	

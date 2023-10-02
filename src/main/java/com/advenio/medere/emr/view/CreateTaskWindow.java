@@ -128,6 +128,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	 }
   
 	 protected void accept() {
+		//TODO agregar campos y ponerlos en la task cuando se crea
 		Task t = new Task();
 		t.setDescription(txtDescription.getValue());
 		t.setOwner(owner);
