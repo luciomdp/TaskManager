@@ -1,5 +1,7 @@
 package com.advenio.medere.emr.objects;
 
+import java.time.LocalDate;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,6 +18,7 @@ public class Task {
     private Long taskid;
     private String title;
     private String description;
+    private LocalDate dateLimit;
     @ManyToOne
     @JoinColumn(name = "parenttask")
     private Task parentTask;
@@ -31,5 +34,12 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "sector")
     private Sector sector;
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "priority")
+    private Priority priority;
+
 
 }

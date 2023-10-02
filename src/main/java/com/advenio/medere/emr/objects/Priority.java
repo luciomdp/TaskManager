@@ -11,14 +11,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Profile {
-    
-	public enum Profiles {
-		USER(1), SPECIALIST (2), SECTOR_MANAGER(3), AREA_MANAGER(4);
+public class Priority {
+
+    public enum Priorities {
+        HIGH(1),
+        MEDIUM(2),
+        LOW(3);
 
 		private long value;
 
-		private Profiles(long value) {
+		private Priorities(long value) {
 			this.value = value;
 		}
 
@@ -29,7 +31,6 @@ public class Profile {
 
 
     @Id
-    private Long profile;
+    private Long priority;
     private String description;
-
 }
