@@ -15,10 +15,10 @@ import lombok.Setter;
 @Setter
 public class Task {
     @Id
-    private Long taskid;
+    private Long task;
     private String title;
     private String description;
-    private LocalDate dateLimit;
+    private LocalDate datelimit;
     @ManyToOne
     @JoinColumn(name = "parenttask")
     private Task parentTask;
