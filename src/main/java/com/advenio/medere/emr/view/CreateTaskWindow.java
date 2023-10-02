@@ -13,6 +13,7 @@ import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.objects.User;
+import com.advenio.medere.emr.objects.State.States;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.components.grid.DataGrid;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
@@ -23,6 +24,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -50,11 +52,12 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
    	private HorizontalLayout footerLayout;
 	private VerticalLayout vlMain;
    	private HorizontalLayout headerLayout;
+	protected Button btnCancel;
+   	protected Button btnAccept;
 	
 	private TextField txtTitle;
 	private Label lblOwner;
 	private ComboBox<Sector> cboSector;
-	private Button btnCancelTask;
 	private TextArea txtDescription;
 	private ComboBox<State> cboState;
 
@@ -82,7 +85,10 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		cboSector.setItems(entityDAO.loadSectors());
 		cboSector.setItemLabelGenerator(e -> e.getDescription());
 
-		btnCancelTask = new Button();
+		this.btnCancel = new Button(VaadinIcon.CLOSE.create());
+		this.btnCancel.addClickListener(e -> cancel());
+		this.btnAccept = new Button(VaadinIcon.CHECK.create());
+		this.btnAccept.addClickListener(e -> accept());
 
 		cboState = new ComboBox<State>("Estado");
 		cboState.setSizeFull();
@@ -94,11 +100,11 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 
 		vlMain = new VerticalLayout();
 		vlMain.setSizeFull();
-		headerLayout = new HorizontalLayout(new Component[]{txtTitle,lblOwner,btnCancelTask});
+		headerLayout = new HorizontalLayout(new Component[]{txtTitle,lblOwner});
 		headerLayout.setSizeUndefined();
 		headerLayout.setSpacing(true);
 		headerLayout.setPadding(false);
-		footerLayout = new HorizontalLayout(new Component[]{});
+		footerLayout = new HorizontalLayout(new Component[]{this.btnCancel, this.btnAccept});
 		footerLayout.setSizeUndefined();
 		footerLayout.setSpacing(true);
 		footerLayout.setPadding(false);
@@ -116,6 +122,22 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	public String getPageTitle() {
 		return caption;
 	}
+
+	protected void cancel() {
+		this.close();
+	 }
+  
+	 protected void accept() {
+		Task t = new Task();
+		t.setDescription(txtDescription.getValue());
+		t.setOwner(owner);
+		t.setParentTask(null);
+		t.setSector(cboSector.getValue());
+		t.setSolver(null);
+		t.setState(entityDAO.getStateById(States.SIN_ASIGNAR.getValue()));
+		t.setTitle(txtTitle.getValue());
+		entityDAO.createTask(t);
+	 };
 
 	private void inputData() {
 		lblOwner.setText(owner.getName());

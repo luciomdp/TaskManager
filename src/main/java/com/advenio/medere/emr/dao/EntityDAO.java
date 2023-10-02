@@ -299,4 +299,12 @@ public class EntityDAO {
 		item.setState(entityManager.find(State.class, States.CANCELADO.getValue()));
 		entityManager.merge(item);
 	}
+
+    public State getStateById(Long value) {
+        return entityManager.createQuery("From State WHERE state = :state",State.class).setParameter("state", value).getResultList().get(0);
+    }
+
+    public void createTask(Task t) {
+		entityManager.persist(t);
+    }
 }
