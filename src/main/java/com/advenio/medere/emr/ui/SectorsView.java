@@ -10,22 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import com.advenio.medere.dao.pagination.Page;
-import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Sector;
-import com.advenio.medere.emr.view.edit.CRUDGenericDrugWindow;
-import com.advenio.medere.emr.view.edit.EventStateChanged;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.GridLoadListener;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
 import com.advenio.medere.ui.views.BaseCRUDView;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 
@@ -34,13 +27,11 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.Command;
-
-import net.engio.mbassy.listener.Handler;
 
 @Route(value = "sectorsGrid", layout = MainLayout.class)
 public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle {
 
+	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
@@ -62,32 +53,19 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	@Override
 	protected void createGrid() {
 		grid = new DataGrid<Sector>(Sector.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
-		grid.setLoadListener(new GridLoadListener<Sector>() {
-
-			@Override
-			public Page<Sector> load(PageLoadConfig<Sector> loadconfig) {
-				return entityDAO.loadSectors(loadconfig, sessionManager.getUser().getLanguageId(),false);
-			}
-			
-			@Override
-			public Integer count(PageLoadConfig<Sector> loadconfig) {
-				return entityDAO.loadSectors(loadconfig, sessionManager.getUser().getLanguageId(),true).getCount();
-			}
-			
-			
-		});
+		
+		grid.getGrid().setItems(entityDAO.loadSectors());
 
 		grid.getGrid().removeAllColumns();
 		
-		grid.getGrid().addColumn("name").setHeader(sessionManager.getI18nMessage("Name")).setTextAlign(ColumnTextAlign.CENTER)
-		.setWidth(WIDTH_BIG).setId("name");
-		
-		grid.getGrid().addColumn("observations").setHeader(sessionManager.getI18nMessage("Observations")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
+		grid.getGrid().removeAllColumns();
 
-		grid.getGrid().addColumn("maxdaystreatmentduration").setHeader(sessionManager.getI18nMessage("MaxDaysTreatmentDuration")).setTextAlign(ColumnTextAlign.CENTER)
-				.setWidth(WIDTH_BIG);
-	
+		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Prioridad").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		
+		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Titulo").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		
+		grid.getGrid().addColumn(e -> e.getSector_manager()!=null?e.getSector_manager().getName():"").setHeader("Creador").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+
 		grid.init();
 		
 		grid.getFilterController().addFilter(new TextFilterConfig("name","").addField("name"), true);
@@ -118,59 +96,19 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	}
 	@Override
 	public String getPageTitle() {
-		return sessionManager.getI18nMessage("EditGenericDrug");
+		return "Sectores";
 	}
 
 	@Override
 	protected void editItem(Sector item) {
-		windowOpen = true;
-		CRUDGenericDrugWindow w = context.getBean(CRUDGenericDrugWindow.class, sessionManager.getI18nMessage("EditGenericDrug"));// sessionManager.getI18nMessage("EditMMSI"));
-		//w.editItem(genericDrugDAO.findGenericDrugById(item.getGenericDrug().longValue()));
-		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
-			@Override
-            public void onComponentEvent(DetachEvent event) {
-                windowOpen = false;
-                if (pendingRefresh) {
-                    pendingRefresh = false;
-                    grid.loadData();
-                }
-            }
-		});
 		
 	}
 
 	@Override
 	protected void newItem() {
-		windowOpen = true;
-		CRUDGenericDrugWindow w = context.getBean(CRUDGenericDrugWindow.class, sessionManager.getI18nMessage("NewGenericDrug"));
-		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
-			@Override
-            public void onComponentEvent(DetachEvent event) {
-                windowOpen = false;
-                if (pendingRefresh) {
-                    pendingRefresh = false;
-                    grid.loadData();
-                }
-            }
-		});
+		
 	}
 	
-	@Handler
-    public void handleEvent(EventStateChanged event) {
-        if ((getUI().isPresent()) && (!getUI().get().isClosing()) ) {
-            getUI().get().access(new Command() {
-                private static final long serialVersionUID = 7766674267731647725L;
-                @Override
-                public void execute() {
-                    if (windowOpen) {
-                        pendingRefresh = true;
-                    }else {
-                        grid.loadData();
-                    }
-                }
-            });
-        }
-    }
 
 	@Override
 	protected void deleteItem(Sector item) {
@@ -183,6 +121,10 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		}
 		grid.loadData();
 		
+	}
+
+	private void loadDataGrid() {
+		grid.getGrid().setItems(entityDAO.loadSectors());
 	}
 }
 

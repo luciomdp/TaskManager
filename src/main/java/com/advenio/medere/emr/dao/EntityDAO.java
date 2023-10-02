@@ -1,6 +1,7 @@
 package com.advenio.medere.emr.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -28,7 +29,10 @@ import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.DiseaseDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.objects.Sector;
+import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
+import com.advenio.medere.emr.objects.User;
+import com.advenio.medere.emr.objects.State.States;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.location.City;
 import com.advenio.medere.objects.location.Country;
@@ -267,19 +271,32 @@ public class EntityDAO {
 		return  entityManager.createQuery(criteriaLanguage).getSingleResult();
 	}
 
-	public Page<Task> loadCreatedTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
-		return null;
+	public List<Task> loadCreatedTasks(User owner) {
+		return entityManager.createQuery("From Task WHERE owner = :user AND state.state =! :deleted",Task.class).setParameter("user", owner).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 
-	public Page<Task> loadMyTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
-		return null;
+	public List<Task> loadMyTasks(User solver) {
+		return entityManager.createQuery("From Task WHERE solver = :solver AND state.state =! :deleted",Task.class).setParameter("solver", solver).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 
-	public Page<Task> loadSectorsTasks(PageLoadConfig<Task> loadconfig, Long valueOf, boolean onlyCount) {
-		return null;
+	public List<Task> loadSectorsTasks(Sector sector) {
+		return entityManager.createQuery("From Task WHERE sector = :sector AND state.state =! :deleted",Task.class).setParameter("sector", sector).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 	
-	public Page<Sector> loadSectors(PageLoadConfig<Sector> loadconfig, Long valueOf, boolean onlyCount) {
-		return null;
+	public List<Sector> loadSectors() {
+		return entityManager.createQuery("From Sector",Sector.class).getResultList();
+	}
+
+    public List<State> getStates() {
+        return entityManager.createQuery("From State",State.class).getResultList();
+    }
+
+	public List<Task> loadSubtasks(Task task) {
+		return entityManager.createQuery("From Task WHERE parentTask = :parent AND state.state =! :deleted",Task.class).setParameter("parent", task).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
+	}
+
+	public void deleteTask(Task item) {
+		item.setState(entityManager.find(State.class, States.CANCELADO.getValue()));
+		entityManager.merge(item);
 	}
 }
