@@ -2,6 +2,7 @@ package com.advenio.medere.emr.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.IUserDAO;
 import com.advenio.medere.emr.objects.Profile;
+import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.objects.Profile.Profiles;
 import com.advenio.medere.objects.Language;
@@ -52,6 +54,21 @@ public class UserDAO implements IUserDAO {
 	
 	public User findUserFull(String username) {
 		return entityManager.createQuery("From User WHERE username = :username",User.class).setParameter("username", username).getSingleResult();
+	}
+	public List<User> loadUserBySectorAndProfile(Profile profile, Sector sector) {
+		return entityManager.createQuery("From User WHERE sector = :sector and profile >= :profile",User.class).setParameter("sector", sector).setParameter("profile", profile).getResultList();
+	}
+	public List<User> loadUserBySector(Sector sector) {
+		return entityManager.createQuery("From User WHERE sector = :sector ",User.class).setParameter("sector", sector).getResultList();
+	}
+	public List<User> loadAllUsers() {
+		return entityManager.createQuery("From User",User.class).getResultList();
+	}
+	public List<User> loadUserByProfile(Profile profile) {
+		return entityManager.createQuery("From User WHERE profile >= :profile ",User.class).setParameter("profile", profile).getResultList();
+	}
+	public void updateUser (User user){
+		entityManager.merge(user);
 	}
 	
 	@Override
@@ -158,5 +175,6 @@ public class UserDAO implements IUserDAO {
 	public void changeUserLanguage(Object userid, long languageId) {
 	
 	}
+
 
 }

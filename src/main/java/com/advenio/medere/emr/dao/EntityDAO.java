@@ -28,6 +28,7 @@ import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.DiseaseDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.emr.objects.Profile;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
@@ -285,6 +286,12 @@ public class EntityDAO {
 	
 	public List<Sector> loadSectors() {
 		return entityManager.createQuery("From Sector",Sector.class).getResultList();
+	}
+	public Sector loadSector(Long sector) {
+		return entityManager.createQuery("From Sector where sector = :sector",Sector.class).setParameter("sector", sector).getSingleResult();
+	}
+	public Profile loadProfile(Long profile) {
+		return entityManager.createQuery("From Profile where profile = :profile",Profile.class).setParameter("profile", profile).getSingleResult();
 	}
 
     public List<State> getStates() {
