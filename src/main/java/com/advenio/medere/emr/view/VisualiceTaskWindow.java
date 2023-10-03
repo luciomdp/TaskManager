@@ -11,9 +11,8 @@ import com.advenio.medere.MessageBusContainer;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.advenio.medere.server.session.ISessionManager;
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
@@ -127,7 +126,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	}
 
 	private void createGrid() {
-		gridSubtasks = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);
+		gridSubtasks = new DataGrid<Task>(Task.class, true, false);
 
 		gridSubtasks.getGrid().setItems(entityDAO.loadSubtasks(task));
 

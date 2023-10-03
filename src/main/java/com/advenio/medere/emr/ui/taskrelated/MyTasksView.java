@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.emr.dao.EntityDAO;
+import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Task;
-import com.advenio.medere.emr.ui.framework.BaseCRUDView;
+import com.advenio.medere.emr.ui.framework.MainLayout;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
+import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
-import com.advenio.medere.ui.MainLayout;
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -36,6 +36,7 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
 	@Autowired private EntityDAO entityDAO;
+	@Autowired protected UserDAO userDAO;
 
 	@Autowired
 	private NativeSQLQueryBuilder nativeQueryBuilder;
@@ -47,9 +48,9 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid = new DataGrid<Task>(Task.class, false, false);
 		
-		grid.getGrid().setItems(entityDAO.loadMyTasks(null));
+		grid.getGrid().setItems(entityDAO.loadMyTasks(userDAO.findUserFull(sessionManager.getUser().getUsername())));
 
 		grid.getGrid().removeAllColumns();
 
@@ -62,9 +63,8 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 		grid.getGrid().addColumn(e -> e.getDatelimit()!=null?e.getDatelimit():"").setHeader("Fecha limite").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
 		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
-
-		grid.init();
 	
+		grid.init();
 	}
 
 	@PostConstruct

@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import com.advenio.medere.emr.dao.EntityDAO;
+import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Task;
-import com.advenio.medere.emr.ui.framework.BaseCRUDView;
+import com.advenio.medere.emr.ui.framework.MainLayout;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
+import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
-import com.advenio.medere.ui.MainLayout;
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -38,15 +38,17 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Autowired
 	protected EntityDAO entityDAO;
 	@Autowired
+	protected UserDAO userDAO;
+	@Autowired
 	protected ISessionManager sessionManager;
 	@Autowired
 	protected ApplicationContext context;
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);
+		grid = new DataGrid<Task>(Task.class, false, false);
 		
-		grid.getGrid().setItems(entityDAO.loadSectorsTasks(null));
+		grid.getGrid().setItems(entityDAO.loadSectorsTasks(userDAO.findUserFull(sessionManager.getUser().getUsername()).getSector()));
 
 		grid.getGrid().removeAllColumns();
 
@@ -67,9 +69,9 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 				//TODO window de asignar tarea a especialista
 			}
 		});
-		
+
 		grid.init();
-	
+		
 	}
 
 	@PostConstruct

@@ -1,12 +1,9 @@
-package com.advenio.medere.emr.ui.framework;
+package com.advenio.medere.emr.ui.framework.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.views.BaseView;
-import com.advenio.medere.ui.views.ConfirmDialog;
-import com.advenio.medere.ui.views.IOnNotificationListener;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;

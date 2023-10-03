@@ -129,7 +129,7 @@ public class UserDAO implements IUserDAO {
 
 		MenuItemDTO createdTasksGrid = new MenuItemDTO();
 		createdTasksGrid.setIcon("home");
-		createdTasksGrid.setItemClassName("com.advenio.medere.emr.ui.CreatedTasksView");
+		createdTasksGrid.setItemClassName("com.advenio.medere.emr.ui.taskrelated.CreatedTasksView");
 		createdTasksGrid.setItemId(Long.valueOf(i));
 		createdTasksGrid.setItemName("Tareas creadas");
 		createdTasksGrid.setOrder(i++);
@@ -138,7 +138,7 @@ public class UserDAO implements IUserDAO {
 		if((profileId == Profiles.SPECIALIST.getValue()) || (profileId == Profiles.SECTOR_MANAGER.getValue()) || (profileId == Profiles.AREA_MANAGER.getValue())) {
 			MenuItemDTO myTasksGrid = new MenuItemDTO();
 			myTasksGrid.setIcon("home");
-			myTasksGrid.setItemClassName("com.advenio.medere.emr.ui.MyTasksView");
+			myTasksGrid.setItemClassName("com.advenio.medere.emr.ui.taskrelated.MyTasksView");
 			myTasksGrid.setItemId(Long.valueOf(i));
 			myTasksGrid.setItemName("Mis tareas");
 			myTasksGrid.setOrder(i++);
@@ -147,7 +147,7 @@ public class UserDAO implements IUserDAO {
 		if((profileId == Profiles.SECTOR_MANAGER.getValue()) || (profileId == Profiles.AREA_MANAGER.getValue())) {
 			MenuItemDTO sectorTasksGrid = new MenuItemDTO();
 			sectorTasksGrid.setIcon("home");
-			sectorTasksGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsTasksView");
+			sectorTasksGrid.setItemClassName("com.advenio.medere.emr.ui.taskrelated.SectorsTasksView");
 			sectorTasksGrid.setItemId(Long.valueOf(i));
 			sectorTasksGrid.setItemName("Tareas de sector");
 			sectorTasksGrid.setOrder(i++);
@@ -156,7 +156,7 @@ public class UserDAO implements IUserDAO {
 		if(profileId == Profiles.AREA_MANAGER.getValue()) {
 			MenuItemDTO sectorsGrid = new MenuItemDTO();
 			sectorsGrid.setIcon("home");
-			sectorsGrid.setItemClassName("com.advenio.medere.emr.ui.SectorsView");
+			sectorsGrid.setItemClassName("com.advenio.medere.emr.ui.taskrelated.SectorsView");
 			sectorsGrid.setItemId(Long.valueOf(i));
 			sectorsGrid.setItemName("Lista de sectores");
 			sectorsGrid.setOrder(i++);

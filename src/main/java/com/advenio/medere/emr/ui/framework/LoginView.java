@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import com.advenio.medere.IAppController;
+import com.advenio.medere.emr.ui.UIUtils;
 import com.advenio.medere.objects.dto.users.UserDTO;
 import com.advenio.medere.security.LoginResponse;
 import com.advenio.medere.security.SecurityConfig;
@@ -25,12 +26,12 @@ import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.services.users.IUserService;
 import com.advenio.medere.ui.components.FlexBoxLayout;
 import com.advenio.medere.ui.components.recaptcha.ReCaptcha;
-import com.advenio.medere.ui.util.UIUtils;
 import com.advenio.medere.utils.StringsUtils;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -187,6 +188,7 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 		super.onAttach(attachEvent);
 		if (imageLogo != null) { //as the logo is dynamic, it is need to reload again
 			UIUtils.getLogoImage(imageLogo);
+			imageLogo.setWidth(150, Unit.PIXELS);
 		}
 		
 		if (imageLogoBrand != null) { //as the logo is dynamic, it is need to reload again
@@ -248,6 +250,7 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 		if (showbrandlogo) {
 			imageLogoBrand = new Image();
 			imageLogoBrand.addClassName("logobrand");
+			imageLogoBrand.setWidth(100,Unit.PIXELS);
 			
 			HorizontalLayout hlLogoBrand = new HorizontalLayout();
 			hlLogoBrand.setSizeFull();
@@ -326,13 +329,13 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 		} catch (ResourceAccessException rce) {
 			UI.getCurrent().access(() -> {
 				password.setValue("");
-				UIUtils.showErrorNotification(vaadinSessionManager.getI18nMessage("CommunicationErrorCaptionMessage"),4000, null );
+				UIUtils.showErrorNotification(vaadinSessionManager.getI18nMessage("CommunicationErrorCaptionMessage"),1000, null );
 			});
 			enableLoginButton();
 		} catch (Exception e) {
 			UI.getCurrent().access(() -> {
 				password.setValue("");
-				UIUtils.showErrorNotification(vaadinSessionManager.getI18nMessage("Error"),4000, null );
+				UIUtils.showErrorNotification("Verifique usuario y contraseña",1000, null );
 			});
 			enableLoginButton();
 		}
@@ -479,6 +482,7 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 
 		imageLogo =  UIUtils.getLogoImage();
 		imageLogo.addClassName("logo");
+		imageLogo.setWidth(150, Unit.PIXELS);
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setSizeFull();
 		hl.setHeight("3em");

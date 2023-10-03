@@ -9,14 +9,13 @@ import org.springframework.context.ApplicationContext;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Task;
-import com.advenio.medere.emr.ui.framework.BaseCRUDView;
+import com.advenio.medere.emr.ui.framework.MainLayout;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
+import com.advenio.medere.emr.ui.framework.components.grid.filters.config.TextFilterConfig;
+import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.CreateTaskWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
-import com.advenio.medere.ui.MainLayout;
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
-import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -47,7 +46,7 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Override
 	protected void createGrid() {
-		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true	
+		grid = new DataGrid<Task>(Task.class, false, false);
 																								
 		grid.getGrid().setItems(entityDAO.loadCreatedTasks(userDAO.findUserFull(sessionManager.getUser().getUsername())));
 
@@ -63,19 +62,14 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-
 		grid.init();
-		
-		grid.getFilterController().addFilter(new TextFilterConfig("apptitle","").addField("apptitle"), true);
-		grid.getFilterController().addFilter(new TextFilterConfig("companyname","").addField("companyname"), true);
 	
 	}
 
 	@PostConstruct
 	@Override
 	public void init() {
-		createGrid();
-		
+		super.init();
 		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
 
 			private static final long serialVersionUID = -1266658791714326144L;
@@ -87,6 +81,8 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 				}
 			}
 		});
+
+		
 
 		titleDelete = "Borrar tarea";
 		titleDeleteItemText = "Estas seguro de borrar esa tarea?";

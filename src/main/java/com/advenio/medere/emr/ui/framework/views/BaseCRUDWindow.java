@@ -1,4 +1,4 @@
-package com.advenio.medere.emr.ui.framework;
+package com.advenio.medere.emr.ui.framework.views;
 
 import javax.annotation.PostConstruct;
 

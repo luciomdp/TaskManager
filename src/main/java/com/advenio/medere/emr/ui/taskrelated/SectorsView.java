@@ -8,23 +8,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataIntegrityViolationException;
-
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Sector;
+import com.advenio.medere.emr.ui.framework.MainLayout;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
+import com.advenio.medere.emr.ui.framework.MainLayout;
+import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.ui.components.SelectUserWindow;
-import com.advenio.medere.emr.ui.framework.BaseCRUDView;
+import com.advenio.medere.emr.ui.framework.views.views.BaseCRUDView;
 import com.advenio.medere.server.session.ISessionManager;
-import com.advenio.medere.ui.MainLayout;
-import com.advenio.medere.ui.components.grid.DataGrid;
-import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
-import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
@@ -55,7 +51,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	protected void createGrid() {
 		//TODO cambiar a SectorDTO porque vamos a tener que tener una columna que nos indique la cantidad de especialistas por sector
 		//TODO armar window de alta baja y mod de especialista por sector
-		grid = new DataGrid<Sector>(Sector.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true																								// para// filtro
+		grid = new DataGrid<Sector>(Sector.class, false, false);
 		
 		grid.getGrid().setItems(entityDAO.loadSectors());
 
@@ -88,6 +84,8 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		grid.getFilterController().addFilter(new TextFilterConfig("name","").addField("name"), true);
 		
 		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
+
+		grid.init();
 	}
 
 	@PostConstruct
@@ -117,14 +115,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 
 	@Override
 	protected void deleteItem(Sector item) {
-		// TODO Auto-generated method stub
-		try {
-			//genericDrugDAO.delete(((Sector)item).getGenericdrug().longValue());
-			Notification.show(sessionManager.getI18nMessage("DrugWadSuccesfullyDeleted")).setPosition(Position.MIDDLE);
-		}catch(DataIntegrityViolationException e) {
-			Notification.show(sessionManager.getI18nMessage("ImposibleToDeleteThereAreReferencesToThisItem")).setPosition(Position.MIDDLE);
-		}
-		grid.loadData();
+		loadDataGrid();
 		
 	}
 
