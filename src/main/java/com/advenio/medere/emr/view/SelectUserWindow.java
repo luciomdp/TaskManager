@@ -1,6 +1,7 @@
-package com.advenio.medere.emr.ui.components;
+package com.advenio.medere.emr.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
@@ -11,12 +12,9 @@ import com.advenio.medere.emr.ui.framework.views.BaseCRUDWindow;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
-import lombok.Getter;
-import lombok.Setter;
 
 @SpringComponent
-@Getter
-@Setter
+@Scope("prototype")
 public class SelectUserWindow extends BaseCRUDWindow {
     private ComboBox<User> cboUsers;
     @Autowired
@@ -27,11 +25,10 @@ public class SelectUserWindow extends BaseCRUDWindow {
     private Long profileId;
     private User selectedUser;
 
-    public SelectUserWindow(String windowTitle, Long profileId, Long sectorId) {
-        super(windowTitle);
+    public SelectUserWindow(String caption, Long profileId, Long sectorId) {
+        super(caption);
         this.sectorId = sectorId;
         this.profileId = profileId;
-        createControls();
     }
 
     @Override
@@ -73,5 +70,10 @@ public class SelectUserWindow extends BaseCRUDWindow {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'editItem'");
     }
+
+    public User getSelectedUser() {
+        return selectedUser;
+    }
+ 
     
 }

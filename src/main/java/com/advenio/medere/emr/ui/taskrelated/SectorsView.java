@@ -14,8 +14,8 @@ import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
+import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.objects.User;
-import com.advenio.medere.emr.ui.components.SelectUserWindow;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
@@ -54,25 +54,25 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		grid.getGrid().setItems(entityDAO.loadSectors());
 
 		grid.getGrid().removeAllColumns();
-		
-		grid.getGrid().removeAllColumns();
 
-		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Prioridad").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Nombre").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
-		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Titulo").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Descripción").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
 		
 		grid.getGrid().addColumn(e -> e.getSector_manager()!=null?e.getSector_manager().getName():"").setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");;
 		
-		grid.getGrid().addItemClickListener(e -> {
-			if (e.getColumn().getId().equals("sectormanager")){
+		grid.getGrid().addItemClickListener(item -> {
+			if(!item.getColumn().getId().isPresent())
+				return;
+			if(item.getColumn().getId().get().equals("sectormanager")) {
 				//TODO COMPLETADA armar window de cambio de jefe de sector
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, e.getItem().getSector());
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, item.getItem().getSector());
 				w.addDialogCloseActionListener(c -> {
 					User u = w.getSelectedUser();
 					u.setSectorspecialist(null);
 					u.setAreamanager(null);
-					u.setSectormanager(e.getItem());
+					u.setSectormanager(item.getItem());
 					userDAO.updateUser(u);
 				});
 			}
