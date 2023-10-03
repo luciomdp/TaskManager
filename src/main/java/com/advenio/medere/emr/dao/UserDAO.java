@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.IUserDAO;
 import com.advenio.medere.emr.objects.Profile;
+import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.objects.Profile.Profiles;
 import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.dto.users.IPLoginAttemptDTO;
@@ -49,26 +50,31 @@ public class UserDAO implements IUserDAO {
 				
 	}
 	
+	public User findUserFull(String username) {
+		return entityManager.createQuery("From User WHERE username = :username",User.class).setParameter("username", username).getSingleResult();
+	}
 	
 	@Override
 	public UserDTO findUser(String username) {
 	
-		
+		User u = findUserFull(username);
+
 		UserDTO user = new UserDTO();
 		user.setActive(true);
 		user.setBlocked(false);
-		user.setFirstname("Dummy");
+		user.setFirstname(u.getName());
 		user.setLanguageCode("es");
-		user.setLastname("User");
-		user.set_user("1");
-		user.setProfile("admin");
-		user.setProfileid(BigInteger.valueOf(1));
+		user.setLastname("");
+		user.set_user(u.get_user().toString());
+		user.setProfile(u.getProfile().getDescription());
+		user.setProfileid(BigInteger.valueOf(u.getProfile().getProfile()));
 		user.setUsername(username);
 		
 		SecurityConfig securityConfig = context.getBean(SecurityConfig.class);
 		
-		user.setPassword(securityConfig.passwordEncoder().encode(userPassword));
+		user.setPassword(securityConfig.passwordEncoder().encode(u.getPassword()));
 		user.setLanguageId(1);
+
 		return user;
 	}
 

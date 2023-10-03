@@ -1,4 +1,4 @@
-package com.advenio.medere.emr.ui;
+package com.advenio.medere.emr.ui.taskrelated;
 
 import javax.annotation.PostConstruct;
 
@@ -13,16 +13,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Sector;
+import com.advenio.medere.emr.ui.framework.BaseCRUDView;
 import com.advenio.medere.server.session.ISessionManager;
 import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
-import com.advenio.medere.ui.views.BaseCRUDView;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.HasDynamicTitle;

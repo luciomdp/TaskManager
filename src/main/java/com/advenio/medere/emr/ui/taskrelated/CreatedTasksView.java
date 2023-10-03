@@ -1,4 +1,4 @@
-package com.advenio.medere.emr.ui;
+package com.advenio.medere.emr.ui.taskrelated;
 
 import javax.annotation.PostConstruct;
 
@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import com.advenio.medere.emr.dao.EntityDAO;
+import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Task;
+import com.advenio.medere.emr.ui.framework.BaseCRUDView;
 import com.advenio.medere.emr.view.CreateTaskWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
@@ -15,7 +17,6 @@ import com.advenio.medere.ui.MainLayout;
 import com.advenio.medere.ui.components.grid.DataGrid;
 import com.advenio.medere.ui.components.grid.filters.GridFilterController.FILTERMODE;
 import com.advenio.medere.ui.components.grid.filters.config.TextFilterConfig;
-import com.advenio.medere.ui.views.BaseCRUDView;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -36,6 +37,8 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Autowired
 	protected EntityDAO entityDAO;
+	@Autowired
+	protected UserDAO userDAO;
 
 	@Autowired
 	protected ISessionManager sessionManager;
@@ -45,8 +48,8 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	protected void createGrid() {
 		grid = new DataGrid<Task>(Task.class, true, false, FILTERMODE.FILTERMODELAZY);// primer boolean true	
-																									// para// filtro
-		grid.getGrid().setItems(entityDAO.loadCreatedTasks(null));
+																								
+		grid.getGrid().setItems(entityDAO.loadCreatedTasks(userDAO.findUserFull(sessionManager.getUser().getUsername())));
 
 		grid.getGrid().removeAllColumns();
 

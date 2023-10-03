@@ -1,4 +1,4 @@
-package com.advenio.medere.emr.ui;
+package com.advenio.medere.emr.ui.framework;
 
 import java.util.List;
 import java.util.Map;
