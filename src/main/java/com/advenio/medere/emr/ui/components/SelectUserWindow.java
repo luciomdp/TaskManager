@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
-import com.advenio.medere.emr.dao.dto.PrescriptionExpirationJobDTO;
 import com.advenio.medere.emr.objects.Profile;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.User;
-import com.advenio.medere.emr.ui.framework.BaseCRUDWindow;
+import com.advenio.medere.emr.ui.framework.views.BaseCRUDWindow;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import lombok.Getter;

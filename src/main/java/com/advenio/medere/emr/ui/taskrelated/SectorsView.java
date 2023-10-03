@@ -13,11 +13,9 @@ import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
-import com.advenio.medere.emr.ui.framework.MainLayout;
-import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
+import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.ui.components.SelectUserWindow;
-import com.advenio.medere.emr.ui.framework.views.views.BaseCRUDView;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
@@ -64,7 +62,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Titulo").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
 		
-		grid.getGrid().addColumn(e -> e.getSector_manager()!=null?e.getSector_manager().getName():"").setHeader("Creador").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");;
+		grid.getGrid().addColumn(e -> e.getSector_manager()!=null?e.getSector_manager().getName():"").setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");;
 		
 		grid.getGrid().addItemClickListener(e -> {
 			if (e.getColumn().getId().equals("sectormanager")){
@@ -81,11 +79,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		});
 		grid.init();
 		
-		grid.getFilterController().addFilter(new TextFilterConfig("name","").addField("name"), true);
-		
 		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
-
-		grid.init();
 	}
 
 	@PostConstruct
