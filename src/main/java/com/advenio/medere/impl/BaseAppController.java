@@ -26,7 +26,7 @@ public class BaseAppController implements IAppController, I18NProvider {
 	@Value("${medere.defaultLangCode:es}")
 	private String defaultLangCode;
 	
-	@Value("${medere.appPath:}")
+	@Value("${medere.appPath:home}")
 	private String appPath;
 	
 	@Value("${medere.appTitle:Medere UI}")

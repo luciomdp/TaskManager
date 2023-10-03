@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.advenio.medere</groupId>
-	<artifactId>sitesmanagement</artifactId>
+	<artifactId>taskmanager</artifactId>
 	<version>1.0.0</version>
-	<name>sitesmanagement</name>
+	<name>taskmanager</name>
 	<description>Medere Sites managment</description>
 	
 	<properties>

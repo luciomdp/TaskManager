@@ -117,5 +117,3 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 	}
 
 }
-
-
