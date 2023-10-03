@@ -98,6 +98,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		txtDescription = new TextArea("Descripción");
 		txtDescription.setSizeFull();	
 
+		//TODO arreglar layouts Visualice es igual
 		vlMain = new VerticalLayout();
 		vlMain.setSizeFull();
 		headerLayout = new HorizontalLayout(new Component[]{txtTitle,lblOwner});
@@ -128,7 +129,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	 }
   
 	 protected void accept() {
-		//TODO agregar campos y ponerlos en la task cuando se crea
+		//TODO agregar campos y ponerlos en la task cuando se crea Visualice es igual
 		Task t = new Task();
 		t.setDescription(txtDescription.getValue());
 		t.setOwner(owner);
