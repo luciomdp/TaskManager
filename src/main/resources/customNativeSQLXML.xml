@@ -11,7 +11,17 @@
 		<queryHasWhere>false</queryHasWhere>
 		<queryReplaceParts />
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
-
+	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
+		<query>
+			Select s.name, s.description, (select count (t.task) from task t where t.sector = s.sector and t.state = 2) as qtypendingtasksassigned, (select count (u.user) from user u where u.sector = s.sector)
+			from Sector s
+		</query>
+		<name>loadSectorDTOInfo</name>
+		<classNameResult></classNameResult>
+		<resultTransformerClass>com.advenio.medere.emr.dao.dto.SectorDTO</resultTransformerClass>
+		<queryHasWhere>true</queryHasWhere>
+		<queryReplaceParts />
+	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 
 	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
