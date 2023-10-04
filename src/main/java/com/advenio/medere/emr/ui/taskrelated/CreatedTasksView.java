@@ -113,7 +113,7 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Override
 	protected void newItem() {
-		CreateTaskWindow w = context.getBean(CreateTaskWindow.class, "Crear tarea",sessionManager.getUser());
+		CreateTaskWindow w = context.getBean(CreateTaskWindow.class, "Crear tarea",userDAO.findUserFull(sessionManager.getUser().getUsername()));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {

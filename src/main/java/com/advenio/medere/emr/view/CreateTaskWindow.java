@@ -77,9 +77,9 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		txtTitle = new TextField("Titulo");
 		txtTitle.setSizeFull();	
 
-		lblOwner = new Label(this.caption + ": ");
+		lblOwner = new Label("Creado por: " + owner.getName());
 
-		cboSector = new ComboBox<Sector>("Estado");
+		cboSector = new ComboBox<Sector>("Sector");
 		cboSector.setSizeFull();
 		cboSector.setItems(entityDAO.loadSectors());
 		cboSector.setItemLabelGenerator(e -> e.getDescription());
@@ -98,9 +98,14 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		txtDescription.setSizeFull();	
 
 		//TODO arreglar layouts Visualice es igual
-		vlMain = new VerticalLayout();
+		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboSector);
+
+		vlMain = new VerticalLayout(hlCbos,txtDescription);
 		vlMain.setSizeFull();
-		headerLayout = new HorizontalLayout(new Component[]{txtTitle,lblOwner});
+
+		VerticalLayout hlHeader = new VerticalLayout(txtTitle,lblOwner);
+
+		headerLayout = new HorizontalLayout(new Component[]{hlHeader});
 		headerLayout.setSizeUndefined();
 		headerLayout.setSpacing(true);
 		headerLayout.setPadding(false);
@@ -114,8 +119,8 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		mainLayout.setMargin(false);
 		mainLayout.setPadding(false);
 		mainLayout.setSpacing(true);
+		add(mainLayout);
 		open();
-		inputData();
 	}
 
 	@Override
@@ -139,9 +144,5 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		t.setTitle(txtTitle.getValue());
 		entityDAO.createTask(t);
 	 };
-
-	private void inputData() {
-		lblOwner.setText(owner.getName());
-	}
 	
 }
