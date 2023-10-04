@@ -11,7 +11,6 @@ import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
-import com.advenio.medere.emr.ui.framework.components.grid.filters.config.TextFilterConfig;
 import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.CreateTaskWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
@@ -113,7 +112,7 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Override
 	protected void newItem() {
-		CreateTaskWindow w = context.getBean(CreateTaskWindow.class, "Crear tarea",sessionManager.getUser());
+		CreateTaskWindow w = context.getBean(CreateTaskWindow.class, "Crear tarea",userDAO.findUserFull(sessionManager.getUser().getUsername()));
 		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
 			@Override
             public void onComponentEvent(DetachEvent event) {
