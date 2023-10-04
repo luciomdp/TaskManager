@@ -28,6 +28,8 @@ import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.DiseaseDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.emr.objects.Category;
+import com.advenio.medere.emr.objects.Priority;
 import com.advenio.medere.emr.objects.Profile;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.State;
@@ -109,4 +111,12 @@ public class EntityDAO {
     public void createTask(Task t) {
 		entityManager.persist(t);
     }
+
+    public List<Category> loadCategories() {
+        return entityManager.createQuery("From Category",Category.class).getResultList();
+    }
+
+	public Collection<Priority> loadPriorities() {
+		return entityManager.createQuery("From Priority",Priority.class).getResultList();
+	}
 }
