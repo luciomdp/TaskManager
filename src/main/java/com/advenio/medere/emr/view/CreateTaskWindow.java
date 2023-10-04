@@ -19,6 +19,7 @@ import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -55,7 +56,6 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
    	protected Button btnAccept;
 	
 	private TextField txtTitle;
-	private Label lblOwner;
 	private ComboBox<Sector> cboSector;
 	private TextArea txtDescription;
 	private ComboBox<State> cboState;
@@ -64,7 +64,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	private String caption;
 	
 	public CreateTaskWindow(String caption, User owner) {
-		this.caption = caption;
+		this.add(caption);
 		this.owner = owner;
 	}
 
@@ -76,8 +76,6 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		setResizable(false);
 		txtTitle = new TextField("Titulo");
 		txtTitle.setSizeFull();	
-
-		lblOwner = new Label("Creado por: " + owner.getName());
 
 		cboSector = new ComboBox<Sector>("Sector");
 		cboSector.setSizeFull();
@@ -95,7 +93,9 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		cboState.setItemLabelGenerator(e -> e.getDescription());
 
 		txtDescription = new TextArea("Descripción");
-		txtDescription.setSizeFull();	
+		txtDescription.setPlaceholder("Descripcion de la tarea");
+		txtDescription.setHeight(300, Unit.PIXELS);
+		txtDescription.setWidth(txtTitle.getWidth());
 
 		//TODO arreglar layouts Visualice es igual
 		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboSector);
@@ -103,10 +103,9 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		vlMain = new VerticalLayout(hlCbos,txtDescription);
 		vlMain.setSizeFull();
 
-		VerticalLayout hlHeader = new VerticalLayout(txtTitle,lblOwner);
-
-		headerLayout = new HorizontalLayout(new Component[]{hlHeader});
+		headerLayout = new HorizontalLayout(txtTitle);
 		headerLayout.setSizeUndefined();
+		headerLayout.setWidthFull();
 		headerLayout.setSpacing(true);
 		headerLayout.setPadding(false);
 		footerLayout = new HorizontalLayout(new Component[]{this.btnCancel, this.btnAccept});
@@ -119,6 +118,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		mainLayout.setMargin(false);
 		mainLayout.setPadding(false);
 		mainLayout.setSpacing(true);
+		setWidth("70%");
 		add(mainLayout);
 		open();
 	}
