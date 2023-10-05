@@ -27,6 +27,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
+	private final String DEMAND_FACTOR = "Factor de carga: ";
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
 
@@ -44,6 +45,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	
 	//TODO armar el label de factor de carga de especialistas por seccion
 	protected Label lblLoadFactor;
+	// cantidad de pedidos en estado “por realizar” dividido la cantidad de especialistas de un sector
 
 	@Override
 	protected void createGrid() {
@@ -77,6 +79,10 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 				});
 			}
 		});
+		grid.addControlToHeader(lblLoadFactor, false);
+
+		
+
 		grid.init();
 		
 		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
@@ -88,8 +94,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 		super.init();
 		titleDelete = sessionManager.getI18nMessage("GenericDrugView");
 		titleDeleteItemText = sessionManager.getI18nMessage("AreYouSureToDeleteGenericDrug");
-		lblLoadFactor = new Label("Factor de carga: ");
-		grid.addControlToHeader(lblLoadFactor, false);
+		lblLoadFactor = new Label(DEMAND_FACTOR);
 	}
 	@Override
 	public String getPageTitle() {
