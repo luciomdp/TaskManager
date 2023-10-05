@@ -1,6 +1,8 @@
 package com.advenio.medere.emr.objects;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Getter;
@@ -31,6 +33,7 @@ public class Priority {
 
 
     @Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long priority;
     private String description;
 }

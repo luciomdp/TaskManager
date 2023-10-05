@@ -3,6 +3,8 @@ package com.advenio.medere.emr.objects;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,7 +16,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Task {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long task;
     private String title;
     private String description;
