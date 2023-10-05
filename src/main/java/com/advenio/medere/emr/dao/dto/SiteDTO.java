@@ -4,16 +4,16 @@ import java.math.BigInteger;
 
 public class SiteDTO {
 	
-	protected BigInteger site;
-	protected boolean active;
-	protected boolean defaultsite;
-	protected String apptitle;
-	protected String companyaddress;
-	protected String companyemail;
-	protected String companyname;
-	protected String companytelephone;
-	protected String companywebsite;
-	protected String medereuuid;
+	private BigInteger site;
+	private boolean active;
+	private boolean defaultsite;
+	private String apptitle;
+	private String companyaddress;
+	private String companyemail;
+	private String companyname;
+	private String companytelephone;
+	private String companywebsite;
+	private String medereuuid;
 	
 
 	public String getMedereuuid() {

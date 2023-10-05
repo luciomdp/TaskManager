@@ -25,11 +25,11 @@ public class ConfirmDialog extends Dialog{
 	private String sureToExitMessage;
 	private IOnNotificationListener acceptListener;
 	private IOnNotificationListener cancelListener;
-	protected HorizontalLayout footerLayout;
-	protected HorizontalLayout headerLayout;
-	protected VerticalLayout mainLayout;
-	protected Button btnCancel;
-	protected Button btnAccept;
+	private HorizontalLayout footerLayout;
+	private HorizontalLayout headerLayout;
+	private VerticalLayout mainLayout;
+	private Button btnCancel;
+	private Button btnAccept;
 
 	public ConfirmDialog(String sureToExitMessage) {
 		super();

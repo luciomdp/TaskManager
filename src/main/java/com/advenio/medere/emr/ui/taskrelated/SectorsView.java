@@ -17,6 +17,7 @@ import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.server.session.ISessionManager;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -32,19 +33,19 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	private String medereAddress;
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(SectorsView.class);
+	private static final Logger logger = LoggerFactory.getLogger(SectorsView.class);
 
 	@Autowired 
 	private EntityDAO entityDAO;
 	@Autowired
-	protected ISessionManager sessionManager;
+	private ISessionManager sessionManager;
 	@Autowired
-	protected ApplicationContext context;
+	private ApplicationContext context;
 	@Autowired 
-	protected UserDAO userDAO;
+	private UserDAO userDAO;
 	
 	//TODO armar el label de factor de carga de especialistas por seccion
-	protected Label lblLoadFactor;
+	private Label lblLoadFactor;
 	// cantidad de pedidos en estado “por realizar” dividido la cantidad de especialistas de un sector
 
 	@Override
@@ -70,7 +71,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 			if(item.getColumn().getId().get().equals("sectormanager")) {
 				//TODO COMPLETADA armar window de cambio de jefe de sector
 				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, item.getItem().getSector());
-				w.addDialogCloseActionListener(c -> {
+				w.addDetachListener(c -> {
 					User u = w.getSelectedUser();
 					u.setSectorspecialist(null);
 					u.setAreamanager(null);
@@ -120,6 +121,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 
 	private void loadDataGrid() {
 		grid.getGrid().setItems(entityDAO.loadSectors());
+		UI.getCurrent().push();
 	}
 }
 

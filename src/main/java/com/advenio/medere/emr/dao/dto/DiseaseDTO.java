@@ -6,14 +6,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class DiseaseDTO {
 
-	protected BigInteger disease;
-	protected String name;
-	protected String cie10;
-	protected char gender;
-	protected Long ns_left;
-	protected Long ns_right;	
-	protected BigInteger parentdisease;
-	protected Integer cantchildren;
+	private BigInteger disease;
+	private String name;
+	private String cie10;
+	private char gender;
+	private Long ns_left;
+	private Long ns_right;	
+	private BigInteger parentdisease;
+	private Integer cantchildren;
 	
 	public BigInteger getDisease() {
 		return disease;

@@ -18,7 +18,7 @@ public class NaviMenu extends Div {
         setClassName(CLASS_NAME);
     }
 
-    protected void addNaviItem(NaviItem item) {
+    private void addNaviItem(NaviItem item) {
         add(item);
     }
 

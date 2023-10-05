@@ -12,16 +12,16 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 
 public class DataGrid<T> {
 
-	protected Grid<T> grid;
-	protected Class<T> domainType;
-	protected GridLoadListener<T> loadListener;
-	protected boolean enableHeaderFilter;
-	protected boolean enableControlFilter;
+	private Grid<T> grid;
+	private Class<T> domainType;
+	private GridLoadListener<T> loadListener;
+	private boolean enableHeaderFilter;
+	private boolean enableControlFilter;
 
-	protected Label lblRecordCount;
-	protected HorizontalLayout hlControls;
-	protected HorizontalLayout hlAdditionalControls;
-	protected VerticalLayout vlContainer;
+	private Label lblRecordCount;
+	private HorizontalLayout hlControls;
+	private HorizontalLayout hlAdditionalControls;
+	private VerticalLayout vlContainer;
 	
 	
 	public DataGrid(Class<T> domainType, boolean enableHeaderFilter, boolean enableControlFilter) {

@@ -2,11 +2,11 @@ package com.advenio.medere.emr.ui.framework.components.grid.filters.config;
 
 public class NumberFilterConfig extends BaseTextFilterConfig<NumberFilterConfig,Number>{
 
-	protected String biggestInputPrompt;
-	protected String wrongValueMessage;
-	protected Class propertyType;
-	protected boolean rangeFilter;
-	protected Number initialEndValue;
+	private String biggestInputPrompt;
+	private String wrongValueMessage;
+	private Class propertyType;
+	private boolean rangeFilter;
+	private Number initialEndValue;
 	
 	public NumberFilterConfig(String columnId,String caption,Class propertyType,boolean rangeFilter) {
 		super(columnId,caption);

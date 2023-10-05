@@ -46,9 +46,9 @@ implements AfterNavigationObserver {
 	private NaviMenu menu;
 
 	@Autowired
-	protected ApplicationContext appContext;
+	private ApplicationContext appContext;
 	
-	@Autowired	protected IAppController appController;
+	@Autowired	private IAppController appController;
 
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
@@ -69,7 +69,7 @@ implements AfterNavigationObserver {
 	}
 
 	@PostConstruct
-	protected void init() {
+	private void init() {
 		setClassName(CLASS_NAME);
 
 		initScrim();

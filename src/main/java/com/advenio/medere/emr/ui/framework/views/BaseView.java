@@ -9,7 +9,7 @@ import com.vaadin.flow.component.DetachEvent;
 public abstract class BaseView extends ViewFrame{
 
 	@Autowired
-	protected MessageBusContainer eventBus;
+	private MessageBusContainer eventBus;
 	
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {

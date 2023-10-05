@@ -42,9 +42,9 @@ public class UserDAO implements IUserDAO {
 	@Value("${showSite}")     
 	private boolean showSite;
 	@Autowired
-	protected ApplicationContext context;
+	private ApplicationContext context;
 	@PersistenceContext
-	protected EntityManager entityManager;
+	private EntityManager entityManager;
 	
 	
 	@Override

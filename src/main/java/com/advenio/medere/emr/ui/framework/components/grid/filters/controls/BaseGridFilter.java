@@ -7,12 +7,12 @@ import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 
 public abstract class BaseGridFilter<C extends Component,T>  {
 
-	protected C filterControl;
-	protected T filterConfig;
-	protected HeaderCell headerCell;
-	protected FilterChangeEventListener filterChangeListener;
+	private C filterControl;
+	private T filterConfig;
+	private HeaderCell headerCell;
+	private FilterChangeEventListener filterChangeListener;
 	
-	protected BaseGridFilter(T filterConfig,HeaderCell headerCell) {
+	private BaseGridFilter(T filterConfig,HeaderCell headerCell) {
 		this.filterConfig = filterConfig;
 		this.headerCell = headerCell;
 	}

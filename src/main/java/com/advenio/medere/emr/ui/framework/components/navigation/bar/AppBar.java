@@ -62,15 +62,15 @@ public class AppBar extends FlexBoxLayout {
 
 	private Icon avatarIcon;
 
-	protected ContextMenu contextMenu;
+	private ContextMenu contextMenu;
 
 	@Autowired
-	protected ISessionManager vaadinSessionManager;
+	private ISessionManager vaadinSessionManager;
 
 	@Autowired
-	protected ApplicationContext context;
+	private ApplicationContext context;
 
-	protected String titleCaption;
+	private String titleCaption;
 
 	public enum NaviMode {
 		MENU, CONTEXTUAL

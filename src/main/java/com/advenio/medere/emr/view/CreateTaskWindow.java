@@ -43,19 +43,19 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
 
-	@Autowired protected EntityDAO entityDAO;
-	@Autowired protected ApplicationContext context;
-	@Autowired protected ISessionManager sessionManager;
-	@Autowired protected MessageBusContainer messageBus;
+	@Autowired private EntityDAO entityDAO;
+	@Autowired private ApplicationContext context;
+	@Autowired private ISessionManager sessionManager;
+	@Autowired private MessageBusContainer messageBus;
 	
-	protected static final Logger logger = LoggerFactory.getLogger(CreateTaskWindow.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateTaskWindow.class);
 
 	private VerticalLayout mainLayout;
    	private HorizontalLayout footerLayout;
 	private VerticalLayout vlMain;
    	private HorizontalLayout headerLayout;
-	protected Button btnCancel;
-   	protected Button btnAccept;
+	private Button btnCancel;
+   	private Button btnAccept;
 	
 	private TextField txtTitle;
 	private ComboBox<State> cboState;
@@ -68,10 +68,18 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 
 	private User owner;
 	private String caption;
+	private Task parentTask;
 	
 	public CreateTaskWindow(String caption, User owner) {
 		this.add(caption);
 		this.owner = owner;
+		parentTask = null;
+	}
+
+	public CreateTaskWindow(String caption, User owner, Task parentTask) {
+		this.add(caption);
+		this.owner = owner;
+		this.parentTask = parentTask;
 	}
 
 	@PostConstruct
@@ -88,6 +96,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		cboState.setSizeFull();
 		cboState.setItems(entityDAO.getStates());
 		cboState.setValue(entityDAO.getStateById(States.SIN_ASIGNAR.getValue()));
+		cboState.setEnabled(false);
 		cboState.setItemLabelGenerator(e -> e.getDescription());
 
 		cboCategory = new ComboBox<Category>("Categoria");
@@ -149,11 +158,11 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		return caption;
 	}
 
-	protected void cancel() {
+	private void cancel() {
 		this.close();
 	 }
   
-	 protected void accept() {
+	 private void accept() {
 		//TODO agregar campos y ponerlos en la task cuando se crea Visualice es igual
 		Task t = new Task();
 		t.setTitle(txtTitle.getValue());
@@ -166,8 +175,9 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		t.setSector(cboSector.getValue());
 		t.setSolver(null);
 		t.setDatelimit(dateLimit.getValue());
-		
+		t.setParentTask(parentTask);
 		entityDAO.createTask(t);
+		this.close();
 	 };
 	
 }

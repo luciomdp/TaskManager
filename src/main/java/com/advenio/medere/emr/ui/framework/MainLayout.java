@@ -83,19 +83,19 @@ public class MainLayout extends FlexBoxLayout
 	private TabBar tabBar;
 	private boolean navigationTabs = false;
 	private AppBar appBar;
-	protected UI ui;
+	private UI ui;
 
 	@Autowired
-	protected ApplicationContext appContext;
+	private ApplicationContext appContext;
 	@Autowired
-	protected IAppController appController;
+	private IAppController appController;
 	@Autowired
-	protected ISessionManager vaadinSessionManager;
+	private ISessionManager vaadinSessionManager;
 	@Autowired
-	protected IMenuBuilder menuBuilder;
+	private IMenuBuilder menuBuilder;
 
 	@Autowired
-	protected MessageBusContainer eventBus;
+	private MessageBusContainer eventBus;
 
 	public MainLayout() {
 
@@ -113,7 +113,7 @@ public class MainLayout extends FlexBoxLayout
 	}
 
 	@PostConstruct
-	protected void init() {
+	private void init() {
 
 		if (vaadinSessionManager.getUser() == null) {
 			UI.getCurrent().getPage().setLocation("/login");

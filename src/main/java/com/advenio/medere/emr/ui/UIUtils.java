@@ -42,7 +42,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 public class UIUtils {
 
 	public static final String IMG_PATH = "images/";
-	protected static final Logger logger = LoggerFactory.getLogger(UIUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(UIUtils.class);
 
 	/**
 	 * Thread-unsafe formatters.

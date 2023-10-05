@@ -15,7 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public abstract class BaseCRUDWindow<T> extends Dialog{
 
-	private static final long serialVersionUID = 5893946646450621089L;
+	protected static final long serialVersionUID = 5893946646450621089L;
 	
 	protected FormLayout formLayout;
 	protected VerticalLayout mainLayout;
@@ -24,7 +24,7 @@ public abstract class BaseCRUDWindow<T> extends Dialog{
 	
 	protected Button btnCancel;
 	protected Button btnAccept;
-	
+
 	protected String windowTitle;
 	protected Label lblWindowTitle;
 
@@ -101,6 +101,6 @@ public abstract class BaseCRUDWindow<T> extends Dialog{
 	}
 	
 	protected abstract void accept();	
-	public abstract void editItem(T item);
+	protected abstract void editItem(T item);
 	
 }

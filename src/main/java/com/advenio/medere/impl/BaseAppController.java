@@ -32,10 +32,10 @@ public class BaseAppController implements IAppController, I18NProvider {
 	@Value("${medere.appTitle:Medere UI}")
 	private String appTitle;
 	
-	protected HashMap<String, ResourceBundle> i18nMessages;
-	protected List<LanguageDTO> activeLanguages;
-	protected LanguageDTO defaultLanguage;
-	protected RegionalSettingsDTO defaultRegionalSettings;
+	private HashMap<String, ResourceBundle> i18nMessages;
+	private List<LanguageDTO> activeLanguages;
+	private LanguageDTO defaultLanguage;
+	private RegionalSettingsDTO defaultRegionalSettings;
 	
 	@PostConstruct
 	public void init() {

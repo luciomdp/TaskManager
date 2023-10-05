@@ -17,9 +17,9 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 
 public class LocalDateFieldFilter extends BaseGridFilter<DatePicker, LocalDateRangeFilterConfig>{
 
-	protected DatePicker dpUpper;
-	protected LocalDate smallestValue;
-	protected LocalDate biggestValue;
+	private DatePicker dpUpper;
+	private LocalDate smallestValue;
+	private LocalDate biggestValue;
 	
 	public LocalDateFieldFilter(LocalDateRangeFilterConfig filterConfig, HeaderCell headerCell) {
 		super(filterConfig, headerCell);

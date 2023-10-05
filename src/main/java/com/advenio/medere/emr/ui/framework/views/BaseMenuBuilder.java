@@ -26,7 +26,7 @@ public class BaseMenuBuilder implements IMenuBuilder {
 	@Autowired
 	ResourceLoader resourceLoader;  
 	
-	protected void addToTree(MenuItemDTO menuItem,List<MenuItemDTO> rootMenu,List<MenuItemDTO> menuOptions) {
+	private void addToTree(MenuItemDTO menuItem,List<MenuItemDTO> rootMenu,List<MenuItemDTO> menuOptions) {
 		
 		if (menuItem.getParentId() == null) {
 			rootMenu.add(menuItem);
@@ -48,7 +48,7 @@ public class BaseMenuBuilder implements IMenuBuilder {
 		}
 	}
 
-	protected MenuItemDTO findParent(MenuItemDTO menuItem,List<MenuItemDTO> rootMenu) {
+	private MenuItemDTO findParent(MenuItemDTO menuItem,List<MenuItemDTO> rootMenu) {
 		for (MenuItemDTO mParent : rootMenu) {
 			if (mParent.getItemId().longValue() == menuItem.getParentId().longValue()) {
 				return mParent;
@@ -65,7 +65,7 @@ public class BaseMenuBuilder implements IMenuBuilder {
 	}
 	
 
-	protected List<MenuItemDTO> buildRootMenu(List<MenuItemDTO> menuOptions) {
+	private List<MenuItemDTO> buildRootMenu(List<MenuItemDTO> menuOptions) {
 		List<MenuItemDTO> rootMenu = new ArrayList<MenuItemDTO>();		
 		for (MenuItemDTO menuItem : menuOptions) {
 			addToTree(menuItem, rootMenu, menuOptions);
@@ -76,7 +76,7 @@ public class BaseMenuBuilder implements IMenuBuilder {
 		return rootMenu;
 	}
 	
-	protected void sortItems(List<MenuItemDTO> menuOptions) {
+	private void sortItems(List<MenuItemDTO> menuOptions) {
 		
 		Collections.sort(menuOptions,
 				new Comparator<MenuItemDTO>(){
@@ -92,7 +92,7 @@ public class BaseMenuBuilder implements IMenuBuilder {
 		}
 	}
 	
-	protected void makeMenu(NaviItem parentItem,NaviMenu menu, List<MenuItemDTO> menuOptions) {
+	private void makeMenu(NaviItem parentItem,NaviMenu menu, List<MenuItemDTO> menuOptions) {
 		// build menu
 		for(MenuItemDTO menuItem:menuOptions) {
 			Class _class = null;

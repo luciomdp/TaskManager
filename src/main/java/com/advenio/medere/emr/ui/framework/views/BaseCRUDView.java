@@ -96,7 +96,7 @@ public abstract class BaseCRUDView<T> extends BaseView {
 	
 	
 	
-	protected Component booleanRender(boolean value) {
+	private Component booleanRender(boolean value) {
 		Icon icon = null;
 		if (value) {
 			icon = VaadinIcon.CHECK.create();

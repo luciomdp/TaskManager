@@ -88,48 +88,48 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 
 	private static final long serialVersionUID = -2099613514951356768L;
 
-	protected static final Logger logger = LoggerFactory.getLogger(LoginView.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
 	@Value("${recaptcha.privatekey}")
-	protected String privatekey;
+	private String privatekey;
 
 	@Value("${recaptcha.sitekey}")
-	protected String sitekey;
+	private String sitekey;
 	
 	@Value("${rememberMeEnabled:true}")
-	protected boolean rememberMeEnabled;
+	private boolean rememberMeEnabled;
 	
 	@Value("${forgotPasswordEnabled:true}")
-	protected boolean forgotPasswordEnabled;
+	private boolean forgotPasswordEnabled;
 
 	@Value("${showbrandlogo:true}")
-	protected boolean showbrandlogo;
+	private boolean showbrandlogo;
 	
-	@Autowired protected ISessionManager vaadinSessionManager;
-	@Autowired protected IAppController appController;
-	@Autowired protected ApplicationContext appContext;
-	@Autowired protected IUserService userService;
+	@Autowired private ISessionManager vaadinSessionManager;
+	@Autowired private IAppController appController;
+	@Autowired private ApplicationContext appContext;
+	@Autowired private IUserService userService;
 
-	protected String currentStyle = "";
-	protected TextField username;
-	protected PasswordField password;
-	protected Checkbox rememberMe;
-	protected Button login;
-	protected VerticalLayout loginLayout;
-	protected VerticalLayout vlLogin;
-	protected ReCaptcha reCaptcha;
-	protected Image imageLogo;
-	protected Image imageLogoBrand;
-	protected FlexBoxLayout centeringLayout ;
+	private String currentStyle = "";
+	private TextField username;
+	private PasswordField password;
+	private Checkbox rememberMe;
+	private Button login;
+	private VerticalLayout loginLayout;
+	private VerticalLayout vlLogin;
+	private ReCaptcha reCaptcha;
+	private Image imageLogo;
+	private Image imageLogoBrand;
+	private FlexBoxLayout centeringLayout ;
 
-	protected Map<String, List<String>> parametersMap;
-	protected VerticalLayout vlContainer;
-	protected HorizontalLayout welcomeLayout;
+	private Map<String, List<String>> parametersMap;
+	private VerticalLayout vlContainer;
+	private HorizontalLayout welcomeLayout;
 
-	protected ComboBox<UserDTO> cboUsers;
-	protected List<UserDTO> users;
-	protected Button btnOk;
-	protected Button cancelButton;
+	private ComboBox<UserDTO> cboUsers;
+	private List<UserDTO> users;
+	private Button btnOk;
+	private Button cancelButton;
 
 	public void changeBackground() {
 		if (!currentStyle.isEmpty()) {
@@ -141,7 +141,7 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 	}
 
 	@PostConstruct
-	protected void createComponents() {
+	private void createComponents() {
 		VaadinSession.getCurrent().setErrorHandler((ErrorHandler) errorEvent -> {
 			logger.error("Uncaught UI exception", errorEvent.getThrowable());
 			//Notification.show("We are sorry, but an internal error occurred");
@@ -411,7 +411,7 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 		vlRecover.getElement().addEventListener("keypress", event -> sendRecoveryEmail(email.getValue())).setFilter("event.key == 'Enter'");
 	}
 
-	protected void sendRecoveryEmail(String email) {
+	private void sendRecoveryEmail(String email) {
 		if (StringsUtils.isNullOrEmptyTrimmed(email)) {
 			UIUtils.showErrorNotification(vaadinSessionManager.getI18nMessage("PleaseCompleteEmail"),2000,Position.TOP_CENTER);
 			btnOk.setEnabled(true);
@@ -494,13 +494,13 @@ public class LoginView extends FlexLayout implements HasDynamicTitle,AfterNaviga
 		return hl;
 	}
 
-	protected void enableLoginButton() {
+	private void enableLoginButton() {
 		UI.getCurrent().access(() -> {
 			login.setEnabled(true);
 		});
 	}
 
-	protected void setLoginFail() {
+	private void setLoginFail() {
 		UI.getCurrent().access(() -> {
 			password.setValue("");
 			UIUtils.showErrorNotification(vaadinSessionManager.getI18nMessage("ErrorLogin"),2000,null);

@@ -17,6 +17,7 @@ import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -33,16 +34,16 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	private String medereAddress;
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
 	@Autowired
-	protected EntityDAO entityDAO;
+	private EntityDAO entityDAO;
 	@Autowired
-	protected UserDAO userDAO;
+	private UserDAO userDAO;
 	@Autowired
-	protected ISessionManager sessionManager;
+	private ISessionManager sessionManager;
 	@Autowired
-	protected ApplicationContext context;
+	private ApplicationContext context;
 
 	@Override
 	protected void createGrid() {
@@ -103,12 +104,7 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	protected void editItem(Task item) {
 		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar tarea",item,true);
-		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
-			@Override
-            public void onComponentEvent(DetachEvent event) {
-                loadDataGrid();
-            }
-		});
+		w.addDetachListener(e ->loadDataGrid());
 	}
 
 	@Override
@@ -122,7 +118,8 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	}
 
 	private void loadDataGrid() {
-		grid.getGrid().setItems(entityDAO.loadSectorsTasks(null));
+		grid.getGrid().setItems(entityDAO.loadSectorsTasks(userDAO.findUserFull(sessionManager.getUser().getUsername()).getSector()));
+		UI.getCurrent().push();
 	}
 
 }

@@ -2,8 +2,8 @@ package com.advenio.medere.emr.ui.framework.components.grid.filters.config;
 
 public abstract class BaseTextFilterConfig<T,K> extends BaseFilterConfig<T,K>{
 
-	protected String toolTip;
-	protected String inputPrompt;
+	private String toolTip;
+	private String inputPrompt;
 	
 	public BaseTextFilterConfig(String columnId,String caption) {
 		super(columnId,caption);		

@@ -17,14 +17,14 @@ public class RegionalSettingsDTO implements Serializable{
 
 	private static final long serialVersionUID = -8604417215812171689L;
 
-	protected BigInteger regionalSettings;
-	protected char decimalSeparator;
-	protected char groupingSeparator;
-	protected String currencySymbolString;
-	protected String shortDateFormatString;
-	protected String dateTimeFormatString;
-	protected String timeFormatString;
-	protected String monthNameAndYearFormatString;
+	private BigInteger regionalSettings;
+	private char decimalSeparator;
+	private char groupingSeparator;
+	private String currencySymbolString;
+	private String shortDateFormatString;
+	private String dateTimeFormatString;
+	private String timeFormatString;
+	private String monthNameAndYearFormatString;
 
 	public BigInteger getRegionalSettings() {
 		return regionalSettings;
@@ -75,19 +75,19 @@ public class RegionalSettingsDTO implements Serializable{
 		this.monthNameAndYearFormatString = monthNameAndYearFormatString;
 	}
 
-	protected SimpleDateFormat timeFormat;
-	protected SimpleDateFormat dateTimeFormat;
-	protected SimpleDateFormat shortDateFormat;
-	protected SimpleDateFormat monthNameAndYearFormat;
-	protected Locale locale;
-	protected DecimalFormat dfCurrency;
-	protected DecimalFormatSymbols otherSymbols;
-	protected DecimalFormat dfBigDecimalWithoutFixedDecimals;
-	protected DateTimeFormatter timeFormatter;
-	protected DateTimeFormatter shortDateFormatter;
-	protected DateTimeFormatter dateTimeFormatter;
-	protected DateTimeFormatter monthNameAndYearFormatter;
-	protected DecimalFormat dfBigDecimalWithFixedDecimals;
+	private SimpleDateFormat timeFormat;
+	private SimpleDateFormat dateTimeFormat;
+	private SimpleDateFormat shortDateFormat;
+	private SimpleDateFormat monthNameAndYearFormat;
+	private Locale locale;
+	private DecimalFormat dfCurrency;
+	private DecimalFormatSymbols otherSymbols;
+	private DecimalFormat dfBigDecimalWithoutFixedDecimals;
+	private DateTimeFormatter timeFormatter;
+	private DateTimeFormatter shortDateFormatter;
+	private DateTimeFormatter dateTimeFormatter;
+	private DateTimeFormatter monthNameAndYearFormatter;
+	private DecimalFormat dfBigDecimalWithFixedDecimals;
 
 	public RegionalSettingsDTO(){
 	}
@@ -119,7 +119,7 @@ public class RegionalSettingsDTO implements Serializable{
 	}
 
 
-	protected DecimalFormatSymbols getDecimalFormatSymbols(){
+	private DecimalFormatSymbols getDecimalFormatSymbols(){
 		if (otherSymbols ==null){
 			otherSymbols = new DecimalFormatSymbols(locale);
 			otherSymbols.setDecimalSeparator(decimalSeparator);

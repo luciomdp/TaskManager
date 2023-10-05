@@ -7,7 +7,7 @@ import com.advenio.medere.dao.pagination.IDataDTO;
 
 public class ComboBoxFilterConfig extends BaseFilterConfig<ComboBoxFilterConfig,BigInteger>{
 
-	protected List<IDataDTO> items;
+	private List<IDataDTO> items;
 		
 	public ComboBoxFilterConfig(String columnId, String caption, List<String> fields,List<IDataDTO> items) {
 		super(columnId,caption);		

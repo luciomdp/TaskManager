@@ -6,9 +6,9 @@ public class BaseBooleanFilterConfig<T> extends BaseFilterConfig<T,Boolean>{
 		super(columnId,caption);
 	}
 
-	protected String yesCaption;
-	protected String noCaption;
-	protected String toolTip;
+	private String yesCaption;
+	private String noCaption;
+	private String toolTip;
 	
 	public String getYesCaption() {
 		return yesCaption;

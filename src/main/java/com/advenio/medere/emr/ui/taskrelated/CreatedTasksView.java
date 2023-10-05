@@ -15,12 +15,8 @@ import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.CreateTaskWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
@@ -28,20 +24,19 @@ import com.vaadin.flow.router.Route;
 public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
-	private static final String WIDTH_BIG = "200px";
 
 	private static final long serialVersionUID = -1985837633347632519L;
-	protected static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
 	@Autowired
-	protected EntityDAO entityDAO;
+	private EntityDAO entityDAO;
 	@Autowired
-	protected UserDAO userDAO;
+	private UserDAO userDAO;
 
 	@Autowired
-	protected ISessionManager sessionManager;
+	private ISessionManager sessionManager;
 	@Autowired
-	protected ApplicationContext context;
+	private ApplicationContext context;
 
 	@Override
 	protected void createGrid() {
@@ -69,20 +64,8 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	public void init() {
 		super.init();
-		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
-
-			private static final long serialVersionUID = -1266658791714326144L;
-
-			@Override
-			public void selectionChange(SelectionEvent<Grid<Task>, Task> event) {
-				if (event.getFirstSelectedItem().isPresent()) {
-					editItem(grid.getGrid().asSingleSelect().getValue());
-				}
-			}
-		});
-
-		
-
+		btnDelete.setVisible(true);
+		btnEdit.setVisible(true);
 		titleDelete = "Borrar tarea";
 		titleDeleteItemText = "Estas seguro de borrar esa tarea?";
 	}
@@ -96,14 +79,8 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	protected void editItem(Task item) {
 		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar tarea",item,true);
-		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
-			@Override
-            public void onComponentEvent(DetachEvent event) {
-                loadDataGrid();
-            }
-		});
+		w.addDetachListener(e -> loadDataGrid());
 	}
-
 	@Override
 	protected void deleteItem(Task item) {
 		entityDAO.deleteTask(item);
@@ -113,16 +90,12 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	protected void newItem() {
 		CreateTaskWindow w = context.getBean(CreateTaskWindow.class, "Crear tarea",userDAO.findUserFull(sessionManager.getUser().getUsername()));
-		w.addDetachListener(new ComponentEventListener<DetachEvent>() {
-			@Override
-            public void onComponentEvent(DetachEvent event) {
-                loadDataGrid();
-            }
-		});
+		w.addDetachListener(e -> loadDataGrid());
 	}
 	
 	private void loadDataGrid() {
-		grid.getGrid().setItems(entityDAO.loadCreatedTasks(null));
+		grid.getGrid().setItems(entityDAO.loadCreatedTasks(userDAO.findUserFull(sessionManager.getUser().getUsername())));
+		UI.getCurrent().push();
 	}
 
 }

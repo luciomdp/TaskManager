@@ -6,11 +6,11 @@ import java.util.Locale;
 
 public class LocalDateRangeFilterConfig extends BaseTextFilterConfig<LocalDateRangeFilterConfig,LocalDate>{
 
-	protected SimpleDateFormat dateFormat;
-	protected String captionTo;
-	protected LocalDate dateTo;
-	protected boolean rangeFilter;
-	protected Locale locale;
+	private SimpleDateFormat dateFormat;
+	private String captionTo;
+	private LocalDate dateTo;
+	private boolean rangeFilter;
+	private Locale locale;
 	
 	public LocalDateRangeFilterConfig(String columnId,String caption,boolean rangeFilter,Locale locale) {
 		super(columnId,caption);
