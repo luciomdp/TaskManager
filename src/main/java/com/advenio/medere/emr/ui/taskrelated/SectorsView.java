@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
+import com.advenio.medere.emr.dao.dto.SectorDTO;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
@@ -24,7 +25,7 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = "sectorsGrid", layout = MainLayout.class)
-public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle {
+public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
 	private static final String WIDTH_BIG = "200px";
@@ -52,37 +53,36 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	protected void createGrid() {
 		//TODO cambiar a SectorDTO porque vamos a tener que tener una columna que nos indique la cantidad de especialistas por sector
 		//TODO armar window de alta baja y mod de especialista por sector
-		grid = new DataGrid<Sector>(Sector.class, false, false);
+		grid = new DataGrid<SectorDTO>(SectorDTO.class, false, false);
 		
-		grid.getGrid().setItems(entityDAO.loadSectors());
-
 		grid.getGrid().removeAllColumns();
 
 		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Nombre").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
 		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Descripción").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
-		
-		grid.getGrid().addColumn(e -> e.getSector_manager()!=null?e.getSector_manager().getName():"").setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");;
+		grid.getGrid().addColumn(e -> e.getSectormanagermame()).setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
+
+		grid.getGrid().addColumn(e -> (e.getQtypendingtasksassigned().longValue()/e.getQtyemployeers().longValue())).setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("demandfactor");
 		
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("sectormanager")) {
-				//TODO COMPLETADA armar window de cambio de jefe de sector
 				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, item.getItem().getSector());
 				w.addDetachListener(c -> {
 					User u = w.getSelectedUser();
 					u.setSectorspecialist(null);
 					u.setAreamanager(null);
-					u.setSectormanager(item.getItem());
+					u.setSectormanager(entityDAO.loadSector(item.getItem().getSector().longValue()));
 					userDAO.updateUser(u);
 				});
 			}
 		});
+		
 		grid.addControlToHeader(lblLoadFactor, false);
 
-		
+		grid.getGrid().setItems(entityDAO.loadSectorInfo().getData());
 
 		grid.init();
 		
@@ -103,7 +103,7 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	}
 
 	@Override
-	protected void editItem(Sector item) {
+	protected void editItem(SectorDTO item) {
 		
 	}
 
@@ -114,13 +114,13 @@ public class SectorsView extends BaseCRUDView<Sector> implements HasDynamicTitle
 	
 
 	@Override
-	protected void deleteItem(Sector item) {
+	protected void deleteItem(SectorDTO item) {
 		loadDataGrid();
 		
 	}
 
 	private void loadDataGrid() {
-		grid.getGrid().setItems(entityDAO.loadSectors());
+		grid.getGrid().setItems(entityDAO.loadSectorInfo().getData());
 		UI.getCurrent().push();
 	}
 }

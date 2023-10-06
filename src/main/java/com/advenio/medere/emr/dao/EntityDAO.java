@@ -1,5 +1,6 @@
 package com.advenio.medere.emr.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.advenio.medere.dao.Hibernate.HibernateCriteriaQueryBuilder;
+import com.advenio.medere.dao.nativeSQL.FieldDataRequest;
 import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
+import com.advenio.medere.dao.nativeSQL.ParameterData;
+import com.advenio.medere.dao.pagination.Page;
+import com.advenio.medere.dao.pagination.PageLoadConfig;
+import com.advenio.medere.emr.dao.dto.SectorDTO;
+import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.objects.Category;
 import com.advenio.medere.emr.objects.Priority;
 import com.advenio.medere.emr.objects.Profile;
@@ -106,4 +113,14 @@ public class EntityDAO {
     public void updateTask(Task task) {
 		entityManager.merge(task);
     }
+
+	public Page<SectorDTO> loadSectorInfo() {
+		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
+		PageLoadConfig<SiteDTO> loadconfig = new PageLoadConfig<>(null);
+        ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();
+        Page page = nativeQueryBuilder.runReport(0, 10,
+        		loadconfig.getSortingList(), loadconfig.getFilters(), "loadSectorDTOInfo",
+        		1L, params, false, true, fieldDataRequest);
+        return page;
+	}
 }

@@ -13,8 +13,16 @@
 	</com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 	<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
-			Select s.name, s.description, (select count (t.task) from task t where t.sector = s.sector and t.state = 2) as qtypendingtasksassigned, (select count (u.user) from user u where u.sector = s.sector)
+			Select s.name as name 
+			, s.description as description
+			, u.name as sectormanagermame
+			, (select (case when count (t.task) = 0 then 0 else count (t.task) end) as qtypendingtasksassigned
+				from task t 
+				where t.sector = s.sector and t.state = 2) as qtypendingtasksassigned
+			, (select (case when count (u._user) = 0 then 0 else count (u._user) end) as qtyemployeers 
+				from _user u where u.sector = s.sector) as qtyusers
 			from Sector s
+			JOIN _user u on u._user = s.sectormanager
 		</query>
 		<name>loadSectorDTOInfo</name>
 		<classNameResult></classNameResult>
