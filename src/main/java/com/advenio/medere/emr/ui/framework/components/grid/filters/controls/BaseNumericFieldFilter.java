@@ -10,11 +10,11 @@ import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
 
 public abstract class BaseNumericFieldFilter<C extends Component, T> extends BaseGridFilter<C, NumberFilterConfig> {
 
-	private C nfUpper;
-	private T smallestValue;
-	private T biggestValue;
+	protected C nfUpper;
+	protected T smallestValue;
+	protected T biggestValue;
 
-	private BaseNumericFieldFilter(NumberFilterConfig filterConfig, HeaderCell headerCell) {
+	protected BaseNumericFieldFilter(NumberFilterConfig filterConfig, HeaderCell headerCell) {
 		super(filterConfig, headerCell);
 	}
 
