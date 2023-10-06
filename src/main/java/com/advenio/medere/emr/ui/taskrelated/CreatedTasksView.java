@@ -78,7 +78,7 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Override
 	protected void editItem(Task item) {
-		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar tarea",item,true);
+		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar tarea",item,null);
 		w.addDetachListener(e -> loadDataGrid());
 	}
 	@Override

@@ -72,13 +72,13 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	private DataGrid<Task> gridSubtasks;
 
 	private Task task;
-	private Boolean showSubtasks;
+	private Task parent;
 	private String caption;
 	
-	public VisualiceTaskWindow(String caption, Task task, boolean showSubtasks) {
+	public VisualiceTaskWindow(String caption, Task task, Task parent) {
 		this.add(caption);
 		this.task = task;
-		this.showSubtasks = showSubtasks;
+		this.parent = parent;
 	}
 
 	@PostConstruct
@@ -128,10 +128,10 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 
 		//TODO arreglar layouts Visualice es igual
 		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority,cboSector);
-
-		createGrid();
-
-		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription,gridSubtasks.getComponent());
+		
+		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription);
+		if(parent == null)
+			vlMain.add(createGridSubtasks());
 		vlMain.setSizeFull();
 
 		headerLayout = new HorizontalLayout(txtTitle);
@@ -184,6 +184,8 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	private void accept() {
 		//TODO agregar campos y ponerlos en la task cuando se crea Visualice es igual
 		task.setTitle(txtTitle.getValue());
+		if(parent != null)
+			task.setOwner(parent.getOwner());
 		task.setDescription(txtDescription.getValue());
 		task.setParentTask(null);
 		task.setState(cboState.getValue());
@@ -196,7 +198,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		this.close();
 	};
 
-	private void createGrid() {
+	private Component createGridSubtasks() {
 
 		gridSubtasks = new DataGrid<Task>(Task.class, false, false);
 
@@ -216,7 +218,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 
 		gridSubtasks.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("solver");
 
-		gridSubtasks.getGrid().setColumns("priority","title","owner","datelimit","solver");
 		gridSubtasks.getGrid().setAllRowsVisible(true);
 		gridSubtasks.getGrid().setVisible(true);
 
@@ -248,6 +249,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		gridSubtasks.addControlToHeader(btnEdit, false);
 		gridSubtasks.addControlToHeader(btnDelete, false);
 		
+		return gridSubtasks.getComponent();
 	}
 
 	private void loadDataGrid() {
@@ -256,7 +258,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	}
 
 	protected void editSubtask(Task item) {
-		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea", item, false);
+		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea", item, ((parent!=null)?null:task));
 		w.addDetachListener(e -> loadDataGrid());
 	}
 
