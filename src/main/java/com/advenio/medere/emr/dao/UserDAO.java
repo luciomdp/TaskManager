@@ -2,32 +2,21 @@ package com.advenio.medere.emr.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.advenio.medere.dao.IUserDAO;
 import com.advenio.medere.emr.objects.Profile;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.objects.Profile.Profiles;
-import com.advenio.medere.objects.Language;
 import com.advenio.medere.objects.dto.users.IPLoginAttemptDTO;
 import com.advenio.medere.objects.dto.users.UserDTO;
 import com.advenio.medere.security.SecurityConfig;

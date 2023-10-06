@@ -60,15 +60,15 @@ public class EntityDAO {
 	}
 
 	public List<Task> loadCreatedTasks(User owner) {
-		return entityManager.createQuery("From Task WHERE owner = :user AND state.state != :deleted ORDER BY priority.priority ASC",Task.class).setParameter("user", owner).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
+		return entityManager.createQuery("From Task WHERE owner = :user AND state.state != :deleted AND (parentTask IS NULL) ORDER BY priority.priority ASC",Task.class).setParameter("user", owner).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 
 	public List<Task> loadMyTasks(User solver) {
-		return entityManager.createQuery("From Task WHERE solver = :solver AND state.state != :deleted ORDER BY priority.priority ASC",Task.class).setParameter("solver", solver).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
+		return entityManager.createQuery("From Task WHERE solver = :solver AND state.state != :deleted AND (parentTask IS NULL) ORDER BY priority.priority ASC",Task.class).setParameter("solver", solver).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 
 	public List<Task> loadSectorsTasks(Sector sector) {
-		return entityManager.createQuery("From Task WHERE sector = :sector AND state.state != :deleted ORDER BY priority.priority ASC",Task.class).setParameter("sector", sector).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
+		return entityManager.createQuery("From Task WHERE sector = :sector AND state.state != :deleted AND (parentTask IS NULL) ORDER BY priority.priority ASC",Task.class).setParameter("sector", sector).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 	
 	public List<Sector> loadSectors() {

@@ -47,6 +47,10 @@ public class DataGrid<T> {
 	public void setRecordCount(int recordCount) {
 		lblRecordCount.setText(String.format(grid.getTranslation("GridRecordCount",null),recordCount));
 	}
+
+	public void showRecordCount(Boolean value) {
+		lblRecordCount.setVisible(value);
+	}
 	
 	public void init() {
 		

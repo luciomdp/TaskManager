@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import com.advenio.medere.MessageBusContainer;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Category;
@@ -15,26 +14,19 @@ import com.advenio.medere.emr.objects.Priority;
 import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
-import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
-import com.advenio.medere.emr.ui.framework.views.IOnNotificationListener;
-import com.advenio.medere.emr.objects.Priority.Priorities;
 import com.advenio.medere.emr.objects.State.States;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
@@ -137,10 +129,10 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		//TODO arreglar layouts Visualice es igual
 		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority,cboSector);
 
-		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription);
+		createGrid();
+
+		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription,gridSubtasks.getComponent());
 		vlMain.setSizeFull();
-		if(showSubtasks)
-			createGrid(vlMain);
 
 		headerLayout = new HorizontalLayout(txtTitle);
 		headerLayout.setSizeUndefined();
@@ -159,6 +151,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		mainLayout.setSpacing(true);
 		setWidth("70%");
 		add(mainLayout);
+		loadData();
 		open();
 	}
 
@@ -169,6 +162,23 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 
 	private void cancel() {
 		this.close();
+	}
+
+	private void loadData() {
+		if(task.getTitle() != null)
+			txtTitle.setValue(task.getTitle());
+		if(task.getState() != null)
+			cboState.setValue(task.getState());
+		if(task.getCategory() != null)
+			cboCategory.setValue(task.getCategory());
+		if(task.getSector() != null)
+			cboSector.setValue(task.getSector());
+		if(task.getPriority() != null)
+			cboPriority.setValue(task.getPriority());
+		if(task.getDatelimit() != null)
+			dateLimit.setValue(task.getDatelimit());
+		if(task.getDescription() != null)
+			txtDescription.setValue(task.getDescription());
 	}
   
 	private void accept() {
@@ -186,24 +196,41 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		this.close();
 	};
 
-	private void createGrid(VerticalLayout layout) {
+	private void createGrid() {
 
-		gridSubtasks = new DataGrid<Task>(Task.class, false, false);																						
-		gridSubtasks.getGrid().setItems(entityDAO.loadCreatedTasks(userDAO.findUserFull(sessionManager.getUser().getUsername())));
+		gridSubtasks = new DataGrid<Task>(Task.class, false, false);
+
+		gridSubtasks.getGrid().setItems(entityDAO.loadSubtasks(task));
+	
+		gridSubtasks.showRecordCount(false);
 
 		gridSubtasks.getGrid().removeAllColumns();
 
-		gridSubtasks.getGrid().addColumn(e -> e.getPriority()!=null?e.getPriority().getDescription():"").setHeader("Prioridad").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		gridSubtasks.getGrid().addColumn(e -> e.getPriority()!=null?e.getPriority().getDescription():"").setHeader("Prioridad").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("priority");
 		
-		gridSubtasks.getGrid().addColumn(e -> e.getTitle()!=null?e.getTitle():"").setHeader("Titulo").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		gridSubtasks.getGrid().addColumn(e -> e.getTitle()!=null?e.getTitle():"").setHeader("Titulo").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("title");
 		
-		gridSubtasks.getGrid().addColumn(e -> e.getOwner()!=null?e.getOwner().getName():"").setHeader("Creador").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		gridSubtasks.getGrid().addColumn(e -> e.getOwner()!=null?e.getOwner().getName():"").setHeader("Creador").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("owner");
 
-		gridSubtasks.getGrid().addColumn(e -> e.getDatelimit()!=null?e.getDatelimit():"").setHeader("Fecha limite").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		gridSubtasks.getGrid().addColumn(e -> e.getDatelimit()!=null?e.getDatelimit():"").setHeader("Fecha limite").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("datelimit");
 
-		gridSubtasks.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
+		gridSubtasks.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("solver");
+
+		gridSubtasks.getGrid().setColumns("priority","title","owner","datelimit","solver");
+		gridSubtasks.getGrid().setAllRowsVisible(true);
+		gridSubtasks.getGrid().setVisible(true);
 
 		gridSubtasks.init();
+
+		gridSubtasks.getGrid().addSelectionListener(e -> {
+			if (e.getFirstSelectedItem().isPresent()) {
+				btnEdit.setVisible(true);
+				btnDelete.setVisible(true);
+			} else {
+				btnEdit.setVisible(false);
+				btnDelete.setVisible(false);
+			}
+		});
 
 		btnNew = new Button(VaadinIcon.PLUS.create());
 		btnNew.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -220,8 +247,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		gridSubtasks.addControlToHeader(btnNew, false);
 		gridSubtasks.addControlToHeader(btnEdit, false);
 		gridSubtasks.addControlToHeader(btnDelete, false);
-		loadDataGrid();
-		layout.add(gridSubtasks.getComponent());
+		
 	}
 
 	private void loadDataGrid() {
@@ -230,7 +256,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	}
 
 	protected void editSubtask(Task item) {
-		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea",item,false);
+		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea", item, false);
 		w.addDetachListener(e -> loadDataGrid());
 	}
 
