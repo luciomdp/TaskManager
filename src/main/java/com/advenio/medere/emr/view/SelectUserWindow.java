@@ -21,36 +21,25 @@ public class SelectUserWindow extends BaseCRUDWindow {
 	protected EntityDAO entityDAO;
 	@Autowired
 	protected UserDAO userDAO;
-    private Long sectorId;
-    private Long profileId;
+    private Sector sector;
+    private Profile profile;
     private User selectedUser;
 
-    public SelectUserWindow(String caption, Long profileId, Long sectorId) {
+    public SelectUserWindow(String caption, Profile profileId, Sector sectorId) {
         super(caption);
-        this.sectorId = sectorId;
-        this.profileId = profileId;
     }
 
     @Override
     protected void createControls() {
-        Sector sector;
-        Profile profile;
         cboUsers = new ComboBox<>("Seleccione un usuario");
         cboUsers.setSizeFull();
         cboUsers.setItemLabelGenerator(u -> u.getName());
-        if (sectorId != null && profileId != null){
-            sector = entityDAO.loadSector(sectorId);
-            profile = entityDAO.loadProfile(profileId);
+        if (sector != null && profile != null)
             cboUsers.setItems(userDAO.loadUserBySectorAndProfile(profile, sector));
-        }
-        else if (sectorId != null){
-            sector = entityDAO.loadSector(sectorId);
+        else if (sector != null)
             cboUsers.setItems(userDAO.loadUserBySector(sector));
-        }
-        else if (sectorId != null){
-            sector = entityDAO.loadSector(sectorId);
-            cboUsers.setItems(userDAO.loadUserBySector(sector));
-        }
+        else if (profile != null)
+            cboUsers.setItems(userDAO.loadUserByProfile(profile));
         else
             cboUsers.setItems(userDAO.loadAllUsers());
         
@@ -62,14 +51,11 @@ public class SelectUserWindow extends BaseCRUDWindow {
 
     @Override
     protected void accept() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accept'");
+        close();
     }
 
     @Override
     public void editItem(Object item) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editItem'");
     }
 
     public User getSelectedUser() {

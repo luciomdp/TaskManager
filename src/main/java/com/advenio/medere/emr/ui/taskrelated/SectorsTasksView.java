@@ -9,15 +9,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
+import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.Task;
+import com.advenio.medere.emr.objects.User;
+import com.advenio.medere.emr.objects.Profile.Profiles;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
+import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.selection.SelectionEvent;
@@ -36,6 +41,9 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	private static final long serialVersionUID = -1985837633347632519L;
 	private static final Logger logger = LoggerFactory.getLogger(CreatedTasksView.class);
 
+	private ComboBox<Sector> cboSector;
+	private User user;
+
 	@Autowired
 	private EntityDAO entityDAO;
 	@Autowired
@@ -45,11 +53,37 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Autowired
 	private ApplicationContext context;
 
+	@PostConstruct
+	@Override
+	public void init() {
+		super.init();
+
+		user = userDAO.findUserFull(sessionManager.getUser().getUsername());
+
+		cboSector = new ComboBox<Sector>("Sector");
+		cboSector.setSizeFull();
+		cboSector.setItems(entityDAO.loadSectors());
+		cboSector.setItemLabelGenerator(e -> e.getDescription());
+		if(user.getProfile().getProfile().longValue() == Profiles.SECTOR_MANAGER.getValue()) 	
+			cboSector.setEnabled(false);
+		cboSector.addValueChangeListener(e -> {
+			loadDataGrid();
+		});
+		cboSector.setValue(user.getSectormanager()!=null?user.getSectormanager():user.getSector());
+
+		
+		grid.addControlToHeader(cboSector, false);
+
+		btnNew.setVisible(false);
+		titleDelete = "Borrar tarea";
+		titleDeleteItemText = "Estas seguro de borrar esa tarea?";
+
+		loadDataGrid();
+	}
+
 	@Override
 	protected void createGrid() {
 		grid = new DataGrid<Task>(Task.class, false, false);
-		
-		grid.getGrid().setItems(entityDAO.loadSectorsTasks(userDAO.findUserFull(sessionManager.getUser().getUsername()).getSector()));
 
 		grid.getGrid().removeAllColumns();
 
@@ -61,39 +95,25 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 		grid.getGrid().addColumn(e -> e.getDatelimit()!=null?e.getDatelimit():"").setHeader("Fecha limite").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
-		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("solver");;
+		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("solver");
 
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("solver")) {
-				//TODO window de asignar tarea a especialista
-			}
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getSector());
+				w.addDetachListener(c -> {
+					Task selectedTask = item.getItem();
+					selectedTask.setSolver(w.getSelectedUser());
+					entityDAO.updateTask(selectedTask);
+					loadDataGrid();
+				});
+			}else
+				editItem(grid.getGrid().asSingleSelect().getValue());
 		});
 
 		grid.init();
 		
-	}
-
-	@PostConstruct
-	@Override
-	public void init() {
-		super.init();
-		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
-
-			private static final long serialVersionUID = -1266658791714326144L;
-
-			@Override
-			public void selectionChange(SelectionEvent<Grid<Task>, Task> event) {
-				if (event.getFirstSelectedItem().isPresent()) {
-					editItem(grid.getGrid().asSingleSelect().getValue());
-				}
-			}
-		});
-
-		btnNew.setVisible(false);
-		titleDelete = "Borrar tarea";
-		titleDeleteItemText = "Estas seguro de borrar esa tarea?";
 	}
 
 	@Override
@@ -118,7 +138,7 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	}
 
 	private void loadDataGrid() {
-		grid.getGrid().setItems(entityDAO.loadSectorsTasks(userDAO.findUserFull(sessionManager.getUser().getUsername()).getSector()));
+		grid.getGrid().setItems(entityDAO.loadSectorsTasks(cboSector.getValue()));
 		UI.getCurrent().push();
 	}
 
