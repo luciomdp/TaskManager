@@ -24,6 +24,7 @@ import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.SectorDTO;
 import com.advenio.medere.emr.dao.dto.SiteDTO;
+import com.advenio.medere.emr.objects.Area;
 import com.advenio.medere.emr.objects.Category;
 import com.advenio.medere.emr.objects.Priority;
 import com.advenio.medere.emr.objects.Profile;
@@ -122,5 +123,13 @@ public class EntityDAO {
         		loadconfig.getSortingList(), loadconfig.getFilters(), "loadSectorDTOInfo",
         		1L, params, false, true, fieldDataRequest);
         return page;
+	}
+
+    public List<Area> loadArea() {
+       	return entityManager.createQuery("From Area ",Area.class).getResultList();
+    }
+
+	public void saveSector(Sector sector) {
+		entityManager.merge(sector);
 	}
 }

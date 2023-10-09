@@ -15,6 +15,7 @@ import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.ui.framework.MainLayout;
 import com.advenio.medere.emr.ui.framework.components.grid.DataGrid;
 import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
+import com.advenio.medere.emr.view.CreateSectorWIndow;
 import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.server.session.ISessionManager;
@@ -54,7 +55,7 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 		//TODO cambiar a SectorDTO porque vamos a tener que tener una columna que nos indique la cantidad de especialistas por sector
 		//TODO armar window de alta baja y mod de especialista por sector
 		grid = new DataGrid<SectorDTO>(SectorDTO.class, false, false);
-		
+		lblLoadFactor = new Label(DEMAND_FACTOR);
 		grid.getGrid().removeAllColumns();
 
 		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Nombre").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
@@ -80,11 +81,12 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 			}
 		});
 		
-		grid.addControlToHeader(lblLoadFactor, false);
+		//grid.addControlToHeader(lblLoadFactor, false);
 
 		grid.getGrid().setItems(entityDAO.loadSectorInfo().getData());
 
 		grid.init();
+
 		
 		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
 	}
@@ -93,9 +95,12 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 	@Override
 	public void init() {
 		super.init();
+		btnNew.addClickListener(e -> {
+				CreateSectorWIndow w = context.getBean(CreateSectorWIndow.class, "Seleccionar jefe de sector");
+		});
 		titleDelete = sessionManager.getI18nMessage("GenericDrugView");
 		titleDeleteItemText = sessionManager.getI18nMessage("AreYouSureToDeleteGenericDrug");
-		lblLoadFactor = new Label(DEMAND_FACTOR);
+
 	}
 	@Override
 	public String getPageTitle() {

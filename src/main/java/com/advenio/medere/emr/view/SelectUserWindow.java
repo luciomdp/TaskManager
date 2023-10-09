@@ -53,6 +53,7 @@ public class SelectUserWindow extends BaseCRUDWindow {
         }
         else
             cboUsers.setItems(userDAO.loadAllUsers());
+        
         cboUsers.addValueChangeListener(u -> {
             selectedUser = u.getValue();
         });
