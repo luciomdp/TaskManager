@@ -9,9 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
-
 
 public class RegionalSettingsDTO implements Serializable{
 

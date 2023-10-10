@@ -25,7 +25,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
-@Route(value = "sectorsGrid", layout = MainLayout.class)
+@Route(value = "sectorsView", layout = MainLayout.class)
 public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
@@ -62,18 +62,20 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 		
 		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Descripción").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
-		grid.getGrid().addColumn(e -> e.getSectormanagermame()).setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
+		grid.getGrid().addColumn(e -> e.getSectormanagermame()).setHeader("Jefe de sector").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
 
-		grid.getGrid().addColumn(e -> (e.getQtypendingtasksassigned().longValue()/e.getQtyemployeers().longValue())).setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("demandfactor");
+		grid.getGrid().addColumn(e -> e.getQtyemployeers()).setHeader("Especialistas asignados").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("qtyemployeers");
+
+		grid.getGrid().addColumn(e -> e.getLoadfactor()).setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("loadfactor");
 		
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("sectormanager")) {
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, item.getItem().getSector());
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, entityDAO.loadSector(item.getItem().getSector().longValue()));
 				w.addDetachListener(c -> {
 					User u = w.getSelectedUser();
-					u.setSectorspecialist(null);
+					u.setSectorspecialist(entityDAO.loadSector(item.getItem().getSector().longValue()));
 					u.setAreamanager(null);
 					u.setSectormanager(entityDAO.loadSector(item.getItem().getSector().longValue()));
 					userDAO.updateUser(u);
@@ -83,7 +85,7 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 		
 		//grid.addControlToHeader(lblLoadFactor, false);
 
-		grid.getGrid().setItems(entityDAO.loadSectorInfo().getData());
+		loadDataGrid();
 
 		grid.init();
 

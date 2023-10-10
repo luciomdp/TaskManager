@@ -38,10 +38,6 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	@Autowired private EntityDAO entityDAO;
 	@Autowired private UserDAO userDAO;
-
-	@Autowired
-	private NativeSQLQueryBuilder nativeQueryBuilder;
-
 	@Autowired
 	private ISessionManager sessionManager;
 	@Autowired
@@ -74,9 +70,7 @@ public class MyTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 		super.init();
 
 		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
-
 			private static final long serialVersionUID = -1266658791714326144L;
-
 			@Override
 			public void selectionChange(SelectionEvent<Grid<Task>, Task> event) {
 				if (event.getFirstSelectedItem().isPresent()) {

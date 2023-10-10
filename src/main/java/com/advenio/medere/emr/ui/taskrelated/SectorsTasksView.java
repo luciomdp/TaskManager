@@ -19,22 +19,16 @@ import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
-@Route(value = "sectorsTasksGrid", layout = MainLayout.class)
+@Route(value = "sectorsTasksView", layout = MainLayout.class)
 public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
-	private static final String WIDTH_BIG = "200px";
 	@Value("${medere.medereaddress}")
 	private String medereAddress;
 
@@ -99,8 +93,8 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
-				return;
-			if(item.getColumn().getId().get().equals("solver")) {
+				editItem(grid.getGrid().asSingleSelect().getValue());
+			else if(item.getColumn().getId().get().equals("solver")) {
 				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getSector());
 				w.addDetachListener(c -> {
 					Task selectedTask = item.getItem();
@@ -108,8 +102,8 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 					entityDAO.updateTask(selectedTask);
 					loadDataGrid();
 				});
-			}else
-				editItem(grid.getGrid().asSingleSelect().getValue());
+			}	
+			return;	
 		});
 
 		grid.init();
@@ -118,7 +112,7 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 
 	@Override
 	public String getPageTitle() {
-		return sessionManager.getI18nMessage("EditCIE10");
+		return "Visualizar tareas de sector";
 	}
 
 	@Override

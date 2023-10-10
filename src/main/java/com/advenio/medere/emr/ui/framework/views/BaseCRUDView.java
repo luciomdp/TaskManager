@@ -9,11 +9,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.data.selection.SelectionListener;
+
 
 public abstract class BaseCRUDView<T> extends BaseView {
 
@@ -32,21 +30,6 @@ public abstract class BaseCRUDView<T> extends BaseView {
 	
 	public void init() {
 		createGrid();
-		grid.getGrid().addSelectionListener(new SelectionListener<Grid<T>, T>() {
-
-			private static final long serialVersionUID = -1266658791714326144L;
-
-			@Override
-			public void selectionChange(SelectionEvent<Grid<T>, T> event) {
-				if (event.getFirstSelectedItem().isPresent()) {
-					btnEdit.setVisible(true);
-					btnDelete.setVisible(true);
-				} else {
-					btnEdit.setVisible(false);
-					btnDelete.setVisible(false);
-				}
-			}
-		});
 
 		btnNew = new Button(VaadinIcon.PLUS.create());
 		btnNew.addThemeVariants(ButtonVariant.LUMO_SMALL);

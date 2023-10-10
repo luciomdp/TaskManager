@@ -2,12 +2,8 @@ package com.advenio.medere.emr.view;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import com.advenio.medere.MessageBusContainer;
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.objects.Category;
 import com.advenio.medere.emr.objects.Priority;
@@ -15,16 +11,13 @@ import com.advenio.medere.emr.objects.Sector;
 import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.Task;
 import com.advenio.medere.emr.objects.User;
-import com.advenio.medere.emr.objects.Priority.Priorities;
 import com.advenio.medere.emr.objects.State.States;
-import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -40,16 +33,9 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	private static final long serialVersionUID = -389362694626171100L;
 
-	private static final String WIDTH_MEDIUM = "100px";
-	private static final String WIDTH_BIG = "200px";
 
 	@Autowired private EntityDAO entityDAO;
-	@Autowired private ApplicationContext context;
-	@Autowired private ISessionManager sessionManager;
-	@Autowired private MessageBusContainer messageBus;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CreateTaskWindow.class);
-
 	private VerticalLayout mainLayout;
    	private HorizontalLayout footerLayout;
 	private VerticalLayout vlMain;

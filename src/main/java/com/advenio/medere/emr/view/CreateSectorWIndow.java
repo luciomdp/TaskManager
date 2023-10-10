@@ -2,12 +2,9 @@ package com.advenio.medere.emr.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-
 import com.advenio.medere.emr.dao.EntityDAO;
-import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Area;
 import com.advenio.medere.emr.objects.Sector;
-import com.advenio.medere.emr.objects.State;
 import com.advenio.medere.emr.objects.User;
 import com.advenio.medere.emr.ui.framework.views.BaseCRUDWindow;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,21 +14,17 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 
 @SpringComponent
 @Scope("prototype")
-public class CreateSectorWIndow extends BaseCRUDWindow {
+public class CreateSectorWIndow extends BaseCRUDWindow<Sector> {
 
-    @Autowired
-    private UserDAO userDAO;
     @Autowired
     private EntityDAO entityDAO;
 	private TextField txtName;
     private TextField txtDescription;
 	private ComboBox<User> cboSectorManager;
     private ComboBox<Area> cboArea;
-    private Long sectorId;
 
     public CreateSectorWIndow(String windowTitle) {
         super(windowTitle);
-        this.sectorId =sectorId;
     }
 
     @Override
@@ -60,10 +53,6 @@ public class CreateSectorWIndow extends BaseCRUDWindow {
         formLayout.add(vl);
     }
 
-    private VerticalLayout VerticalLayout() {
-        return null;
-    }
-
     @Override
     protected void accept() {
         Sector sector = new Sector ();
@@ -75,14 +64,13 @@ public class CreateSectorWIndow extends BaseCRUDWindow {
         entityDAO.saveSector(sector);
     }
 
-    @Override
-    protected void editItem(Object item) {
-        Sector sector = ((Sector)item);
+   @Override
+    protected void editItem(Sector item) {
         cboSectorManager.setVisible(true);
-        cboArea.setValue(sector.getArea());
-        cboSectorManager.setValue(sector.getSector_manager());
-        txtDescription.setValue(sector.getDescription());
-        txtName.setValue(sector.getName());
+        cboArea.setValue(item.getArea());
+        cboSectorManager.setValue(item.getSector_manager());
+        txtDescription.setValue(item.getDescription());
+        txtName.setValue(item.getName());
     }
 
 }
