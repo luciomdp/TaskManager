@@ -4,21 +4,16 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.apache.commons.codec.binary.Base64;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.persistence.Transient;
 import javax.crypto.spec.SecretKeySpec;
-
 import com.advenio.medere.sender.objects.dto.MessageDTO;
-
 import lombok.Getter;
 import lombok.Setter;
 

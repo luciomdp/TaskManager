@@ -41,6 +41,8 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	private static final long serialVersionUID = -389362694626171100L;
 
+	public static final Logger logger = LoggerFactory.getLogger(CreateTaskWindow.class);
+
 	private static final String WIDTH_MEDIUM = "100px";
 
 	@Autowired private ISessionManager sessionManager;
@@ -48,8 +50,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	@Autowired private UserDAO userDAO;
 	@Autowired private ApplicationContext context;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CreateTaskWindow.class);
-
 	private VerticalLayout mainLayout;
    	private HorizontalLayout footerLayout;
 	private VerticalLayout vlMain;
@@ -173,6 +173,8 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 			cboCategory.setValue(task.getCategory());
 		if(task.getSector() != null)
 			cboSector.setValue(task.getSector());
+		else if(parent != null && parent.getSector() != null)
+			cboSector.setValue(parent.getSector());
 		if(task.getPriority() != null)
 			cboPriority.setValue(task.getPriority());
 		if(task.getDatelimit() != null)
@@ -223,14 +225,20 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 
 		gridSubtasks.init();
 
-		gridSubtasks.getGrid().addSelectionListener(e -> {
-			if (e.getFirstSelectedItem().isPresent()) {
-				btnEdit.setVisible(true);
-				btnDelete.setVisible(true);
-			} else {
-				btnEdit.setVisible(false);
-				btnDelete.setVisible(false);
-			}
+		gridSubtasks.getGrid().addItemClickListener(item -> {
+			if(!item.getColumn().getId().isPresent())
+				return;
+			if(item.getColumn().getId().get().equals("solver")) {
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getSector());
+				w.addDetachListener(c -> {
+					Task selectedTask = item.getItem();
+					selectedTask.setSolver(w.getSelectedUser());
+					entityDAO.updateTask(selectedTask);
+					loadDataGrid();
+				});
+			}else
+				editSubtask(gridSubtasks.getGrid().asSingleSelect().getValue());	
+			return;	
 		});
 
 		btnNew = new Button(VaadinIcon.PLUS.create());

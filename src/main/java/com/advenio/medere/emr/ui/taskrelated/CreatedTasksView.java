@@ -17,8 +17,11 @@ import com.advenio.medere.emr.view.VisualiceTaskWindow;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.selection.SelectionEvent;
+import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.Route;;
 
 @Route(value = "createTask", layout = MainLayout.class)
 public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTitle {
@@ -57,6 +60,22 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 		grid.getGrid().addColumn(e ->e.getSolver()!=null? e.getSolver().getName():"").setHeader("Resolutor").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 
 		grid.init();
+
+		grid.getGrid().addSelectionListener(new SelectionListener<Grid<Task>, Task>() {
+
+			private static final long serialVersionUID = -1266658791714326144L;
+
+			@Override
+			public void selectionChange(SelectionEvent<Grid<Task>, Task> event) {
+				if (event.getFirstSelectedItem().isPresent()) {
+					btnEdit.setVisible(true);
+					btnDelete.setVisible(true);
+				} else {
+					btnEdit.setVisible(false);
+					btnDelete.setVisible(false);
+				}
+			}
+		});
 	
 	}
 
@@ -64,8 +83,6 @@ public class CreatedTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 	@Override
 	public void init() {
 		super.init();
-		btnDelete.setVisible(true);
-		btnEdit.setVisible(true);
 		titleDelete = "Borrar tarea";
 		titleDeleteItemText = "Estas seguro de borrar esa tarea?";
 	}

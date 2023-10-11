@@ -2,7 +2,6 @@ package com.advenio.medere.emr.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-
 import com.advenio.medere.emr.dao.EntityDAO;
 import com.advenio.medere.emr.dao.UserDAO;
 import com.advenio.medere.emr.objects.Profile;
@@ -15,7 +14,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 
 @SpringComponent
 @Scope("prototype")
-public class SelectUserWindow extends BaseCRUDWindow {
+public class SelectUserWindow extends BaseCRUDWindow<User> {
     private ComboBox<User> cboUsers;
     @Autowired
 	protected EntityDAO entityDAO;
@@ -55,7 +54,7 @@ public class SelectUserWindow extends BaseCRUDWindow {
     }
 
     @Override
-    public void editItem(Object item) {
+    public void editItem(User item) {
     }
 
     public User getSelectedUser() {

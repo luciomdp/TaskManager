@@ -25,7 +25,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 
-@Route(value = "sectorsGrid", layout = MainLayout.class)
+@Route(value = "sectorsView", layout = MainLayout.class)
 public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTitle {
 
 	private static final String WIDTH_MEDIUM = "100px";
@@ -45,50 +45,41 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 	private ApplicationContext context;
 	@Autowired 
 	private UserDAO userDAO;
-	
-	//TODO armar el label de factor de carga de especialistas por seccion
-	private Label lblLoadFactor;
-	// cantidad de pedidos en estado “por realizar” dividido la cantidad de especialistas de un sector
 
 	@Override
 	protected void createGrid() {
-		//TODO cambiar a SectorDTO porque vamos a tener que tener una columna que nos indique la cantidad de especialistas por sector
 		//TODO armar window de alta baja y mod de especialista por sector
 		grid = new DataGrid<SectorDTO>(SectorDTO.class, false, false);
-		lblLoadFactor = new Label(DEMAND_FACTOR);
 		grid.getGrid().removeAllColumns();
 
 		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Nombre").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
 		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Descripción").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
-		grid.getGrid().addColumn(e -> e.getSectormanagermame()).setHeader("Jefe").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
+		grid.getGrid().addColumn(e -> e.getSectormanagername()).setHeader("Jefe de sector").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
 
-		grid.getGrid().addColumn(e -> (e.getQtypendingtasksassigned().longValue()/e.getQtyemployeers().longValue())).setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("demandfactor");
+		grid.getGrid().addColumn(e -> e.getQtyspetialist()).setHeader("Especialistas asignados").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("qtyemployeers");
+
+		grid.getGrid().addColumn(e -> e.getLoadfactor().toString() + " %").setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("loadfactor");
 		
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("sectormanager")) {
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, item.getItem().getSector());
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, entityDAO.loadSector(item.getItem().getSector().longValue()));
 				w.addDetachListener(c -> {
 					User u = w.getSelectedUser();
-					u.setSectorspecialist(null);
+					u.setSectorspecialist(entityDAO.loadSector(item.getItem().getSector().longValue()));
 					u.setAreamanager(null);
 					u.setSectormanager(entityDAO.loadSector(item.getItem().getSector().longValue()));
 					userDAO.updateUser(u);
 				});
 			}
 		});
-		
-		//grid.addControlToHeader(lblLoadFactor, false);
 
-		grid.getGrid().setItems(entityDAO.loadSectorInfo().getData());
+		loadDataGrid();
 
 		grid.init();
-
-		
-		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
 	}
 
 	@PostConstruct

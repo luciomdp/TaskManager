@@ -15,15 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.advenio.medere.dao.Hibernate.HibernateCriteriaQueryBuilder;
 import com.advenio.medere.dao.nativeSQL.FieldDataRequest;
 import com.advenio.medere.dao.nativeSQL.NativeSQLQueryBuilder;
 import com.advenio.medere.dao.nativeSQL.ParameterData;
 import com.advenio.medere.dao.pagination.Page;
 import com.advenio.medere.dao.pagination.PageLoadConfig;
 import com.advenio.medere.emr.dao.dto.SectorDTO;
-import com.advenio.medere.emr.dao.dto.SiteDTO;
 import com.advenio.medere.emr.objects.Area;
 import com.advenio.medere.emr.objects.Category;
 import com.advenio.medere.emr.objects.Priority;
@@ -39,17 +36,13 @@ import com.advenio.medere.objects.Language;
 @Transactional
 public class EntityDAO {
 
-	private static final Logger logger = LoggerFactory.getLogger(EntityDAO.class);
+	public static final Logger logger = LoggerFactory.getLogger(EntityDAO.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	private NativeSQLQueryBuilder nativeQueryBuilder;
-	
-	@Autowired
-	private HibernateCriteriaQueryBuilder hibernateCriteriaQueryBuilder;
-
 	
 	@Transactional(readOnly = true)
 	public Language loadLanguageByCode(String languageCode) {		
@@ -116,12 +109,11 @@ public class EntityDAO {
     }
 
 	public Page<SectorDTO> loadSectorInfo() {
-		ArrayList<ParameterData> params = new ArrayList<ParameterData>();
-		PageLoadConfig<SiteDTO> loadconfig = new PageLoadConfig<>(null);
+		PageLoadConfig<SectorDTO> loadconfig = new PageLoadConfig<>(null);
         ArrayList<FieldDataRequest> fieldDataRequest = new ArrayList<FieldDataRequest>();
-        Page page = nativeQueryBuilder.runReport(0, 10,
+        Page<SectorDTO> page = ((Page<SectorDTO>) nativeQueryBuilder.runReport(0, 10,
         		loadconfig.getSortingList(), loadconfig.getFilters(), "loadSectorDTOInfo",
-        		1L, params, false, true, fieldDataRequest);
+        		1L, new ArrayList<ParameterData>(), true, true, fieldDataRequest));
         return page;
 	}
 
