@@ -9,8 +9,8 @@
 				a.description AS area,
 				count(employee._user) AS qtyspetialist,
 				CASE
-					WHEN count(employee._user) = 0 THEN 0 ::float  -- Para evitar la división por cero
-					ELSE (count(t.value) / count(employee._user))::float  -- Factor de carga
+					WHEN CAST(count(employee._user) AS float) = 0 THEN 0   -- Para evitar la división por cero
+					ELSE CAST((count(t.value) / count(employee._user)) AS float)*100  -- Factor de carga
 				END AS loadfactor
 			FROM sector AS s
 			JOIN area AS a ON a.area = s.area

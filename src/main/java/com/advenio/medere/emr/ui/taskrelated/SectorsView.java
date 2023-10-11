@@ -45,28 +45,22 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 	private ApplicationContext context;
 	@Autowired 
 	private UserDAO userDAO;
-	
-	//TODO armar el label de factor de carga de especialistas por seccion
-	private Label lblLoadFactor;
-	// cantidad de pedidos en estado “por realizar” dividido la cantidad de especialistas de un sector
 
 	@Override
 	protected void createGrid() {
-		//TODO cambiar a SectorDTO porque vamos a tener que tener una columna que nos indique la cantidad de especialistas por sector
 		//TODO armar window de alta baja y mod de especialista por sector
 		grid = new DataGrid<SectorDTO>(SectorDTO.class, false, false);
-		lblLoadFactor = new Label(DEMAND_FACTOR);
 		grid.getGrid().removeAllColumns();
 
 		grid.getGrid().addColumn(e -> e.getName()!=null?e.getName():"").setHeader("Nombre").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
 		grid.getGrid().addColumn(e -> e.getDescription()!=null?e.getDescription():"").setHeader("Descripción").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM);
 		
-		grid.getGrid().addColumn(e -> e.getSectormanagermame()).setHeader("Jefe de sector").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
+		grid.getGrid().addColumn(e -> e.getSectormanagername()).setHeader("Jefe de sector").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("sectormanager");
 
-		grid.getGrid().addColumn(e -> e.getQtyemployeers()).setHeader("Especialistas asignados").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("qtyemployeers");
+		grid.getGrid().addColumn(e -> e.getQtyspetialist()).setHeader("Especialistas asignados").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("qtyemployeers");
 
-		grid.getGrid().addColumn(e -> e.getLoadfactor()).setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("loadfactor");
+		grid.getGrid().addColumn(e -> e.getLoadfactor().toString() + " %").setHeader("Factor de carga").setTextAlign(ColumnTextAlign.CENTER).setWidth(WIDTH_MEDIUM).setId("loadfactor");
 		
 		grid.getGrid().addItemClickListener(item -> {
 			if(!item.getColumn().getId().isPresent())
@@ -82,15 +76,10 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 				});
 			}
 		});
-		
-		//grid.addControlToHeader(lblLoadFactor, false);
 
 		loadDataGrid();
 
 		grid.init();
-
-		
-		//TODO para las windows de cambios que debe devolver especialista, armar una window generica que devuelva un User y se tome de ahi la mod. 
 	}
 
 	@PostConstruct

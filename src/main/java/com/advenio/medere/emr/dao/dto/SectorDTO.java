@@ -14,8 +14,8 @@ public class SectorDTO {
     private BigInteger sector;
     private String name;
     private String description;
-    private String sectormanagermame;
+    private String sectormanagername;
     private String area;
-    private BigInteger qtyemployeers;
-    private BigDecimal loadfactor;
+    private BigInteger qtyspetialist;
+    private Double loadfactor;
 }
