@@ -62,7 +62,7 @@ public class EntityDAO {
 	}
 
 	public List<Task> loadSectorsTasks(Sector sector) {
-		return entityManager.createQuery("From Task WHERE sector = :sector AND state.state != :deleted AND (parentTask IS NULL) ORDER BY priority.priority ASC",Task.class).setParameter("sector", sector).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
+		return entityManager.createQuery("From Task WHERE category.sector = :sector AND state.state != :deleted AND (parentTask IS NULL) ORDER BY priority.priority ASC",Task.class).setParameter("sector", sector).setParameter("deleted", States.CANCELADO.getValue()).getResultList();
 	}
 	
 	public List<Sector> loadSectors() {

@@ -60,7 +60,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	private TextField txtTitle;
 	private ComboBox<State> cboState;
 	private ComboBox<Category> cboCategory;
-	private ComboBox<Sector> cboSector;
 	private ComboBox<Priority> cboPriority;
 	private DatePicker dateLimit;
 	
@@ -95,7 +94,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		cboState.setSizeFull();
 		cboState.setItems(entityDAO.getStates());
 		cboState.setValue(entityDAO.getStateById(States.SIN_ASIGNAR.getValue()));
-		cboState.setEnabled(false);
+		cboState.setEnabled(userDAO.findUserFull(sessionManager.getUser().getUsername()).getProfile().getProfile() >  1);
 		cboState.setItemLabelGenerator(e -> e.getDescription());
 
 		cboCategory = new ComboBox<Category>("Categoria");
@@ -107,11 +106,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		cboPriority.setSizeFull();
 		cboPriority.setItems(entityDAO.loadPriorities());
 		cboPriority.setItemLabelGenerator(e -> e.getDescription());
-
-		cboSector = new ComboBox<Sector>("Sector");
-		cboSector.setSizeFull();
-		cboSector.setItems(entityDAO.loadSectors());
-		cboSector.setItemLabelGenerator(e -> e.getDescription());
 
 		dateLimit = new DatePicker();
 		dateLimit.setLabel("Fecha limite");
@@ -127,7 +121,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		txtDescription.setWidth(txtTitle.getWidth());
 
 		//TODO arreglar layouts Visualice es igual
-		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority,cboSector);
+		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority);
 		
 		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription);
 		if(parent == null)
@@ -171,10 +165,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 			cboState.setValue(task.getState());
 		if(task.getCategory() != null)
 			cboCategory.setValue(task.getCategory());
-		if(task.getSector() != null)
-			cboSector.setValue(task.getSector());
-		else if(parent != null && parent.getSector() != null)
-			cboSector.setValue(parent.getSector());
 		if(task.getPriority() != null)
 			cboPriority.setValue(task.getPriority());
 		if(task.getDatelimit() != null)
@@ -193,7 +183,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		task.setState(cboState.getValue());
 		task.setCategory(cboCategory.getValue());
 		task.setPriority(cboPriority.getValue());
-		task.setSector(cboSector.getValue());
 		task.setDatelimit(dateLimit.getValue());
 		
 		entityDAO.updateTask(task);
@@ -229,7 +218,7 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("solver")) {
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getSector());
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getCategory().getSector());
 				w.addDetachListener(c -> {
 					Task selectedTask = item.getItem();
 					selectedTask.setSolver(w.getSelectedUser());

@@ -1,7 +1,7 @@
 <list>
 		<com.advenio.medere.dao.nativeSQL.SQLQueryConfig>
 		<query>
-			SELECT
+SELECT
 				s.sector,
 				s.name,
 				s.description,
@@ -10,18 +10,20 @@
 				count(employee._user) AS qtyspetialist,
 				CASE
 					WHEN CAST(count(employee._user) AS float) = 0 THEN 0   -- Para evitar la división por cero
-					ELSE CAST((count(t.value) / count(employee._user)) AS float)*100  -- Factor de carga
+					ELSE CAST((todotasks.value / count(employee._user)) AS float)*100  -- Factor de carga
 				END AS loadfactor
 			FROM sector AS s
 			JOIN area AS a ON a.area = s.area
-			LEFT JOIN _user AS sectormanager ON s.sectormanager = sectormanager._user
+			LEFT JOIN _user AS sectormanager ON s.sector = sectormanager.sectormanager
 			LEFT JOIN _user AS employee ON s.sector = employee.sector AND employee.profile = 2 --Especialistas
-			LEFT JOIN LATERAL (
-				SELECT count(t.task) AS value
+			LEFT JOIN (
+				SELECT count(t.task) AS value,c.sector
 				FROM task AS t
-				WHERE t.sector = s.sector AND t.state = 2 -- Estado por realizar
-			) AS t ON 1 = 1
-			GROUP BY s.sector, s.name, s.description, COALESCE(sectormanager.name, ''), a.description
+				JOIN category AS c ON c.category = t.category
+				WHERE  t.state = 2 -- Estado por realizar
+                GROUP BY c.sector
+			) AS todotasks ON todotasks.sector = s.sector
+			GROUP BY s.sector,todotasks.value, s.name, s.description, COALESCE(sectormanager.name, ''), a.description
 		</query>
 		<name>loadSectorDTOInfo</name>
 		<classNameResult></classNameResult>

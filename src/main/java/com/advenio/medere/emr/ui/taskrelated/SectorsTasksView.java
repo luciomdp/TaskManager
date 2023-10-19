@@ -95,7 +95,7 @@ public class SectorsTasksView extends BaseCRUDView<Task> implements HasDynamicTi
 			if(!item.getColumn().getId().isPresent())
 				editItem(grid.getGrid().asSingleSelect().getValue());
 			else if(item.getColumn().getId().get().equals("solver")) {
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getSector());
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Resolutor", null, item.getItem().getCategory().getSector());
 				w.addDetachListener(c -> {
 					Task selectedTask = item.getItem();
 					selectedTask.setSolver(w.getSelectedUser());

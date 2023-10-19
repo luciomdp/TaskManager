@@ -33,9 +33,6 @@ public class Task {
     @JoinColumn(name = "solver")
     private User solver;
     @ManyToOne
-    @JoinColumn(name = "sector")
-    private Sector sector;
-    @ManyToOne
     @JoinColumn(name = "category")
     private Category category;
     @ManyToOne

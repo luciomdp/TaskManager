@@ -46,7 +46,6 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 	private TextField txtTitle;
 	private ComboBox<State> cboState;
 	private ComboBox<Category> cboCategory;
-	private ComboBox<Sector> cboSector;
 	private ComboBox<Priority> cboPriority;
 	private DatePicker dateLimit;
 	
@@ -95,11 +94,6 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		cboPriority.setItems(entityDAO.loadPriorities());
 		cboPriority.setItemLabelGenerator(e -> e.getDescription());
 
-		cboSector = new ComboBox<Sector>("Sector");
-		cboSector.setSizeFull();
-		cboSector.setItems(entityDAO.loadSectors());
-		cboSector.setItemLabelGenerator(e -> e.getDescription());
-
 		dateLimit = new DatePicker();
 		dateLimit.setLabel("Fecha limite");
 
@@ -114,7 +108,7 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		txtDescription.setWidth(txtTitle.getWidth());
 
 		//TODO arreglar layouts Visualice es igual
-		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority,cboSector);
+		HorizontalLayout hlCbos = new HorizontalLayout(cboState,cboCategory,cboPriority);
 
 		vlMain = new VerticalLayout(hlCbos,dateLimit,txtDescription);
 		vlMain.setSizeFull();
@@ -158,7 +152,6 @@ public class CreateTaskWindow extends Dialog implements HasDynamicTitle{
 		t.setState(cboState.getValue());
 		t.setCategory(cboCategory.getValue());
 		t.setPriority(cboPriority.getValue());
-		t.setSector(cboSector.getValue());
 		t.setSolver(null);
 		t.setDatelimit(dateLimit.getValue());
 		t.setParentTask(parentTask);
