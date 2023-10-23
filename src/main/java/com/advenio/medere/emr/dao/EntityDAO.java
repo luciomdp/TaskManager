@@ -124,4 +124,8 @@ public class EntityDAO {
 	public void saveSector(Sector sector) {
 		entityManager.merge(sector);
 	}
+
+	public void updateSector(Sector s) {
+		entityManager.merge(s);
+	}
 }

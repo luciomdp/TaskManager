@@ -26,6 +26,8 @@ public class SelectUserWindow extends BaseCRUDWindow<User> {
 
     public SelectUserWindow(String caption, Profile profileId, Sector sectorId) {
         super(caption);
+        profile = profileId;
+        sector = sectorId;
     }
 
     @Override

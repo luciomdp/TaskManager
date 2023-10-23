@@ -179,7 +179,6 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 		if(parent != null)
 			task.setOwner(parent.getOwner());
 		task.setDescription(txtDescription.getValue());
-		task.setParentTask(null);
 		task.setState(cboState.getValue());
 		task.setCategory(cboCategory.getValue());
 		task.setPriority(cboPriority.getValue());
@@ -255,8 +254,10 @@ public class VisualiceTaskWindow extends Dialog implements HasDynamicTitle{
 	}
 
 	protected void editSubtask(Task item) {
-		VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea", item, ((parent!=null)?null:task));
-		w.addDetachListener(e -> loadDataGrid());
+		if(item != null) {
+			VisualiceTaskWindow w = context.getBean(VisualiceTaskWindow.class, "Editar subtarea", item, ((parent!=null)?null:task));
+			w.addDetachListener(e -> loadDataGrid());
+		}	
 	}
 
 	protected void deleteSubtask(Task item) {

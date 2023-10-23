@@ -18,6 +18,7 @@ import com.advenio.medere.emr.ui.framework.views.BaseCRUDView;
 import com.advenio.medere.emr.view.CreateSectorWIndow;
 import com.advenio.medere.emr.view.SelectUserWindow;
 import com.advenio.medere.emr.objects.User;
+import com.advenio.medere.emr.objects.Profile.Profiles;
 import com.advenio.medere.server.session.ISessionManager;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
@@ -66,13 +67,25 @@ public class SectorsView extends BaseCRUDView<SectorDTO> implements HasDynamicTi
 			if(!item.getColumn().getId().isPresent())
 				return;
 			if(item.getColumn().getId().get().equals("sectormanager")) {
-				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", null, entityDAO.loadSector(item.getItem().getSector().longValue()));
+				SelectUserWindow w = context.getBean(SelectUserWindow.class, "Seleccionar jefe de sector", entityDAO.loadProfile(Profiles.SECTOR_MANAGER.getValue()),null);
 				w.addDetachListener(c -> {
-					User u = w.getSelectedUser();
-					u.setSectorspecialist(entityDAO.loadSector(item.getItem().getSector().longValue()));
-					u.setAreamanager(null);
-					u.setSectormanager(entityDAO.loadSector(item.getItem().getSector().longValue()));
-					userDAO.updateUser(u);
+					Sector s = entityDAO.loadSector(item.getItem().getSector().longValue());
+					User u;
+					if(w.getSelectedUser()!=null) {
+						u = w.getSelectedUser();
+						u.setSectorspecialist(entityDAO.loadSector(item.getItem().getSector().longValue()));
+						u.setSectormanager(entityDAO.loadSector(item.getItem().getSector().longValue()));
+						s.setSector_manager(u);
+						userDAO.updateUser(u);
+						entityDAO.updateSector(s);
+						return;
+					}else if (s.getSector_manager() != null ){
+						u = s.getSector_manager();
+						u.setSectormanager(null);
+						s.setSector_manager(null);
+						userDAO.updateUser(u);
+						entityDAO.updateSector(s);
+					}
 				});
 			}
 		});
